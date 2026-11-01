@@ -1,0 +1,587 @@
+<header class="sg-header">
+  <app-container size="wide">
+    <div class="sg-header__bar">
+      <a class="sg-wordmark" href="#inicio">Cristian <em>Atienza</em></a>
+      <span class="t-meta sg-header__meta">Sistema de diseño · v0.1 · solo desarrollo</span>
+      <div class="sg-scheme" role="group" aria-label="Modo de color">
+        @for (option of schemeOptions; track option.value) {
+          <button
+            type="button"
+            class="sg-scheme__option"
+            [attr.aria-pressed]="colorScheme.scheme() === option.value"
+            (click)="colorScheme.set(option.value)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </div>
+    <nav class="sg-nav" aria-label="Secciones del sistema de diseño">
+      <a app-link variant="quiet" href="#color">Color</a>
+      <a app-link variant="quiet" href="#tipografia">Tipografía</a>
+      <a app-link variant="quiet" href="#espaciado">Espaciado</a>
+      <a app-link variant="quiet" href="#reticula">Retícula</a>
+      <a app-link variant="quiet" href="#componentes">Componentes</a>
+      <a app-link variant="quiet" href="#temas">Temas</a>
+      <a app-link variant="quiet" href="#composicion">Composición</a>
+    </nav>
+  </app-container>
+</header>
+
+<main id="inicio">
+  <!-- Portada del styleguide -->
+  <section class="section">
+    <app-container size="wide">
+      <div class="stack sg-intro">
+        <app-eyebrow [index]="0">Sistema de diseño</app-eyebrow>
+        <h1 class="t-hero">Cuaderno de campo <em>cinematográfico</em></h1>
+        <p class="t-lead sg-intro__lead">
+          Papel cálido de día, sala de cine de noche. La fotografía manda y la tipografía narra: una
+          sola marca con cinco temperaturas.
+        </p>
+      </div>
+      <ol class="sg-principles" role="list">
+        <li>
+          <span class="t-meta">01</span>
+          <p>La foto es la protagonista: la interfaz se aparta.</p>
+        </li>
+        <li>
+          <span class="t-meta">02</span>
+          <p>Titulares serif enormes, itálica para el énfasis.</p>
+        </li>
+        <li>
+          <span class="t-meta">03</span>
+          <p>Metadatos en mono, como un cuaderno de campo.</p>
+        </li>
+        <li>
+          <span class="t-meta">04</span>
+          <p>Sin esquinas redondeadas; líneas de un píxel.</p>
+        </li>
+        <li>
+          <span class="t-meta">05</span>
+          <p>Aire generoso y composiciones asimétricas.</p>
+        </li>
+      </ol>
+    </app-container>
+  </section>
+
+  <!-- 01 · Color -->
+  <section id="color" class="section sg-section">
+    <app-container size="wide">
+      <header class="sg-section__head">
+        <app-eyebrow [index]="1">Color</app-eyebrow>
+        <h2 class="t-h1">Neutros <em>y acentos</em></h2>
+        <p class="t-caption">
+          Cada token tiene un valor claro y otro oscuro (light-dark()). Texto y acentos cumplen WCAG
+          AA sobre bg y bg-raised.
+        </p>
+      </header>
+
+      <h3 class="t-label sg-subhead">Neutros</h3>
+      <ul class="sg-swatches" role="list">
+        @for (name of neutrals; track name) {
+          <li class="sg-swatch">
+            <span
+              class="sg-swatch__chip"
+              [style.background-color]="'var(--color-' + name + ')'"
+            ></span>
+            <code class="sg-swatch__name">--color-{{ name }}</code>
+            <span class="t-meta">{{ colors()[name]?.light }} · {{ colors()[name]?.dark }}</span>
+          </li>
+        }
+      </ul>
+
+      <h3 class="t-label sg-subhead">Acentos por temática</h3>
+      <ul class="sg-swatches" role="list">
+        @for (section of sections; track section.id) {
+          <li class="sg-swatch" [attr.data-section]="section.id">
+            <span class="sg-swatch__chip sg-swatch__chip--accent"></span>
+            <span class="sg-swatch__name">{{ section.name }} · {{ section.accent }}</span>
+            <span class="t-meta"
+              >{{ colors()[section.id]?.light }} · {{ colors()[section.id]?.dark }}</span
+            >
+          </li>
+        }
+      </ul>
+
+      <h3 class="t-label sg-subhead">Los dos modos a la vez</h3>
+      <div class="sg-compare">
+        <div class="scheme-light sg-compare__panel">
+          <span class="t-meta">Modo claro · papel</span>
+          <p class="t-h2">Carreteras <em>sin final</em></p>
+          <p class="t-caption">Texto secundario sobre papel cálido.</p>
+          <div class="cluster">
+            <button app-button size="sm" type="button">Leer</button>
+            <app-tag tone="tint">Viajes</app-tag>
+          </div>
+        </div>
+        <div class="scheme-dark sg-compare__panel">
+          <span class="t-meta">Modo oscuro · cine</span>
+          <p class="t-h2">Carreteras <em>sin final</em></p>
+          <p class="t-caption">Texto secundario sobre negro de sala.</p>
+          <div class="cluster">
+            <button app-button size="sm" type="button">Leer</button>
+            <app-tag tone="tint">Viajes</app-tag>
+          </div>
+        </div>
+      </div>
+    </app-container>
+  </section>
+
+  <!-- 02 · Tipografía -->
+  <section id="tipografia" class="section sg-section">
+    <app-container size="wide">
+      <header class="sg-section__head">
+        <app-eyebrow [index]="2">Tipografía</app-eyebrow>
+        <h2 class="t-h1">Tres voces, <em>una revista</em></h2>
+        <p class="t-caption">Escala fluida con clamp(): de 360 a 1600 px de viewport.</p>
+      </header>
+
+      <div class="sg-families">
+        <article class="sg-family">
+          <span class="sg-family__sample sg-family__sample--display">Aa<em>g</em></span>
+          <h3 class="t-label">Fraunces · display</h3>
+          <p class="t-caption">
+            Serif de tamaño óptico: alto contraste en titulares gigantes, firme en tamaños medios.
+            Ejes: peso y tamaño óptico.
+          </p>
+        </article>
+        <article class="sg-family">
+          <span class="sg-family__sample sg-family__sample--sans">Aa</span>
+          <h3 class="t-label">Instrument Sans · texto</h3>
+          <p class="t-caption">
+            Sans contemporánea para lectura y navegación. Su eje de anchura condensa los eyebrows de
+            Motor.
+          </p>
+        </article>
+        <article class="sg-family">
+          <span class="sg-family__sample sg-family__sample--mono">&lt;/&gt;</span>
+          <h3 class="t-label">JetBrains Mono · datos</h3>
+          <p class="t-caption">
+            Código en Tecnología y metadatos de campo: coordenadas, fechas y datos de cámara.
+          </p>
+        </article>
+      </div>
+
+      <h3 class="t-label sg-subhead">Escala</h3>
+      <ul class="sg-scale" role="list">
+        @for (step of typeScale; track step.token) {
+          <li class="sg-scale__row">
+            <span class="sg-scale__info">
+              <code>--text-{{ step.token }}</code>
+              <span class="t-meta">{{ sizes()['font:' + step.token] }} · {{ step.use }}</span>
+            </span>
+            <span
+              class="sg-scale__sample"
+              [attr.data-family]="step.family"
+              [attr.data-measure]="'font:' + step.token"
+              [style.font-size]="'var(--text-' + step.token + ')'"
+            >
+              Costa da Morte
+            </span>
+          </li>
+        }
+      </ul>
+
+      <h3 class="t-label sg-subhead">Elementos tipográficos</h3>
+      <div class="grid">
+        <div class="span-5 stack">
+          <p class="t-lead">
+            Entradilla: el primer párrafo de un relato, algo mayor que el texto, para entrar en
+            situación.
+          </p>
+          <p class="t-body">
+            Texto corrido con <a app-link href="#tipografia">enlaces en línea</a>,
+            <strong>negritas</strong>, <em>itálicas</em> y <code>código en línea</code>.
+          </p>
+          <p class="t-caption">Pie de foto: contexto breve bajo una imagen.</p>
+          <p class="t-meta">42.8805° N · 9.2717° W · Octubre 2026</p>
+          <p class="t-label">Etiqueta en versalitas</p>
+        </div>
+        <div class="span-6 start-7 stack">
+          <blockquote class="t-quote">
+            El faro no anuncia el final del camino: anuncia que hay que volver.
+          </blockquote>
+          <pre><code>export const serverRoutes = [
+  {{ '{' }} path: '', renderMode: RenderMode.Prerender {{ '}' }},
+];</code></pre>
+        </div>
+      </div>
+    </app-container>
+  </section>
+
+  <!-- 03 · Espaciado -->
+  <section id="espaciado" class="section sg-section">
+    <app-container size="wide">
+      <header class="sg-section__head">
+        <app-eyebrow [index]="3">Espaciado</app-eyebrow>
+        <h2 class="t-h1">Aire <em>como material</em></h2>
+        <p class="t-caption">Escala base 4 px para componentes; espaciado fluido para secciones.</p>
+      </header>
+
+      <div class="grid">
+        <div class="span-6">
+          <h3 class="t-label sg-subhead">Escala fija</h3>
+          <ul class="sg-bars" role="list">
+            @for (step of spaces; track step) {
+              <li class="sg-bars__row">
+                <code>--space-{{ step }}</code>
+                <span
+                  class="sg-bars__bar"
+                  [style.inline-size]="'var(--space-' + step + ')'"
+                  [attr.data-measure]="'size:space-' + step"
+                ></span>
+                <span class="t-meta">{{ sizes()['size:space-' + step] }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+        <div class="span-5 start-8 stack">
+          <div>
+            <h3 class="t-label sg-subhead">Fluido (viewport actual)</h3>
+            <ul class="sg-bars" role="list">
+              @for (name of fluidSpaces; track name) {
+                <li class="sg-bars__row">
+                  <code>--{{ name }}</code>
+                  <span
+                    class="sg-bars__bar sg-bars__bar--accent"
+                    [style.inline-size]="'var(--' + name + ')'"
+                    [attr.data-measure]="'size:' + name"
+                  ></span>
+                  <span class="t-meta">{{ sizes()['size:' + name] }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+          <div>
+            <h3 class="t-label sg-subhead">Anchos máximos</h3>
+            <dl class="sg-table">
+              @for (name of widths; track name) {
+                <dt>
+                  <code>--width-{{ name }}</code>
+                </dt>
+                <dd class="t-meta">{{ raw()['width-' + name] }}</dd>
+              }
+            </dl>
+          </div>
+          <div>
+            <h3 class="t-label sg-subhead">Breakpoints</h3>
+            <dl class="sg-table">
+              @for (name of breakpoints; track name) {
+                <dt>
+                  <code>{{ name }}</code>
+                </dt>
+                <dd class="t-meta">≥ {{ raw()['breakpoint-' + name] }}</dd>
+              }
+            </dl>
+          </div>
+        </div>
+      </div>
+    </app-container>
+  </section>
+
+  <!-- 04 · Retícula -->
+  <section id="reticula" class="section sg-section">
+    <app-container size="wide">
+      <header class="sg-section__head">
+        <app-eyebrow [index]="4">Retícula</app-eyebrow>
+        <h2 class="t-h1">Doce columnas, <em>reglas para romperlas</em></h2>
+        <p class="t-caption">
+          .grid reparte 12 columnas desde md (en móvil todo se apila). .page-grid permite a las
+          imágenes salir de la columna de texto.
+        </p>
+      </header>
+      <div class="sg-columns" aria-hidden="true">
+        @for (column of columns; track column) {
+          <span class="t-meta">{{ column }}</span>
+        }
+      </div>
+    </app-container>
+
+    <div class="page-grid sg-bleeds">
+      <div class="bleed-full sg-demo">
+        <app-media ratio="21/9" tone="sea" label="Mar abierto, imagen provisional" />
+        <code class="sg-demo__label">.bleed-full</code>
+      </div>
+      <div class="bleed-wide sg-demo">
+        <app-media ratio="21/9" tone="forest" label="Bosque, imagen provisional" />
+        <code class="sg-demo__label">.bleed-wide</code>
+      </div>
+      <div class="sg-demo">
+        <app-media ratio="21/9" tone="road" label="Carretera, imagen provisional" />
+        <code class="sg-demo__label">content (por defecto)</code>
+      </div>
+      <div class="bleed-offset-start sg-demo">
+        <app-media ratio="21/9" tone="desert" label="Desierto, imagen provisional" />
+        <code class="sg-demo__label">.bleed-offset-start</code>
+      </div>
+      <div class="bleed-offset-end sg-demo">
+        <app-media ratio="21/9" tone="dawn" label="Amanecer, imagen provisional" />
+        <code class="sg-demo__label">.bleed-offset-end</code>
+      </div>
+    </div>
+
+    <app-container size="wide">
+      <h3 class="t-label sg-subhead">Composiciones asimétricas</h3>
+      <div class="grid sg-asym">
+        <div class="span-7 sg-demo">
+          <app-media ratio="3/2" tone="night" label="Ciudad de noche, imagen provisional" />
+          <code class="sg-demo__label">.span-7</code>
+        </div>
+        <div class="span-4 start-9 align-end stack sg-demo">
+          <app-media ratio="4/5" tone="dawn" label="Amanecer, imagen provisional" />
+          <code class="sg-demo__label">.span-4 .start-9 .align-end</code>
+        </div>
+        <div class="span-4 start-2 sg-demo">
+          <app-media ratio="4/5" tone="forest" label="Bosque, imagen provisional" />
+          <code class="sg-demo__label">.span-4 .start-2</code>
+        </div>
+        <div class="span-6 start-7 align-center sg-demo">
+          <app-media ratio="3/2" tone="sea" label="Costa, imagen provisional" />
+          <code class="sg-demo__label">.span-6 .start-7 .align-center</code>
+        </div>
+      </div>
+    </app-container>
+  </section>
+
+  <!-- 05 · Componentes -->
+  <section id="componentes" class="section sg-section">
+    <app-container size="wide">
+      <header class="sg-section__head">
+        <app-eyebrow [index]="5">Componentes</app-eyebrow>
+        <h2 class="t-h1">Piezas <em>base</em></h2>
+      </header>
+
+      <div class="sg-components">
+        <article class="sg-component">
+          <h3 class="t-label sg-subhead">Botones · solid, outline, ghost</h3>
+          <div class="cluster">
+            <button app-button type="button">Solid</button>
+            <button app-button variant="outline" type="button">Outline</button>
+            <button app-button variant="ghost" arrow type="button">Ghost</button>
+          </div>
+          <div class="cluster">
+            <button app-button size="sm" type="button">Pequeño</button>
+            <button app-button type="button">Mediano</button>
+            <button app-button size="lg" arrow type="button">Grande</button>
+          </div>
+          <div class="cluster">
+            <a app-button variant="outline" arrow href="#componentes">Como enlace</a>
+            <button app-button type="button" disabled>Desactivado</button>
+          </div>
+        </article>
+
+        <article class="sg-component">
+          <h3 class="t-label sg-subhead">Enlaces · inline, quiet, arrow</h3>
+          <p class="t-body">
+            Un enlace <a app-link href="#componentes">dentro del texto</a> mantiene un subrayado
+            fino que toma el color del acento.
+          </p>
+          <div class="cluster">
+            <a app-link variant="quiet" href="#componentes">Enlace discreto</a>
+            <a app-link variant="arrow" href="#componentes">Leer el relato</a>
+          </div>
+        </article>
+
+        <article class="sg-component">
+          <h3 class="t-label sg-subhead">Etiquetas · outline, tint, solid</h3>
+          <div class="cluster">
+            <app-tag>Islandia</app-tag>
+            <app-tag tone="tint">Fotografía</app-tag>
+            <app-tag tone="solid">Nuevo</app-tag>
+            <a app-tag href="#componentes">Como enlace</a>
+          </div>
+        </article>
+
+        <article class="sg-component">
+          <h3 class="t-label sg-subhead">Eyebrows</h3>
+          <div class="stack">
+            <app-eyebrow [index]="1">Viajes</app-eyebrow>
+            <app-eyebrow>Sin numeración</app-eyebrow>
+            @for (section of sections; track section.id) {
+              <span [attr.data-section]="section.id">
+                <app-eyebrow [index]="$index + 1">{{ section.name }}</app-eyebrow>
+              </span>
+            }
+          </div>
+        </article>
+
+        <article class="sg-component">
+          <h3 class="t-label sg-subhead">Divisores · line, strong, label</h3>
+          <div class="stack">
+            <app-divider />
+            <app-divider variant="strong" />
+            <app-divider variant="label">Capítulo II</app-divider>
+          </div>
+        </article>
+
+        <article class="sg-component">
+          <h3 class="t-label sg-subhead">Contenedores</h3>
+          <div class="stack sg-containers">
+            @for (name of containerSizes; track name) {
+              <app-container [size]="name">
+                <span class="t-meta">{{ name }} · {{ raw()['width-' + name] }}</span>
+              </app-container>
+            }
+          </div>
+        </article>
+      </div>
+
+      <h3 class="t-label sg-subhead">Multimedia · tonos provisionales</h3>
+      <ul class="sg-tones" role="list">
+        @for (tone of tones; track tone) {
+          <li>
+            <app-media
+              ratio="4/5"
+              [tone]="tone"
+              [label]="'Imagen provisional, tono ' + tone"
+              [meta]="tone"
+            />
+          </li>
+        }
+      </ul>
+      <div class="grid">
+        <app-media
+          class="span-8"
+          ratio="16/9"
+          tone="road"
+          label="Carretera de montaña, imagen provisional"
+          caption="Puerto del Pico al caer la tarde."
+          meta="f/4 · 1/250 · ISO 200"
+          credit="Foto: Cristian Atienza"
+        />
+      </div>
+    </app-container>
+  </section>
+
+  <!-- 06 · Temas por temática -->
+  <section id="temas" class="section sg-section">
+    <app-container size="wide">
+      <header class="sg-section__head">
+        <app-eyebrow [index]="6">Temas</app-eyebrow>
+        <h2 class="t-h1">Una marca, <em>cinco temperaturas</em></h2>
+        <p class="t-caption">
+          data-section cambia acento, peso de titulares y voz de los eyebrows.
+        </p>
+      </header>
+      <div class="sg-themes">
+        @for (section of sections; track section.id) {
+          <article class="sg-theme" [attr.data-section]="section.id">
+            <app-eyebrow [index]="$index + 1">{{ section.name }}</app-eyebrow>
+            <h3 class="t-h2">
+              {{ section.title }} <em>{{ section.emphasis }}</em>
+            </h3>
+            <p class="t-caption">{{ section.lead }}</p>
+            <div class="cluster">
+              <app-tag tone="tint">{{ section.tag }}</app-tag>
+              <a app-link variant="arrow" href="#temas">Leer</a>
+            </div>
+          </article>
+        }
+      </div>
+    </app-container>
+  </section>
+
+  <!-- 07 · Composición editorial -->
+  <section id="composicion" class="sg-section" data-section="viajes">
+    <app-container size="wide">
+      <header class="sg-section__head section--s">
+        <app-eyebrow [index]="7">Composición</app-eyebrow>
+        <h2 class="t-h1">Apertura <em>de un relato</em></h2>
+        <p class="t-caption">Ejemplo con todas las piezas juntas. No es la maqueta final.</p>
+      </header>
+    </app-container>
+
+    <article class="page-grid sg-story">
+      <app-media
+        class="bleed-full sg-story__hero"
+        fill
+        tone="desert"
+        label="Acantilados al atardecer, imagen provisional"
+      />
+
+      <header class="sg-story__head grid">
+        <div class="span-10 stack">
+          <app-eyebrow [index]="12">Viajes · Galicia</app-eyebrow>
+          <h3 class="t-display">La carretera que <em>bordea el fin del mundo</em></h3>
+        </div>
+        <p class="t-lead span-6 start-1">
+          Cuatro días siguiendo la costa da Morte, de Malpica a Fisterra, con la niebla como única
+          compañera fiel.
+        </p>
+        <div class="span-12 sg-story__meta">
+          <app-divider />
+          <div class="cluster sg-story__meta-row">
+            <span class="t-meta">42.8805° N · 9.2717° W</span>
+            <span class="t-meta">Octubre 2026</span>
+            <span class="t-meta">12 min de lectura</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="span-7 start-4 prose prose--dropcap">
+          <p>
+            La niebla llega antes que el mar. Primero es un rumor blanco sobre los eucaliptos, luego
+            una pared que borra la línea de la carretera y deja solo el sonido de las ruedas sobre
+            el asfalto mojado.
+          </p>
+          <p>
+            En Camariñas el viento cambia de dirección tres veces en una hora. Nadie parece darle
+            importancia: aquí el tiempo no se mira, se escucha.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <blockquote class="t-quote span-8 start-3 sg-story__quote">
+          El faro no anuncia el final del camino: anuncia que hay que volver.
+        </blockquote>
+      </div>
+
+      <div class="bleed-wide grid">
+        <app-media
+          class="span-7"
+          ratio="3/2"
+          tone="sea"
+          label="Faro entre la niebla, imagen provisional"
+          caption="Faro de Vilán, a media mañana."
+          meta="f/8 · 1/125 · ISO 100"
+        />
+        <app-media
+          class="span-4 start-9 align-end"
+          ratio="4/5"
+          tone="dawn"
+          label="Playa al amanecer, imagen provisional"
+          caption="Praia do Trece."
+        />
+      </div>
+    </article>
+
+    <div class="scheme-dark sg-cinema">
+      <div class="page-grid">
+        <div class="stack sg-cinema__head">
+          <span class="t-meta">.scheme-dark · modo cine forzado</span>
+          <h3 class="t-h1">Cuando cae <em>la noche</em></h3>
+        </div>
+        <app-media
+          class="bleed-wide"
+          ratio="21/9"
+          tone="night"
+          label="Pueblo costero de noche, imagen provisional"
+          caption="Muxía, 23:40."
+          meta="f/1.8 · 1/30 · ISO 3200"
+          credit="Foto: Cristian Atienza"
+        />
+        <div class="sg-cinema__end">
+          <app-divider variant="label">Fin del relato</app-divider>
+          <div class="cluster sg-cinema__actions">
+            <app-tag>Galicia</app-tag>
+            <app-tag>Costa</app-tag>
+            <a app-button variant="outline" arrow href="#inicio">Siguiente relato</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

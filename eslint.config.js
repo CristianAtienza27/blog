@@ -26,7 +26,8 @@ module.exports = defineConfig([
       '@angular-eslint/component-selector': [
         'error',
         {
-          type: 'element',
+          // 'attribute' permite componentes sobre elementos nativos: <a app-button>.
+          type: ['element', 'attribute'],
           prefix: 'app',
           style: 'kebab-case',
         },

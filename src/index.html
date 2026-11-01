@@ -9,7 +9,18 @@
       name="description"
       content="Revista personal de Cristian Atienza: viajes, fotografía, motor, experiencias y tecnología."
     />
+    <meta name="theme-color" content="#f2eee6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f0e0c" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- Aplica el modo guardado antes del primer pintado (ver ColorSchemeService). -->
+    <script>
+      try {
+        var scheme = localStorage.getItem('ca-color-scheme');
+        if (scheme === 'light' || scheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', scheme);
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <app-root></app-root>

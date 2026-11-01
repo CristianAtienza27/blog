@@ -1,0 +1,34 @@
+@use 'abstracts' as *;
+
+:host {
+  --_color: var(--color-line);
+
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  inline-size: 100%;
+}
+
+:host::before,
+:host::after {
+  flex: 1;
+  block-size: var(--border-width);
+  content: '';
+  background-color: var(--_color);
+}
+
+:host([data-variant='line'])::after,
+:host([data-variant='strong'])::after {
+  display: none;
+}
+
+:host([data-variant='strong']) {
+  --_color: var(--color-ink);
+}
+
+.label {
+  @include label-text;
+
+  font-size: var(--text-2xs);
+  color: var(--color-ink-muted);
+}

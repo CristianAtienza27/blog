@@ -1,0 +1,297 @@
+// =============================================================================
+// Tokens del sistema de diseño: fuente única de verdad.
+// base/_root.scss los publica como custom properties (--color-*, --text-*…).
+// Los componentes consumen las custom properties, nunca valores sueltos.
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Color · pares [modo claro, modo oscuro]
+// Contraste validado (WCAG AA ≥ 4.5:1) para texto sobre bg y bg-raised.
+// bg-sunken se reserva para fondos y bloques sin texto de acento.
+// -----------------------------------------------------------------------------
+$neutrals: (
+  'bg': (
+    #f2eee6,
+    #0f0e0c,
+  ),
+  // Papel cálido / negro de sala de cine
+  'bg-raised': (
+      #e9e3d8,
+      #181613,
+    ),
+  'bg-sunken': (
+    #dfd7c9,
+    #221f1b,
+  ),
+  'ink': (
+    #1a1814,
+    #ece6db,
+  ),
+  'ink-muted': (
+    #57514a,
+    #a8a094,
+  ),
+  'ink-subtle': (
+    #665f55,
+    #8c8478,
+  ),
+  'line': (
+    #d3cbbd,
+    #2c2824,
+  ),
+  'line-strong': (
+    #b3aa9a,
+    #47413a,
+  ),
+);
+
+// Acentos por temática. Apagados y naturales, nunca saturados.
+$accents: (
+  'viajes': (
+    #934f2c,
+    #d99168,
+  ),
+  // Siena
+  'fotografia': (
+      #6d5e45,
+      #c2ae8a,
+    ),
+  // Gelatina de plata
+  'motor': (
+      #9c3a2c,
+      #e07a68,
+    ),
+  // Rosso
+  'experiencias': (
+      #55623e,
+      #a7b488,
+    ),
+  // Musgo
+  'tecnologia': (
+      #3b6275,
+      #86b6c9,
+    ), // Pizarra
+);
+
+$accent-default: 'viajes';
+
+// Tonos provisionales para medios sin fotografía (no dependen del modo).
+$placeholder-tones: (
+  'dawn': (
+    #d8c3ad,
+    #e6cfae 45%,
+    #9d8670,
+  ),
+  'sea': (
+    #a9bcbf,
+    #6b8a92 50%,
+    #2c464d,
+  ),
+  'desert': (
+    #e6c8a0,
+    #c38d5c 55%,
+    #6f4128,
+  ),
+  'forest': (
+    #97a584,
+    #56664a 50%,
+    #232b20,
+  ),
+  'road': (
+    #8d8b86,
+    #4a4946 55%,
+    #1c1c1b,
+  ),
+  'night': (
+    #1b2030,
+    #3a3450 55%,
+    #b9825a,
+  ),
+);
+
+// -----------------------------------------------------------------------------
+// Tipografía
+// -----------------------------------------------------------------------------
+$fonts: (
+  'display': (
+    'Fraunces Variable',
+    'Iowan Old Style',
+    'Palatino Linotype',
+    'Georgia',
+    serif,
+  ),
+  'sans': (
+    'Instrument Sans Variable',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif,
+  ),
+  'mono': (
+    'JetBrains Mono Variable',
+    ui-monospace,
+    'Cascadia Code',
+    'Consolas',
+    monospace,
+  ),
+);
+
+// Escala fluida en px [mínimo a 360px de viewport, máximo a 1600px].
+$type-scale: (
+  '2xs': (
+    11,
+    12,
+  ),
+  'xs': (
+    12,
+    13,
+  ),
+  'sm': (
+    14,
+    15,
+  ),
+  'base': (
+    16,
+    18,
+  ),
+  'md': (
+    18,
+    21,
+  ),
+  'lg': (
+    21,
+    26,
+  ),
+  'xl': (
+    26,
+    36,
+  ),
+  '2xl': (
+    32,
+    52,
+  ),
+  // Mínimos contenidos: palabras largas en español («cinematográfico») caben en 360px.
+  '3xl': (
+      36,
+      76,
+    ),
+  '4xl': (
+    40,
+    112,
+  ),
+  '5xl': (
+    44,
+    168,
+  ),
+);
+
+$leading: (
+  'none': 0.92,
+  'tight': 1.02,
+  'snug': 1.15,
+  'normal': 1.45,
+  'relaxed': 1.65,
+);
+
+$tracking: (
+  'tighter': -0.035em,
+  'tight': -0.02em,
+  'normal': 0,
+  'wide': 0.06em,
+  'wider': 0.14em,
+);
+
+$font-weights: (
+  'light': 320,
+  'regular': 400,
+  'medium': 520,
+  'semibold': 620,
+);
+
+// -----------------------------------------------------------------------------
+// Espaciado (base 4px) y espaciado fluido de sección
+// -----------------------------------------------------------------------------
+$space: (
+  '1': 4,
+  '2': 8,
+  '3': 12,
+  '4': 16,
+  '5': 24,
+  '6': 32,
+  '7': 48,
+  '8': 64,
+  '9': 96,
+  '10': 128,
+  '11': 192,
+);
+
+$space-fluid: (
+  'section-s': (
+    48,
+    96,
+  ),
+  'section-m': (
+    72,
+    160,
+  ),
+  'section-l': (
+    96,
+    240,
+  ),
+  'page-margin': (
+    20,
+    64,
+  ),
+  'gutter': (
+    16,
+    32,
+  ),
+);
+
+// -----------------------------------------------------------------------------
+// Anchos y breakpoints
+// -----------------------------------------------------------------------------
+$widths: (
+  'measure': 40rem,
+  // Línea de lectura (~68 caracteres)
+  'narrow': 760px,
+  'content': 1200px,
+  'wide': 1440px,
+  'max': 1760px,
+);
+
+$breakpoints: (
+  'sm': 640px,
+  'md': 900px,
+  'lg': 1200px,
+  'xl': 1600px,
+);
+
+// -----------------------------------------------------------------------------
+// Movimiento (compartido con GSAP en la fase 2)
+// -----------------------------------------------------------------------------
+$durations: (
+  'instant': 120ms,
+  'fast': 220ms,
+  'base': 380ms,
+  'slow': 700ms,
+  'cinematic': 1200ms,
+);
+
+$easings: (
+  'standard': cubic-bezier(0.2, 0, 0, 1),
+  'out': cubic-bezier(0.22, 1, 0.36, 1),
+  'in-out': cubic-bezier(0.65, 0, 0.35, 1),
+  'expo': cubic-bezier(0.16, 1, 0.3, 1),
+);
+
+// -----------------------------------------------------------------------------
+// Capas
+// -----------------------------------------------------------------------------
+$z-layers: (
+  'base': 0,
+  'raised': 10,
+  'header': 100,
+  'overlay': 500,
+  'modal': 1000,
+);

@@ -1,0 +1,117 @@
+// Publica los tokens como custom properties.
+// Los colores usan light-dark(): se resuelven según el color-scheme del elemento
+// que los consume, así una sección puede forzar el modo oscuro (.scheme-dark).
+@use 'sass:list';
+@use 'sass:meta';
+@use '../abstracts' as *;
+
+:root {
+  color-scheme: light dark;
+
+  // Color
+  @each $name, $pair in $neutrals {
+    --color-#{$name}: light-dark(#{list.nth($pair, 1)}, #{list.nth($pair, 2)});
+  }
+
+  @each $name, $pair in $accents {
+    --accent-#{$name}: light-dark(#{list.nth($pair, 1)}, #{list.nth($pair, 2)});
+  }
+
+  --accent: var(--accent-#{$accent-default});
+  --accent-ink: var(--color-bg);
+
+  @include accent-derived;
+
+  // Tipografía
+  @each $name, $stack in $fonts {
+    --font-#{$name}: #{meta.inspect($stack)};
+  }
+
+  @each $name, $range in $type-scale {
+    --text-#{$name}: #{fluid(list.nth($range, 1), list.nth($range, 2))};
+  }
+
+  @each $name, $value in $leading {
+    --leading-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $tracking {
+    --tracking-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $font-weights {
+    --weight-#{$name}: #{$value};
+  }
+
+  // Espaciado
+  @each $name, $px in $space {
+    --space-#{$name}: #{rem($px)};
+  }
+
+  @each $name, $range in $space-fluid {
+    --#{$name}: #{fluid(list.nth($range, 1), list.nth($range, 2))};
+  }
+
+  // Anchos
+  @each $name, $value in $widths {
+    --width-#{$name}: #{$value};
+  }
+
+  // Breakpoints (solo informativos: las media queries usan el mixin mq)
+  @each $name, $value in $breakpoints {
+    --breakpoint-#{$name}: #{$value};
+  }
+
+  // Movimiento
+  @each $name, $value in $durations {
+    --duration-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $easings {
+    --ease-#{$name}: #{$value};
+  }
+
+  // Capas
+  @each $name, $value in $z-layers {
+    --z-#{$name}: #{$value};
+  }
+
+  // Detalles
+  --border-width: 1px;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 3px;
+  --focus-ring-color: var(--accent);
+
+  // Personalidad tipográfica (las temáticas la redefinen)
+  --display-weight: var(--weight-light);
+  --display-tracking: var(--tracking-tight);
+  --em-style: italic;
+  --em-color: inherit;
+  --eyebrow-font: var(--font-sans);
+  --eyebrow-stretch: 100%;
+  --eyebrow-transform: uppercase;
+}
+
+// Preferencia explícita del lector (la aplica ColorSchemeService).
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+// Forzar un modo dentro de una sección concreta (por ejemplo, galerías en «modo cine»).
+.scheme-light {
+  color-scheme: light;
+}
+
+.scheme-dark {
+  color-scheme: dark;
+}
+
+.scheme-light,
+.scheme-dark {
+  color: var(--color-ink);
+  background-color: var(--color-bg);
+}

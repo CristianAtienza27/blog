@@ -1,3 +1,18 @@
 {
-  "extends": ["stylelint-config-standard-scss"]
+  "extends": ["stylelint-config-standard-scss"],
+  "rules": {
+    "selector-class-pattern": [
+      "^[a-z][a-z0-9]*(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+      { "message": "Usa kebab-case o BEM: bloque__elemento--modificador" }
+    ],
+    "custom-property-pattern": [
+      "^_?[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      { "message": "Usa kebab-case; prefijo _ para propiedades privadas de un componente" }
+    ],
+    "scss/dollar-variable-pattern": [
+      "^_?[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      { "message": "Usa kebab-case; prefijo _ para variables privadas del módulo" }
+    ],
+    "scss/dollar-variable-empty-line-before": null
+  }
 }

@@ -1,0 +1,225 @@
+// Elementos tipográficos. Las clases .t-* separan estilo visual de semántica:
+// un <h2> puede tener aspecto de .t-display si la composición lo pide.
+@use '../abstracts' as *;
+
+// --- Titulares (serif display) ----------------------------------------------
+%display-base {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  font-optical-sizing: auto;
+  text-wrap: balance;
+
+  em,
+  i {
+    font-style: var(--em-style);
+    color: var(--em-color);
+  }
+}
+
+h1,
+h2,
+h3,
+h4 {
+  @extend %display-base;
+
+  line-height: var(--leading-snug);
+}
+
+h1 {
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+}
+
+h2 {
+  font-size: var(--text-2xl);
+  line-height: var(--leading-tight);
+}
+
+h3 {
+  font-size: var(--text-xl);
+}
+
+h4 {
+  font-size: var(--text-lg);
+}
+
+.t-hero {
+  @extend %display-base;
+
+  font-size: var(--text-5xl);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tighter);
+}
+
+.t-display {
+  @extend %display-base;
+
+  font-size: var(--text-4xl);
+  line-height: var(--leading-none);
+}
+
+.t-h1 {
+  @extend %display-base;
+
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+}
+
+.t-h2 {
+  @extend %display-base;
+
+  font-size: var(--text-2xl);
+  line-height: var(--leading-tight);
+}
+
+.t-h3 {
+  @extend %display-base;
+
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+}
+
+.t-h4 {
+  @extend %display-base;
+
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+}
+
+// --- Texto (sans) -------------------------------------------------------------
+.t-lead {
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  text-wrap: pretty;
+}
+
+.t-body {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  text-wrap: pretty;
+}
+
+.t-small {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.t-caption {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-muted);
+}
+
+.t-label {
+  @include label-text;
+}
+
+// Metadatos de campo: coordenadas, fechas, datos de cámara.
+.t-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-muted {
+  color: var(--color-ink-muted);
+}
+
+// --- Cita destacada -----------------------------------------------------------
+.t-quote {
+  @extend %display-base;
+
+  font-size: var(--text-2xl);
+  font-style: italic;
+  line-height: var(--leading-snug);
+  quotes: '«' '»';
+
+  &::before {
+    content: open-quote;
+  }
+
+  &::after {
+    content: close-quote;
+  }
+}
+
+// --- Texto largo (artículos) --------------------------------------------------
+.prose {
+  max-inline-size: var(--width-measure);
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  text-wrap: pretty;
+
+  > * + * {
+    margin-block-start: 1.1em;
+  }
+
+  > :is(h2, h3) {
+    margin-block-start: 2em;
+  }
+
+  a {
+    text-decoration-color: var(--accent-line);
+  }
+}
+
+// Capitular: primera letra del primer párrafo, alineada con tres líneas de texto.
+.prose--dropcap > p:first-of-type::first-letter {
+  float: inline-start;
+  margin-inline-end: 0.1em;
+  font-family: var(--font-display);
+  font-size: 4.9em;
+  font-weight: var(--display-weight);
+  line-height: 0.8;
+  color: var(--accent);
+}
+
+@supports (initial-letter: 3) {
+  .prose--dropcap > p:first-of-type::first-letter {
+    float: none;
+    margin-inline-end: 0.12em;
+    font-size: inherit;
+    line-height: inherit;
+    initial-letter: 3;
+  }
+}
+
+// --- Elementos en línea ---------------------------------------------------
+a {
+  color: inherit;
+  text-decoration-thickness: var(--border-width);
+  text-underline-offset: 0.22em;
+}
+
+strong,
+b {
+  font-weight: var(--weight-semibold);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+}
+
+:not(pre) > code {
+  padding: 0.1em 0.35em;
+  background-color: var(--color-bg-raised);
+  border: var(--border-width) solid var(--color-line);
+}
+
+pre {
+  padding: var(--space-5);
+  overflow-x: auto;
+  line-height: var(--leading-normal);
+  background-color: var(--color-bg-raised);
+  border: var(--border-width) solid var(--color-line);
+}

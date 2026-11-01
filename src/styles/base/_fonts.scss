@@ -1,0 +1,7 @@
+// Fuentes alojadas localmente (OFL-1.1) con solo los ejes que usamos.
+// Cada familia se divide en subconjuntos unicode: el navegador descarga solo los necesarios.
+@use '@fontsource-variable/fraunces/opsz'; // wght + tamaño óptico
+@use '@fontsource-variable/fraunces/opsz-italic';
+@use '@fontsource-variable/instrument-sans/wdth'; // wght + anchura (75–100 %)
+@use '@fontsource-variable/instrument-sans/wdth-italic';
+@use '@fontsource-variable/jetbrains-mono/wght';

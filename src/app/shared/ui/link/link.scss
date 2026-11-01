@@ -1,0 +1,54 @@
+@use 'abstracts' as *;
+
+// El subrayado es un degradado: permite animar su anchura sin mover el texto.
+:host {
+  --_underline: 100%;
+
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(currentcolor, currentcolor);
+  background-repeat: no-repeat;
+  background-position: left 100%;
+  background-size: var(--_underline) var(--border-width);
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background-size var(--duration-base) var(--ease-expo);
+}
+
+:host([data-variant='quiet']),
+:host([data-variant='arrow']) {
+  --_underline: 0%;
+}
+
+:host([data-variant='arrow']) {
+  @include label-text;
+
+  display: inline-flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding-block: var(--space-2);
+}
+
+@media (hover: hover) {
+  :host(:hover) {
+    color: var(--accent);
+  }
+
+  :host([data-variant='quiet']:hover),
+  :host([data-variant='arrow']:hover) {
+    --_underline: 100%;
+  }
+
+  :host(:hover) .arrow {
+    transform: translateX(0.3em);
+  }
+}
+
+.arrow {
+  inline-size: 1.6em;
+  block-size: auto;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.2;
+  transition: transform var(--duration-base) var(--ease-expo);
+}

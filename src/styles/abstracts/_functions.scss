@@ -1,0 +1,19 @@
+@use 'sass:math';
+
+$_root-font-size: 16;
+$_fluid-min-viewport: 360;
+$_fluid-max-viewport: 1600;
+
+/// Convierte px (sin unidad) a rem.
+@function rem($px) {
+  @return math.div($px, $_root-font-size) * 1rem;
+}
+
+/// Valor fluido entre $min y $max (px sin unidad) según el ancho del viewport.
+@function fluid($min, $max, $from: $_fluid-min-viewport, $to: $_fluid-max-viewport) {
+  $slope: math.div($max - $min, $to - $from);
+  $intercept: $min - $slope * $from;
+  $preferred: calc(#{rem($intercept)} + #{math.div(math.round($slope * 100000), 1000)}vw);
+
+  @return clamp(#{rem($min)}, #{$preferred}, #{rem($max)});
+}

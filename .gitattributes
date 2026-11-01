@@ -1,0 +1,15 @@
+# Finales de línea: LF en el repositorio y en el disco, también en Windows.
+* text=auto eol=lf
+
+# Binarios: sin conversión ni diff de texto.
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.gif binary
+*.woff binary
+*.woff2 binary
+*.mp4 binary
+*.webm binary

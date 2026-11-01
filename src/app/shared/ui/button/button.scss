@@ -1,0 +1,101 @@
+@use 'abstracts' as *;
+
+:host {
+  --_bg: var(--color-ink);
+  --_fg: var(--color-bg);
+  --_border: var(--color-ink);
+  --_fill: var(--accent);
+  --_fill-fg: var(--accent-ink);
+
+  @include label-text;
+
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: center;
+  min-block-size: 3rem;
+  padding-inline: var(--space-6);
+  overflow: hidden;
+  color: var(--_fg);
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: var(--_bg);
+  border: var(--border-width) solid var(--_border);
+  transition:
+    color var(--duration-base) var(--ease-expo),
+    border-color var(--duration-base) var(--ease-expo);
+}
+
+// Barrido de color al pasar el ratón: entra por la izquierda, sale por la derecha.
+:host::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: '';
+  background-color: var(--_fill);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--duration-base) var(--ease-expo);
+}
+
+@media (hover: hover) {
+  :host(:hover) {
+    color: var(--_fill-fg);
+    border-color: var(--_fill);
+  }
+
+  :host(:hover)::before {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  :host(:hover) .arrow {
+    transform: translateX(0.3em);
+  }
+}
+
+:host([data-variant='outline']) {
+  --_bg: transparent;
+  --_fg: var(--color-ink);
+  --_border: var(--color-line-strong);
+}
+
+:host([data-variant='ghost']) {
+  --_bg: transparent;
+  --_fg: var(--color-ink);
+  --_border: transparent;
+  --_fill: transparent;
+  --_fill-fg: var(--accent);
+
+  min-block-size: auto;
+  padding-inline: 0;
+}
+
+:host([data-size='sm']) {
+  min-block-size: 2.5rem;
+  padding-inline: var(--space-5);
+  font-size: var(--text-2xs);
+}
+
+:host([data-size='lg']) {
+  min-block-size: 3.75rem;
+  padding-inline: var(--space-7);
+  font-size: var(--text-sm);
+}
+
+:host(:disabled),
+:host([aria-disabled='true']) {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.arrow {
+  inline-size: 1.6em;
+  block-size: auto;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.2;
+  transition: transform var(--duration-base) var(--ease-expo);
+}

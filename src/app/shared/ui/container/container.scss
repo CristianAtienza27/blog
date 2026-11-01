@@ -1,0 +1,23 @@
+:host {
+  --_max: var(--width-content);
+
+  display: block;
+  inline-size: min(100% - 2 * var(--page-margin), var(--_max));
+  margin-inline: auto;
+}
+
+:host([data-size='measure']) {
+  --_max: var(--width-measure);
+}
+
+:host([data-size='narrow']) {
+  --_max: var(--width-narrow);
+}
+
+:host([data-size='wide']) {
+  --_max: var(--width-wide);
+}
+
+:host([data-size='full']) {
+  inline-size: 100%;
+}

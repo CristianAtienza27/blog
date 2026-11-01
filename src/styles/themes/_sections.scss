@@ -1,0 +1,50 @@
+// =============================================================================
+// Temas por temática: misma marca, distinta personalidad.
+// Uso: <section data-section="motor">…</section>
+// Cada tema cambia el acento y matices tipográficos; nunca la estructura.
+// =============================================================================
+@use 'sass:map';
+@use '../abstracts' as *;
+
+$_section-personality: (
+  // Viajes: serif ligera, itálica cálida, acento Siena.
+  'viajes': (),
+  // Fotografía: titulares finos, eyebrows con aspecto de datos EXIF.
+  'fotografia': (
+      'display-weight': 300,
+      'eyebrow-font': var(--font-mono),
+    ),
+  // Motor: más peso y tensión; eyebrows condensados; énfasis en color, no en itálica.
+  'motor': (
+      'display-weight': 560,
+      'display-tracking': var(--tracking-tighter),
+      'em-style': normal,
+      'em-color': var(--accent),
+      'eyebrow-stretch': 78%,
+    ),
+  // Experiencias: cálida y cercana; itálica en el color del acento.
+  'experiencias': (
+      'display-weight': 360,
+      'em-color': var(--accent),
+    ),
+  // Tecnología: misma serif, pero eyebrows mono y énfasis sin itálica.
+  'tecnologia': (
+      'display-weight': 420,
+      'em-style': normal,
+      'em-color': var(--accent),
+      'eyebrow-font': var(--font-mono),
+      'eyebrow-transform': none,
+    )
+);
+
+@each $section, $overrides in $_section-personality {
+  [data-section='#{$section}'] {
+    --accent: var(--accent-#{$section});
+
+    @include accent-derived;
+
+    @each $token, $value in $overrides {
+      --#{$token}: #{$value};
+    }
+  }
+}

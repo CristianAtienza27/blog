@@ -1,0 +1,5 @@
+// Punto de entrada de las abstracciones: no genera CSS.
+// Uso en componentes: @use 'abstracts' as *;
+@forward 'tokens';
+@forward 'functions';
+@forward 'mixins';

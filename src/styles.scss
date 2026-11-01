@@ -1,1 +1,7 @@
-/* You can add global styles to this file, and also import other style files */
+// Estilos globales. El orden importa: tokens → base → retícula → temas.
+@use 'base/fonts';
+@use 'base/root';
+@use 'base/reset';
+@use 'base/typography';
+@use 'layout/grid';
+@use 'themes/sections';

@@ -1,0 +1,118 @@
+// =============================================================================
+// Retícula editorial
+// ·
+// 1. .page-grid: maqueta de página con líneas con nombre. Los hijos ocupan
+//    «content» por defecto y pueden romperla:
+//      .bleed-full        → de borde a borde de la pantalla
+//      .bleed-wide        → más ancho que el texto, sin tocar los bordes
+//      .bleed-narrow      → columna de lectura centrada
+//      .bleed-offset-start → del borde izquierdo hasta el final del contenido
+//      .bleed-offset-end   → del inicio del contenido hasta el borde derecho
+// ·
+// 2. .grid: 12 columnas para composiciones asimétricas (desde md).
+//    En móvil todo se apila a ancho completo.
+//      .span-{1..12}  .start-{1..12}  .align-{start|center|end}
+// =============================================================================
+@use '../abstracts' as *;
+
+.page-grid {
+  --_breakout: calc((var(--width-wide) - var(--width-content)) / 2);
+
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--page-margin), 1fr)
+    [wide-start] minmax(0, var(--_breakout))
+    [content-start] min(100% - 2 * var(--page-margin), var(--width-content))
+    [content-end] minmax(0, var(--_breakout))
+    [wide-end] minmax(var(--page-margin), 1fr)
+    [full-end];
+
+  > * {
+    grid-column: content;
+  }
+
+  > .bleed-full {
+    grid-column: full;
+  }
+
+  > .bleed-wide {
+    grid-column: wide;
+  }
+
+  > .bleed-narrow {
+    grid-column: content;
+    justify-self: center;
+    inline-size: 100%;
+    max-inline-size: var(--width-narrow);
+  }
+
+  > .bleed-offset-start {
+    grid-column: full-start / content-end;
+  }
+
+  > .bleed-offset-end {
+    grid-column: content-start / full-end;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-7) var(--gutter);
+
+  // El «span» va en el final para que .span-N lo sustituya y .start-N fije el inicio.
+  > * {
+    grid-column: auto / span 12;
+  }
+
+  @include mq(md) {
+    @for $i from 1 through 12 {
+      > .span-#{$i} {
+        grid-column-end: span $i;
+      }
+
+      > .start-#{$i} {
+        grid-column-start: $i;
+      }
+    }
+  }
+
+  > .align-start {
+    align-self: start;
+  }
+
+  > .align-center {
+    align-self: center;
+  }
+
+  > .align-end {
+    align-self: end;
+  }
+}
+
+// Ritmo vertical entre secciones.
+.section {
+  padding-block: var(--section-m);
+}
+
+.section--s {
+  padding-block: var(--section-s);
+}
+
+.section--l {
+  padding-block: var(--section-l);
+}
+
+// Pila con espacio uniforme entre hijos.
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap, var(--space-5));
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cluster-gap, var(--space-3));
+}
