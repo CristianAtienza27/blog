@@ -1,0 +1,76 @@
+<dialog
+  #dialog
+  id="site-menu"
+  class="menu scheme-dark"
+  aria-label="Menú principal"
+  [attr.data-section]="preview()"
+  (cancel)="onCancel($event)"
+  (close)="onClosed()"
+>
+  <div class="menu__curtain" aria-hidden="true"></div>
+
+  <div class="menu__layout">
+    <div class="menu__top" data-menu-fade>
+      <a class="menu__wordmark" routerLink="/" (click)="onLinkClick('/')"
+        >Cristian <em>Atienza</em></a
+      >
+      <button type="button" class="menu__close" autofocus (click)="state.hide()">
+        <span>Cerrar</span>
+        <span class="menu__cross" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <nav class="menu__nav" aria-label="Secciones">
+      <ol role="list" class="menu__list">
+        @for (section of sections; track section.id) {
+          <li class="menu__item" [attr.data-section]="section.id">
+            <a
+              class="menu__link"
+              [routerLink]="section.path"
+              routerLinkActive="is-active"
+              ariaCurrentWhenActive="page"
+              (mouseenter)="preview.set(section.id)"
+              (focus)="preview.set(section.id)"
+              (click)="onLinkClick(section.path)"
+            >
+              <span class="menu__index t-meta" data-menu-fade>{{ pad(section.index) }}</span>
+              <span class="menu__mask">
+                <span class="menu__label" data-menu-line>{{ section.label }}</span>
+              </span>
+              <span class="menu__teaser t-meta">{{ section.teaser }}</span>
+            </a>
+          </li>
+        }
+      </ol>
+    </nav>
+
+    <div class="menu__preview" aria-hidden="true" data-menu-preview>
+      @for (section of sections; track section.id) {
+        <app-media
+          class="menu__frame"
+          [class.is-active]="preview() === section.id"
+          fill
+          [tone]="section.tone"
+          label=""
+        />
+      }
+      <span class="menu__caption t-meta">
+        {{ pad(previewSection().index) }} · {{ previewSection().label }} ·
+        {{ previewSection().teaser }}
+      </span>
+    </div>
+
+    <div class="menu__bottom" data-menu-fade>
+      <ul role="list" class="menu__secondary">
+        @for (page of pages; track page.path) {
+          <li>
+            <a app-link variant="quiet" [routerLink]="page.path" (click)="onLinkClick(page.path)">{{
+              page.label
+            }}</a>
+          </li>
+        }
+      </ul>
+      <app-theme-toggle />
+    </div>
+  </div>
+</dialog>

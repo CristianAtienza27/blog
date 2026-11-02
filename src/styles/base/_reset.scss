@@ -16,6 +16,17 @@ html {
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
   hanging-punctuation: first last;
+
+  // Las anclas no quedan bajo el header fijo.
+  scroll-padding-block-start: var(--header-height);
+
+  // Reserva el hueco del scrollbar: abrir el menú (que bloquea el scroll) no desplaza la página.
+  scrollbar-gutter: stable;
+}
+
+// Scroll bloqueado mientras hay un diálogo modal abierto (menú).
+html:has(dialog[open]:modal) {
+  overflow: hidden;
 }
 
 body {

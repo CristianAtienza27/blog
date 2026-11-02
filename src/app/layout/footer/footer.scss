@@ -1,0 +1,98 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+.footer {
+  display: grid;
+  gap: var(--space-9);
+  padding: var(--section-m) var(--page-margin) var(--space-7);
+}
+
+.footer__lead {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.footer__title {
+  max-inline-size: 13ch;
+}
+
+.footer__grid {
+  row-gap: var(--space-8);
+}
+
+.footer__sections ol {
+  padding: 0;
+  margin: 0;
+  border-block-start: var(--border-width) solid var(--color-line);
+}
+
+.footer__section {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding-block: var(--space-4);
+  text-decoration: none;
+  border-block-end: var(--border-width) solid var(--color-line);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.footer__label {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+
+  // Peso uniforme: en un índice, la temática se expresa con el acento, no con el peso.
+  font-weight: var(--weight-light);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  transition: transform var(--duration-base) var(--ease-expo);
+}
+
+.footer__teaser {
+  display: none;
+
+  @include mq(sm) {
+    display: inline;
+  }
+}
+
+.footer__index {
+  color: var(--accent);
+}
+
+@media (hover: hover) {
+  .footer__section:hover {
+    color: var(--accent);
+  }
+
+  .footer__section:hover .footer__label {
+    transform: translateX(0.4rem);
+  }
+}
+
+.footer__aside {
+  display: grid;
+  gap: var(--space-7);
+  align-content: start;
+}
+
+.footer__block {
+  --stack-gap: var(--space-3);
+
+  align-items: flex-start;
+}
+
+.footer__heading {
+  color: var(--color-ink-muted);
+}
+
+.footer__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-7);
+  align-items: center;
+  justify-content: space-between;
+}

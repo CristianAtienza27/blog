@@ -1,34 +1,23 @@
-<header class="sg-header">
+<div class="sg-header">
   <app-container size="wide">
     <div class="sg-header__bar">
-      <a class="sg-wordmark" href="#inicio">Cristian <em>Atienza</em></a>
-      <span class="t-meta sg-header__meta">Sistema de diseño · v0.1 · solo desarrollo</span>
-      <div class="sg-scheme" role="group" aria-label="Modo de color">
-        @for (option of schemeOptions; track option.value) {
-          <button
-            type="button"
-            class="sg-scheme__option"
-            [attr.aria-pressed]="colorScheme.scheme() === option.value"
-            (click)="colorScheme.set(option.value)"
-          >
-            {{ option.label }}
-          </button>
-        }
-      </div>
+      <span class="t-meta">Sistema de diseño · v0.2 · solo desarrollo</span>
+      <app-theme-toggle />
     </div>
     <nav class="sg-nav" aria-label="Secciones del sistema de diseño">
-      <a app-link variant="quiet" href="#color">Color</a>
-      <a app-link variant="quiet" href="#tipografia">Tipografía</a>
-      <a app-link variant="quiet" href="#espaciado">Espaciado</a>
-      <a app-link variant="quiet" href="#reticula">Retícula</a>
-      <a app-link variant="quiet" href="#componentes">Componentes</a>
-      <a app-link variant="quiet" href="#temas">Temas</a>
-      <a app-link variant="quiet" href="#composicion">Composición</a>
+      <a app-link variant="quiet" routerLink="/_styleguide" fragment="color">Color</a>
+      <a app-link variant="quiet" routerLink="/_styleguide" fragment="tipografia">Tipografía</a>
+      <a app-link variant="quiet" routerLink="/_styleguide" fragment="espaciado">Espaciado</a>
+      <a app-link variant="quiet" routerLink="/_styleguide" fragment="reticula">Retícula</a>
+      <a app-link variant="quiet" routerLink="/_styleguide" fragment="componentes">Componentes</a>
+      <a app-link variant="quiet" routerLink="/_styleguide" fragment="temas">Temas</a>
+      <a app-link variant="quiet" routerLink="/_styleguide" fragment="composicion">Composición</a>
+      <a app-link variant="quiet" routerLink="/_styleguide" fragment="movimiento">Movimiento</a>
     </nav>
   </app-container>
-</header>
+</div>
 
-<main id="inicio">
+<div id="inicio">
   <!-- Portada del styleguide -->
   <section class="section">
     <app-container size="wide">
@@ -191,7 +180,8 @@
             situación.
           </p>
           <p class="t-body">
-            Texto corrido con <a app-link href="#tipografia">enlaces en línea</a>,
+            Texto corrido con
+            <a app-link routerLink="/_styleguide" fragment="tipografia">enlaces en línea</a>,
             <strong>negritas</strong>, <em>itálicas</em> y <code>código en línea</code>.
           </p>
           <p class="t-caption">Pie de foto: contexto breve bajo una imagen.</p>
@@ -366,7 +356,9 @@
             <button app-button size="lg" arrow type="button">Grande</button>
           </div>
           <div class="cluster">
-            <a app-button variant="outline" arrow href="#componentes">Como enlace</a>
+            <a app-button variant="outline" arrow routerLink="/_styleguide" fragment="componentes"
+              >Como enlace</a
+            >
             <button app-button type="button" disabled>Desactivado</button>
           </div>
         </article>
@@ -374,12 +366,17 @@
         <article class="sg-component">
           <h3 class="t-label sg-subhead">Enlaces · inline, quiet, arrow</h3>
           <p class="t-body">
-            Un enlace <a app-link href="#componentes">dentro del texto</a> mantiene un subrayado
-            fino que toma el color del acento.
+            Un enlace
+            <a app-link routerLink="/_styleguide" fragment="componentes">dentro del texto</a>
+            mantiene un subrayado fino que toma el color del acento.
           </p>
           <div class="cluster">
-            <a app-link variant="quiet" href="#componentes">Enlace discreto</a>
-            <a app-link variant="arrow" href="#componentes">Leer el relato</a>
+            <a app-link variant="quiet" routerLink="/_styleguide" fragment="componentes"
+              >Enlace discreto</a
+            >
+            <a app-link variant="arrow" routerLink="/_styleguide" fragment="componentes"
+              >Leer el relato</a
+            >
           </div>
         </article>
 
@@ -389,7 +386,7 @@
             <app-tag>Islandia</app-tag>
             <app-tag tone="tint">Fotografía</app-tag>
             <app-tag tone="solid">Nuevo</app-tag>
-            <a app-tag href="#componentes">Como enlace</a>
+            <a app-tag routerLink="/_styleguide" fragment="componentes">Como enlace</a>
           </div>
         </article>
 
@@ -474,7 +471,7 @@
             <p class="t-caption">{{ section.lead }}</p>
             <div class="cluster">
               <app-tag tone="tint">{{ section.tag }}</app-tag>
-              <a app-link variant="arrow" href="#temas">Leer</a>
+              <a app-link variant="arrow" routerLink="/_styleguide" fragment="temas">Leer</a>
             </div>
           </article>
         }
@@ -578,10 +575,84 @@
           <div class="cluster sg-cinema__actions">
             <app-tag>Galicia</app-tag>
             <app-tag>Costa</app-tag>
-            <a app-button variant="outline" arrow href="#inicio">Siguiente relato</a>
+            <a app-button variant="outline" arrow routerLink="/_styleguide" fragment="inicio"
+              >Siguiente relato</a
+            >
           </div>
         </div>
       </div>
     </div>
   </section>
-</main>
+
+  <!-- 08 · Movimiento -->
+  <section id="movimiento" class="section sg-section">
+    <app-container size="wide">
+      <header class="sg-section__head">
+        <app-eyebrow [index]="8">Movimiento</app-eyebrow>
+        <h2 class="t-h1" appSplitText>Directivas <em>de movimiento</em></h2>
+        <p class="t-caption">
+          GSAP se carga bajo demanda, solo en el navegador. Con prefers-reduced-motion todo queda
+          estático; en móvil los recorridos son más cortos y la galería es un carrusel nativo.
+        </p>
+      </header>
+
+      <h3 class="t-label sg-subhead">appReveal · fade-up, fade, stagger</h3>
+      <div class="grid sg-motion-row">
+        <p class="span-4 t-lead" appReveal>
+          <code>appReveal</code>: el bloque sube y aparece al entrar en pantalla.
+        </p>
+        <p class="span-4 t-lead" appReveal="fade" revealDelay="0.15">
+          <code>appReveal="fade"</code>: solo opacidad, para elementos discretos.
+        </p>
+        <ul class="span-4 sg-motion-list" role="list" appReveal="stagger">
+          <li class="t-meta">01 · Los hijos</li>
+          <li class="t-meta">02 · aparecen</li>
+          <li class="t-meta">03 · en cascada</li>
+          <li class="t-meta">04 · (stagger)</li>
+        </ul>
+      </div>
+
+      <h3 class="t-label sg-subhead">appReveal="mask" · appParallax</h3>
+      <div class="grid">
+        <app-media
+          class="span-7"
+          ratio="3/2"
+          tone="sea"
+          appReveal="mask"
+          label="Imagen provisional revelada con máscara"
+          caption="Revelado con máscara: la imagen se descubre de abajo arriba."
+        />
+        <app-media
+          class="span-4 start-9 align-end"
+          ratio="4/5"
+          tone="forest"
+          appParallax="0.2"
+          label="Imagen provisional con parallax"
+          caption="Parallax: la imagen se desplaza dentro de su marco."
+        />
+      </div>
+
+      <h3 class="t-label sg-subhead">appSplitText · líneas y palabras</h3>
+      <div class="grid">
+        <p class="t-display span-8" appSplitText>Doce curvas antes <em>del amanecer</em></p>
+        <p class="t-h2 span-8" appSplitText="words">Palabra a palabra, <em>sin prisa</em></p>
+      </div>
+
+      <h3 class="t-label sg-subhead">appHorizontal · galería horizontal</h3>
+    </app-container>
+
+    <section class="sg-gallery" appHorizontal aria-label="Galería horizontal de ejemplo">
+      <div data-horizontal-track>
+        @for (tone of tones; track tone; let i = $index) {
+          <app-media
+            class="sg-gallery__item"
+            ratio="4/5"
+            [tone]="tone"
+            [label]="'Fotografía provisional ' + (i + 1)"
+            [meta]="(i + 1).toString().padStart(2, '0') + ' / ' + tones.length"
+          />
+        }
+      </div>
+    </section>
+  </section>
+</div>

@@ -5,15 +5,10 @@
   display: block;
 }
 
-// --- Cabecera -------------------------------------------------------------
+// --- Barra del styleguide (bajo el header del sitio) ----------------------------
 .sg-header {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: var(--z-header);
-  padding-block: var(--space-4) var(--space-3);
-  background-color: color-mix(in oklab, var(--color-bg) 88%, transparent);
+  padding-block: var(--space-4);
   border-block-end: var(--border-width) solid var(--color-line);
-  backdrop-filter: blur(14px);
 }
 
 .sg-header__bar {
@@ -21,46 +16,7 @@
   flex-wrap: wrap;
   gap: var(--space-3) var(--space-6);
   align-items: center;
-}
-
-.sg-wordmark {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-tight);
-  text-decoration: none;
-
-  em {
-    font-style: italic;
-  }
-}
-
-.sg-header__meta {
-  @include mq-down(md) {
-    display: none;
-  }
-}
-
-.sg-scheme {
-  display: inline-flex;
-  margin-inline-start: auto;
-  border: var(--border-width) solid var(--color-line-strong);
-}
-
-.sg-scheme__option {
-  @include label-text;
-
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--text-2xs);
-  color: var(--color-ink-muted);
-  transition:
-    color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-fast) var(--ease-standard);
-
-  &[aria-pressed='true'] {
-    color: var(--color-bg);
-    background-color: var(--color-ink);
-  }
+  justify-content: space-between;
 }
 
 .sg-nav {
@@ -401,4 +357,19 @@
 
 .sg-cinema__actions {
   justify-content: center;
+}
+
+// --- Movimiento ------------------------------------------------------------
+.sg-motion-list {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0;
+}
+
+.sg-gallery {
+  padding-block: var(--space-6) var(--section-s);
+}
+
+.sg-gallery__item {
+  inline-size: clamp(15rem, 28vw, 26rem);
 }

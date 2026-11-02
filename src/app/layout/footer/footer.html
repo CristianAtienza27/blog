@@ -1,0 +1,45 @@
+<footer class="footer">
+  <div class="footer__lead">
+    <app-eyebrow>Cuaderno de campo</app-eyebrow>
+    <p class="t-display footer__title">Historias de carretera, <em>luz</em> y código.</p>
+  </div>
+
+  <div class="grid footer__grid">
+    <nav class="span-7 footer__sections" aria-label="Secciones (pie de página)">
+      <ol role="list">
+        @for (section of sections; track section.id) {
+          <li [attr.data-section]="section.id">
+            <a [routerLink]="section.path" class="footer__section">
+              <span class="t-meta footer__index">{{
+                section.index.toString().padStart(2, '0')
+              }}</span>
+              <span class="footer__label">{{ section.label }}</span>
+              <span class="t-meta footer__teaser">{{ section.teaser }}</span>
+            </a>
+          </li>
+        }
+      </ol>
+    </nav>
+
+    <div class="span-4 start-9 footer__aside">
+      <div class="stack footer__block">
+        <span class="t-label footer__heading">La revista</span>
+        @for (page of pages; track page.path) {
+          <a app-link variant="quiet" [routerLink]="page.path">{{ page.label }}</a>
+        }
+      </div>
+      <div class="stack footer__block">
+        <span class="t-label footer__heading">Lectura</span>
+        <app-theme-toggle />
+      </div>
+    </div>
+  </div>
+
+  <app-divider />
+
+  <div class="footer__meta">
+    <span class="t-meta">© {{ year }} Cristian Atienza</span>
+    <span class="t-meta">Viajes · Fotografía · Motor · Experiencias · Tecnología</span>
+    <a app-link variant="arrow" href="#contenido" (click)="scrollTop($event)">Volver arriba</a>
+  </div>
+</footer>

@@ -1,0 +1,35 @@
+@use 'abstracts' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100svh;
+}
+
+main {
+  flex: 1;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// Visible solo al recibir el foco con teclado.
+.skip-link {
+  @include label-text;
+
+  position: fixed;
+  inset-block-start: var(--space-3);
+  inset-inline-start: var(--space-3);
+  z-index: var(--z-modal);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-bg);
+  text-decoration: none;
+  background-color: var(--color-ink);
+  transform: translateY(calc(-100% - var(--space-4)));
+  transition: transform var(--duration-fast) var(--ease-standard);
+
+  &:focus-visible {
+    transform: none;
+  }
+}

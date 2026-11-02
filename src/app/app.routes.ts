@@ -1,4 +1,30 @@
-import { Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
+import { SeoData } from './core/seo/seo';
+import { HOME_PAGE, NavPage, NavSection, SECONDARY_PAGES, SECTIONS } from './layout/navigation';
+
+const loadPlaceholder = () =>
+  import('./features/placeholder/placeholder').then((m) => m.Placeholder);
+
+/** Ruta provisional: noindex hasta que tenga contenido definitivo. */
+function placeholderRoute(page: NavPage | NavSection, title?: string): Route {
+  const section = 'id' in page ? page : undefined;
+  const seo: SeoData = { description: page.lead, noindex: true };
+  return {
+    path: page.path.slice(1),
+    title,
+    loadComponent: loadPlaceholder,
+    data: {
+      seo,
+      section: section?.id,
+      index: section?.index,
+      label: page.label,
+      heading: page.heading,
+      emphasis: page.emphasis,
+      lead: page.lead,
+      tone: page.tone,
+    },
+  };
+}
 
 /**
  * Rutas solo de desarrollo. En desarrollo ngDevMode aún no existe al evaluar este módulo
@@ -10,22 +36,22 @@ const devRoutes: Routes =
     ? [
         {
           path: '_styleguide',
-          title: 'Sistema de diseño · Cristian Atienza',
+          title: 'Sistema de diseño',
+          data: { seo: { noindex: true } satisfies SeoData },
           loadComponent: () => import('./features/styleguide/styleguide').then((m) => m.Styleguide),
         },
       ]
     : [];
 
 export const routes: Routes = [
-  {
-    path: '',
-    title: 'Cristian Atienza',
-    loadComponent: () => import('./features/home/home').then((m) => m.Home),
-  },
+  placeholderRoute(HOME_PAGE),
+  ...SECTIONS.map((section) => placeholderRoute(section, section.label)),
+  ...SECONDARY_PAGES.map((page) => placeholderRoute(page, page.label)),
   ...devRoutes,
   {
     path: '**',
-    title: 'Página no encontrada · Cristian Atienza',
+    title: 'Página no encontrada',
+    data: { seo: { noindex: true } satisfies SeoData },
     loadComponent: () => import('./features/not-found/not-found').then((m) => m.NotFound),
   },
 ];

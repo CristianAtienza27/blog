@@ -1,7 +1,8 @@
-// Estilos globales. El orden importa: tokens → base → retícula → temas.
+// Estilos globales. El orden importa: tokens → base → retícula → temas → movimiento.
 @use 'base/fonts';
 @use 'base/root';
 @use 'base/reset';
 @use 'base/typography';
 @use 'layout/grid';
 @use 'themes/sections';
+@use 'motion/motion';

@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.placeholder__head {
+  padding-block-end: var(--section-s);
+}
+
+.placeholder__intro {
+  --stack-gap: var(--space-6);
+
+  max-inline-size: 60rem;
+
+  .t-display {
+    max-inline-size: 14ch;
+  }
+}
+
+.placeholder__lead {
+  max-inline-size: 36rem;
+}
+
+.placeholder__hero {
+  block-size: clamp(22rem, 78svh, 56rem);
+}

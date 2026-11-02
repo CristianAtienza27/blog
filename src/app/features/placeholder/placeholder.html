@@ -1,0 +1,40 @@
+<header class="page-grid section placeholder__head">
+  <div class="stack placeholder__intro">
+    <app-eyebrow [index]="index()" appReveal="fade">{{ label() }}</app-eyebrow>
+    <h1 class="t-display" appSplitText>
+      {{ heading() }} <em>{{ emphasis() }}</em>
+    </h1>
+    <div class="stack placeholder__lead" appReveal revealDelay="0.25">
+      <p class="t-lead">{{ lead() }}</p>
+      <div class="cluster">
+        <app-tag tone="tint">En preparación</app-tag>
+        <span class="t-meta">Contenido provisional</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page-grid">
+  <app-media
+    class="bleed-full placeholder__hero"
+    fill
+    appParallax
+    [tone]="tone()"
+    [label]="'Imagen provisional de ' + label()"
+  />
+</div>
+
+<section class="page-grid section placeholder__note">
+  <div class="grid" appReveal="stagger">
+    <p class="t-h3 span-7">
+      Esta sección se está escribiendo. Pronto llegarán los primeros
+      <em>relatos, imágenes y notas</em>.
+    </p>
+    <div class="span-4 start-9 align-end stack">
+      <p class="t-caption">
+        Mientras tanto, la estructura, la navegación y las transiciones ya funcionan.
+      </p>
+      <a app-link variant="arrow" routerLink="/">Volver a la portada</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,282 @@
+@use 'abstracts' as *;
+
+// --- Diálogo a pantalla completa ------------------------------------------------
+.menu {
+  position: fixed;
+  inset: 0;
+  inline-size: 100%;
+  max-inline-size: none;
+  block-size: 100dvh;
+  max-block-size: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-ink);
+  background: transparent;
+  border: 0;
+
+  &::backdrop {
+    background: transparent;
+  }
+}
+
+// Fondo que la animación abre como una cortina. Lleva un halo del acento de la sección activa.
+.menu__curtain {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      90% 70% at 80% 20%,
+      color-mix(in oklab, var(--accent) 16%, transparent),
+      transparent 70%
+    ),
+    var(--color-bg);
+  transition: background-color var(--duration-slow) var(--ease-standard);
+}
+
+.menu__layout {
+  position: relative;
+  display: grid;
+  grid-template-areas:
+    'top'
+    'nav'
+    'bottom';
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-6);
+  block-size: 100%;
+  padding: 0 var(--page-margin) var(--space-6);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  @include mq(lg) {
+    grid-template-areas:
+      'top top'
+      'nav preview'
+      'bottom preview';
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--gutter);
+    padding-block-end: var(--space-7);
+  }
+}
+
+// --- Barra superior ----------------------------------------------------------
+.menu__top {
+  display: flex;
+  grid-area: top;
+  align-items: center;
+  justify-content: space-between;
+  block-size: var(--header-height);
+}
+
+.menu__wordmark {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  letter-spacing: var(--tracking-tight);
+  text-decoration: none;
+
+  em {
+    font-style: italic;
+  }
+}
+
+.menu__close {
+  @include label-text;
+
+  display: inline-flex;
+  gap: var(--space-3);
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-2);
+  margin-inline-end: calc(var(--space-2) * -1);
+}
+
+.menu__cross {
+  position: relative;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+
+  &::before,
+  &::after {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline: 0;
+    block-size: var(--border-width);
+    content: '';
+    background-color: currentcolor;
+    transition: transform var(--duration-base) var(--ease-expo);
+  }
+
+  &::before {
+    transform: rotate(45deg);
+  }
+
+  &::after {
+    transform: rotate(-45deg);
+  }
+}
+
+@media (hover: hover) {
+  .menu__close:hover .menu__cross::before {
+    transform: rotate(135deg);
+  }
+
+  .menu__close:hover .menu__cross::after {
+    transform: rotate(45deg);
+  }
+}
+
+// --- Lista de secciones ------------------------------------------------------
+.menu__nav {
+  display: flex;
+  grid-area: nav;
+  align-items: center;
+}
+
+.menu__list {
+  inline-size: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.menu__link {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  column-gap: var(--space-4);
+  align-items: baseline;
+  padding-block: var(--space-2);
+  text-decoration: none;
+  transition:
+    color var(--duration-base) var(--ease-standard),
+    opacity var(--duration-base) var(--ease-standard);
+
+  @include mq(md) {
+    grid-template-columns: 3rem auto 1fr;
+  }
+}
+
+.menu__index {
+  color: var(--accent);
+}
+
+// La máscara recorta las palabras para que suban «desde dentro» al abrir.
+.menu__mask {
+  display: block;
+  padding-block: 0.06em 0.12em;
+  overflow: hidden;
+}
+
+.menu__label {
+  display: block;
+  font-family: var(--font-display);
+
+  // Se ajusta también a la altura para que las cinco secciones quepan sin scroll.
+  font-size: min(var(--text-4xl), 10svh);
+
+  // Peso uniforme: en un índice, la temática se expresa con el acento, no con el peso.
+  font-weight: var(--weight-light);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+  transition: transform var(--duration-slow) var(--ease-expo);
+}
+
+.menu__teaser {
+  display: none;
+
+  @include mq(md) {
+    display: block;
+    align-self: center;
+    padding-inline-start: var(--space-5);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-standard);
+  }
+}
+
+.menu__link.is-active .menu__label {
+  font-style: italic;
+}
+
+// Al señalar una sección, el resto se atenúa y la elegida toma su acento.
+.menu__list:has(.menu__link:is(:hover, :focus-visible)) .menu__link:not(:hover, :focus-visible) {
+  opacity: 0.32;
+}
+
+.menu__link:is(:hover, :focus-visible) {
+  color: var(--accent);
+
+  .menu__label {
+    transform: translateX(0.12em);
+  }
+
+  .menu__teaser {
+    opacity: 1;
+  }
+}
+
+.menu__link:focus-visible {
+  outline-offset: var(--space-2);
+}
+
+// --- Vista previa fotográfica (solo escritorio) ----------------------------------
+.menu__preview {
+  position: relative;
+  display: none;
+  grid-area: preview;
+  align-self: center;
+  aspect-ratio: 4 / 5;
+  max-block-size: 72svh;
+  overflow: hidden;
+
+  @include mq(lg) {
+    display: block;
+  }
+}
+
+.menu__frame {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path var(--duration-slow) var(--ease-expo);
+
+  &.is-active {
+    z-index: 1;
+    clip-path: inset(0);
+  }
+}
+
+.menu__caption {
+  position: absolute;
+  inset: auto var(--space-4) var(--space-4);
+  z-index: 2;
+  color: #fff;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 35%);
+}
+
+// --- Pie del menú --------------------------------------------------------------
+.menu__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  grid-area: bottom;
+  gap: var(--space-5) var(--space-7);
+  align-items: center;
+  justify-content: space-between;
+  padding-block-start: var(--space-5);
+  border-block-start: var(--border-width) solid var(--color-line);
+
+  @include mq(lg) {
+    align-self: end;
+  }
+}
+
+.menu__secondary {
+  display: flex;
+  gap: var(--space-6);
+  padding: 0;
+  margin: 0;
+  font-size: var(--text-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu__frame {
+    transition: none;
+  }
+}

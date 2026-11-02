@@ -1,12 +1,25 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import {
+  TitleStrategy,
+  provideRouter,
+  withComponentInputBinding,
+  withInMemoryScrolling,
+} from '@angular/router';
 import { routes } from './app.routes';
-import { provideClientHydration } from '@angular/platform-browser';
+import { SeoTitleStrategy } from './core/seo/seo-title-strategy';
+import { withPageTransitions } from './motion/view-transitions';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
-    provideClientHydration(),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
+      withPageTransitions(),
+    ),
+    { provide: TitleStrategy, useClass: SeoTitleStrategy },
+    provideClientHydration(withEventReplay()),
   ],
 };

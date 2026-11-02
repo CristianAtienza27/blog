@@ -1,0 +1,94 @@
+// =============================================================================
+// Movimiento: soporte CSS de las directivas y transiciones entre páginas.
+// =============================================================================
+@use '../abstracts' as *;
+
+// --- Galería horizontal (appHorizontal) -----------------------------------------
+// Base sin JavaScript: carrusel nativo con scroll-snap (SSR, móvil, reduced motion).
+.horizontal {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  [data-horizontal-track] {
+    display: flex;
+    gap: var(--gutter);
+    inline-size: max-content;
+    padding-inline: var(--page-margin);
+
+    > * {
+      flex: none;
+      scroll-snap-align: center;
+    }
+  }
+
+  // Escritorio con movimiento: la sección se fija y GSAP desplaza la pista.
+  &.is-pinned {
+    overflow: hidden;
+  }
+}
+
+// --- Titulares divididos (appSplitText) -------------------------------------------
+// La máscara recorta cada línea; el margen evita cortar itálicas y descendentes.
+.split-line-mask {
+  padding-block: 0.04em 0.12em;
+  padding-inline-end: 0.1em;
+  margin-block: -0.04em -0.12em;
+  margin-inline-end: -0.1em;
+}
+
+// --- Transiciones entre páginas (View Transitions) ---------------------------------
+// La página nueva sube como una cortina sobre la anterior, que se aleja y oscurece.
+// El header tiene su propio nombre (site-header) y permanece fijo.
+@keyframes page-leave {
+  to {
+    opacity: 0.35;
+    transform: translateY(-3%) scale(0.985);
+  }
+}
+
+@keyframes page-enter {
+  from {
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(6%);
+  }
+
+  to {
+    clip-path: inset(0);
+    transform: none;
+  }
+}
+
+::view-transition-old(root) {
+  animation: page-leave 0.7s var(--ease-in-out) both;
+}
+
+::view-transition-new(root) {
+  animation: page-enter 0.9s var(--ease-expo) both;
+}
+
+::view-transition-group(site-header) {
+  z-index: 1;
+  animation: none;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

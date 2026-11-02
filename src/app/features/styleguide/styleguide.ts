@@ -7,7 +7,11 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ColorScheme, ColorSchemeService } from '../../core/theme/color-scheme';
+import { RouterLink } from '@angular/router';
+import { Horizontal } from '../../motion/directives/horizontal';
+import { Parallax } from '../../motion/directives/parallax';
+import { Reveal } from '../../motion/directives/reveal';
+import { SplitText } from '../../motion/directives/split-text';
 import { Button } from '../../shared/ui/button/button';
 import { Container, ContainerSize } from '../../shared/ui/container/container';
 import { Divider } from '../../shared/ui/divider/divider';
@@ -15,6 +19,7 @@ import { Eyebrow } from '../../shared/ui/eyebrow/eyebrow';
 import { Link } from '../../shared/ui/link/link';
 import { Media, MediaTone } from '../../shared/ui/media/media';
 import { Tag } from '../../shared/ui/tag/tag';
+import { ThemeToggle } from '../../shared/ui/theme-toggle/theme-toggle';
 
 interface ColorPair {
   light: string;
@@ -37,22 +42,29 @@ interface SectionTheme {
  */
 @Component({
   selector: 'app-styleguide',
-  imports: [Button, Container, Divider, Eyebrow, Link, Media, Tag],
+  imports: [
+    Button,
+    Container,
+    Divider,
+    Eyebrow,
+    Horizontal,
+    Link,
+    Media,
+    Parallax,
+    Reveal,
+    RouterLink,
+    SplitText,
+    Tag,
+    ThemeToggle,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(window:resize)': 'measure()' },
   templateUrl: './styleguide.html',
   styleUrl: './styleguide.scss',
 })
 export class Styleguide {
-  protected readonly colorScheme = inject(ColorSchemeService);
   private readonly document = inject(DOCUMENT);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-
-  protected readonly schemeOptions: { value: ColorScheme; label: string }[] = [
-    { value: 'system', label: 'Sistema' },
-    { value: 'light', label: 'Claro' },
-    { value: 'dark', label: 'Oscuro' },
-  ];
 
   protected readonly neutrals = [
     'bg',
