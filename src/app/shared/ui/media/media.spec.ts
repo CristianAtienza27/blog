@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { Media as MediaAsset } from '../../../content/models';
 import { provideMediaDelivery } from '../../../core/media/media-delivery';
-import { Media, addAvifPreload } from './media';
+import { Media } from './media';
 
 const photo: MediaAsset = {
   id: 'cala',
@@ -33,6 +33,14 @@ const photo: MediaAsset = {
 })
 class Host {
   readonly image = signal<MediaAsset>(photo);
+}
+
+@Component({
+  imports: [Media],
+  template: `<app-media [image]="image" priority sizes="100vw" />`,
+})
+class PriorityHost {
+  readonly image = photo;
 }
 
 async function render(image = photo) {
@@ -87,14 +95,16 @@ describe('app-media con fotografía optimizada', () => {
     );
   });
 
-  it('la precarga de la imagen principal es solo AVIF y no se duplica', () => {
-    addAvifPreload(document, '/media', photo, '100vw');
-    addAvifPreload(document, '/media', photo, '100vw');
-    const links = document.head.querySelectorAll(`link[data-media="${photo.path}"]`);
-    expect(links).toHaveLength(1);
-    expect(links[0].getAttribute('type')).toBe('image/avif');
-    expect(links[0].getAttribute('fetchpriority')).toBe('high');
-    expect(links[0].getAttribute('imagesrcset')).toContain('-1600.avif 1600w');
-    links[0].remove();
+  it('la imagen principal usa un solo formato con la prioridad del framework', async () => {
+    TestBed.configureTestingModule({ providers: [provideMediaDelivery()] });
+    const fixture = TestBed.createComponent(PriorityHost);
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('picture source')).toBeNull();
+    const img = element.querySelector('picture img') as HTMLImageElement;
+    expect(img.getAttribute('fetchpriority')).toBe('high');
+    expect(img.getAttribute('loading')).toBe('eager');
+    expect(img.getAttribute('sizes')).toBe('100vw');
+    expect(img.getAttribute('srcset')).toContain('-1600.webp 1600w');
   });
 });

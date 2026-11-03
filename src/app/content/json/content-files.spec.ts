@@ -1,3 +1,5 @@
+import { RETIRED_MEDIA } from '../../editorial/retired-media';
+import { HOME_COMPOSITION } from '../../features/home/home.composition';
 import { SECTIONS } from '../../layout/navigation';
 import { validateContent } from '../records/integrity';
 import { COLLECTION_NAMES, ContentCollections } from '../records/records';
@@ -26,6 +28,19 @@ describe('Contenido de src/content', () => {
     const { data } = await loadContent();
     const ids = new Set(data.media.map((m) => m.id));
     expect(SECTIONS.filter((section) => !ids.has(section.preview)).map((s) => s.id)).toEqual([]);
+  });
+
+  it('la fotografía y el destino del hero de la portada existen', async () => {
+    const { data } = await loadContent();
+    const { hero } = HOME_COMPOSITION;
+    expect(data.media.map((m) => m.id)).toContain(hero.media);
+    const destination = data.destinations.find((d) => d.slug === hero.destination);
+    expect(destination?.elevation).toBeTypeOf('number');
+  });
+
+  it('la portada y el menú no usan fotografías retiradas', async () => {
+    const used = [HOME_COMPOSITION.hero.media, ...SECTIONS.map((section) => section.preview)];
+    expect(used.filter((id) => RETIRED_MEDIA.includes(id))).toEqual([]);
   });
 
   it('todas las imágenes tienen texto alternativo, autoría y licencia', async () => {

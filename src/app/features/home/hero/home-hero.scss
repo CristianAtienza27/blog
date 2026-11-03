@@ -1,0 +1,419 @@
+@use 'abstracts' as *;
+
+// Hero de la portada. Móvil primero: foto arriba y titular cabalgando su borde inferior.
+// Desde sm, fotograma a pantalla completa; desde lg, titular y lema en composición asimétrica.
+
+:host {
+  // Tamaño del titular: lo usan el propio titular y el encaje del texto sobre la foto en móvil.
+  --hero-title: clamp(3.25rem, 21vw, 6.5rem);
+  --hero-photo: 58svh;
+
+  display: block;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-block-size: 100svh;
+
+  // Sube bajo el header, que se vuelve transparente mientras está sobre la foto.
+  margin-block-start: calc(var(--header-height) * -1);
+  overflow: clip;
+  color: var(--color-ink);
+  background-color: var(--color-bg);
+}
+
+// --- Plano 1: fotografía -------------------------------------------------------
+.hero__media {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -2;
+  block-size: var(--hero-photo);
+  transform-origin: 50% 0;
+
+  @include mq(sm) {
+    inset: 0;
+    block-size: auto;
+  }
+}
+
+.hero__zoom {
+  block-size: 100%;
+  animation: hero-zoom 2600ms var(--ease-out) both;
+
+  app-media {
+    block-size: 100%;
+  }
+}
+
+// --- Plano 2: velo --------------------------------------------------------------
+// En móvil funde la foto con el fondo; desde sm oscurece solo donde hay texto.
+.hero__veil {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  block-size: var(--hero-photo);
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-bg) 55%, transparent),
+      transparent calc(var(--header-height) * 2.2)
+    ),
+    linear-gradient(to top, var(--color-bg) 0%, transparent 24%);
+
+  @include mq(sm) {
+    inset: 0;
+    block-size: auto;
+    background:
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--color-bg) 72%, transparent),
+        transparent calc(var(--header-height) * 3.4)
+      ),
+      linear-gradient(
+        to top,
+        color-mix(in oklab, var(--color-bg) 78%, transparent) 0%,
+        transparent 52%
+      ),
+      radial-gradient(
+        120% 70% at 0% 100%,
+        color-mix(in oklab, var(--color-bg) 60%, transparent),
+        transparent 70%
+      );
+  }
+}
+
+// --- Plano 3: tipografía --------------------------------------------------------
+.hero__layout {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  min-block-size: 100svh;
+  padding: calc(var(--header-height) + var(--space-4)) var(--page-margin) var(--space-4);
+  text-shadow: 0 1px 24px rgb(0 0 0 / 35%);
+
+  @include mq(sm) {
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    padding-block: calc(var(--header-height) + var(--space-5)) var(--space-6);
+  }
+}
+
+// Fila superior: claqueta de metadatos a la derecha, sobre el cielo.
+.hero__top {
+  display: flex;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  gap: var(--space-3) var(--space-6);
+  margin-block-start: var(--space-4);
+
+  @include mq(sm) {
+    grid-row: 1;
+    justify-content: flex-end;
+    margin-block-start: 0;
+  }
+}
+
+// Antetítulo sobre el titular. En móvil repetiría al header: el espacio es para titular y lema.
+.hero__kicker {
+  display: none;
+  gap: var(--space-1);
+  padding-block-start: var(--space-3);
+  color: var(--color-ink);
+  border-block-start: var(--border-width) solid
+    color-mix(in oklab, var(--color-ink) 45%, transparent);
+
+  @include mq(sm) {
+    display: grid;
+    justify-self: start;
+    min-inline-size: 22rem;
+  }
+
+  @include mq(lg) {
+    grid-column: 1 / 8;
+    margin-block-end: var(--space-5);
+  }
+}
+
+.hero__sections {
+  display: none;
+  color: color-mix(in oklab, var(--color-ink) 82%, transparent);
+
+  @include mq(md) {
+    display: block;
+  }
+}
+
+// En móvil, una línea bajo el lema; desde sm, claqueta apilada arriba a la derecha.
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) 1.5ch;
+  color: var(--color-ink);
+
+  @include mq(sm) {
+    display: grid;
+    text-align: end;
+  }
+}
+
+// Titular y lema.
+.hero__copy {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  gap: var(--space-4);
+  align-items: end;
+
+  // En móvil, la primera línea del titular queda sobre la foto y la segunda sobre el fondo.
+  padding-block-start: calc(
+    var(--hero-photo) - var(--header-height) - var(--space-4) - var(--hero-title) * 0.92
+  );
+
+  @include mq(sm) {
+    grid-row: 3;
+    gap: var(--space-5);
+    padding-block-start: 0;
+  }
+
+  @include mq(lg) {
+    grid-template-columns: subgrid;
+    gap: 0;
+  }
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-size: var(--hero-title);
+  font-weight: var(--weight-light);
+  line-height: 0.86;
+  letter-spacing: var(--tracking-tight);
+
+  // Tableta: el titular crece con el ancho (sin superar la cuarta parte de la altura).
+  @include mq(sm) {
+    --hero-title: min(max(var(--text-5xl), 15vw), 26svh);
+  }
+
+  @include mq(lg) {
+    --hero-title: min(var(--text-5xl), 26svh);
+
+    grid-column: 1 / 8;
+  }
+
+  em {
+    font-style: italic;
+  }
+}
+
+// Máscara de cada línea: recorta solo en vertical para no cortar la cursiva.
+.hero__line {
+  display: block;
+  padding-block: 0.04em 0.1em;
+  overflow: visible clip;
+
+  > * {
+    display: block;
+    animation: hero-rise 1100ms var(--ease-expo) both;
+    animation-delay: calc(200ms + var(--i, 0) * 120ms);
+  }
+}
+
+.hero__tagline {
+  display: grid;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-style: italic;
+  font-weight: var(--weight-light);
+  line-height: var(--leading-snug);
+
+  span {
+    // Una frase por línea: el lema no debe partirse.
+    white-space: nowrap;
+    animation: hero-fade-up 900ms var(--ease-out) both;
+    animation-delay: calc(700ms + var(--i, 0) * 120ms);
+  }
+
+  @include mq(lg) {
+    grid-column: 8 / -1;
+    justify-self: end;
+    padding-block-end: 0.35em;
+    font-size: clamp(var(--text-xl), 2.6vw, var(--text-2xl));
+  }
+}
+
+// Fila inferior: indicador de scroll y crédito fotográfico.
+.hero__bottom {
+  display: flex;
+  grid-column: 1 / -1;
+  grid-row: 3;
+  gap: var(--space-4);
+  align-items: end;
+  justify-content: space-between;
+  margin-block-start: var(--space-5);
+
+  @include mq(sm) {
+    grid-row: 4;
+    margin-block-start: var(--space-6);
+  }
+}
+
+.hero__cue {
+  display: inline-flex;
+  gap: var(--space-3);
+  align-items: center;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.hero__cue-line {
+  position: relative;
+  inline-size: var(--border-width);
+  block-size: 2.75rem;
+  background-color: color-mix(in oklab, var(--color-ink) 30%, transparent);
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background-color: var(--color-ink);
+    transform-origin: 50% 0;
+    animation: hero-cue 2400ms var(--ease-in-out) 1800ms infinite both;
+  }
+}
+
+.hero__credit {
+  max-inline-size: 28rem;
+  text-align: end;
+
+  // Color, subrayado y grosor vienen del estilo global de los enlaces.
+  a {
+    text-underline-offset: 2px;
+  }
+
+  // Móvil: bloque de tres líneas en caja baja, más grande y con la tinta de los metadatos.
+  @include mq-down(sm) {
+    display: grid;
+    font-size: var(--text-xs);
+    color: var(--color-ink);
+    text-transform: none;
+
+    &-sep {
+      display: none;
+    }
+  }
+}
+
+// Antetítulo, metadatos, indicador y crédito: fundido tras el titular.
+.hero__enter {
+  animation: hero-fade 700ms var(--ease-standard) 1100ms both;
+}
+
+// Móviles bajos (iPhone SE y similares): todo debe caber en la primera pantalla.
+@media (width < 640px) and (height < 760px) {
+  :host {
+    --hero-title: clamp(3rem, min(21vw, 11svh), 6.5rem);
+    --hero-photo: 54svh;
+  }
+
+  .hero__tagline {
+    font-size: var(--text-lg);
+  }
+
+  .hero__meta > div:last-child {
+    display: none;
+  }
+}
+
+// Móvil apaisado y pantallas bajas: el titular se adapta a la altura y sobra lo accesorio.
+@media (orientation: landscape) and (height < 560px) {
+  :host {
+    --hero-photo: 100svh;
+  }
+
+  .hero__layout {
+    padding-block: calc(var(--header-height) + var(--space-2)) var(--space-3);
+  }
+
+  .hero__copy {
+    gap: var(--space-3);
+  }
+
+  .hero__title {
+    --hero-title: min(var(--text-5xl), 21svh);
+  }
+
+  // El lema en una sola línea fluida.
+  .hero__tagline {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.35em;
+    font-size: var(--text-md);
+  }
+
+  .hero__bottom {
+    justify-content: flex-end;
+    margin-block-start: var(--space-3);
+  }
+
+  .hero__kicker,
+  .hero__meta,
+  .hero__cue {
+    display: none;
+  }
+}
+
+// --- Entrada --------------------------------------------------------------------
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    transform: translateY(105%);
+  }
+}
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-cue {
+  0% {
+    transform: scaleY(0);
+  }
+
+  45% {
+    transform: scaleY(1);
+    transform-origin: 50% 0;
+  }
+
+  55% {
+    transform: scaleY(1);
+    transform-origin: 50% 100%;
+  }
+
+  100% {
+    transform: scaleY(0);
+    transform-origin: 50% 100%;
+  }
+}
+
+// Sin ninguna animación de entrada ni del indicador. !important: debe ganar a cualquier
+// selector más específico del componente (p. ej. `.hero__tagline span`). El reset global solo
+// acorta la duración, no el retardo, y el texto quedaría oculto durante la espera.
+@media (prefers-reduced-motion: reduce) {
+  .hero *,
+  .hero *::after {
+    animation: none !important;
+  }
+}

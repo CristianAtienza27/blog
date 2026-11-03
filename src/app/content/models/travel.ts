@@ -12,6 +12,8 @@ export interface Destination extends DemoFlag {
   country: string;
   region?: string;
   location: GeoPoint;
+  /** Altitud en metros sobre el nivel del mar. */
+  elevation?: number;
   summary: string;
   cover?: Media;
 }

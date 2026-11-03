@@ -302,6 +302,7 @@ const destination = shape({
   country: text(COUNTRY, 'código de país'),
   region: optional(text()),
   location: geoPoint,
+  elevation: optional(num({ min: -500, max: 9000, integer: true })),
   summary: text(),
   cover: optional(slug),
   demo: bool,

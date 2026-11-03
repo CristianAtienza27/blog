@@ -77,6 +77,7 @@ export interface DestinationRecord {
   country: string;
   region?: string;
   location: GeoPoint;
+  elevation?: number;
   summary: string;
   cover?: string;
   demo: boolean;

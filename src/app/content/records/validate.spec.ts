@@ -113,6 +113,24 @@ describe('Validación de la estructura de los registros', () => {
     ]);
   });
 
+  it('la altitud de un destino es opcional, entera y en un rango terrestre', () => {
+    const destinations = fixtureCollections().destinations;
+    const stelvio = destinations.find((d) => d.id === 'stelvio')!;
+    const withoutElevation = { ...stelvio };
+    delete withoutElevation.elevation;
+    expect(collectionIssues('destinations', [withoutElevation])).toEqual([]);
+    expect(collectionIssues('destinations', [{ ...stelvio, elevation: -12 }])).toEqual([]);
+    expect(collectionIssues('destinations', [{ ...stelvio, elevation: 2757.5 }])).toEqual([
+      expect.stringMatching(/^destinations\[0\]\.elevation: /),
+    ]);
+    expect(collectionIssues('destinations', [{ ...stelvio, elevation: 12000 }])).toEqual([
+      expect.stringMatching(/^destinations\[0\]\.elevation: /),
+    ]);
+    expect(collectionIssues('destinations', [{ ...stelvio, elevation: '2757' }])).toEqual([
+      expect.stringMatching(/^destinations\[0\]\.elevation: /),
+    ]);
+  });
+
   it('la versión optimizada no supera al original y la exposición tiene formato válido', () => {
     const own = ownMedia('propia', 'viajes');
     const issues = collectionIssues('media', [

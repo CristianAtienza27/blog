@@ -1,8 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DOCUMENT,
-  OnInit,
   ViewEncapsulation,
   booleanAttribute,
   computed,
@@ -23,9 +21,10 @@ export type MediaTone = 'dawn' | 'sea' | 'desert' | 'forest' | 'road' | 'night';
  * - AVIF en un <source> y WebP en el <img> de NgOptimizedImage (carga diferida,
  *   srcset con los anchos generados, vista previa difuminada mientras carga).
  * - Recorte según el punto focal de la foto y crédito con autor, procedencia y licencia.
- * - `priority` (solo la imagen principal de la página): carga inmediata y, en el
- *   servidor, un preload del AVIF. No se usa el `priority` de NgOptimizedImage porque
- *   precargaría el WebP y el navegador descargaría dos formatos.
+ * - `priority` (solo la imagen principal de la página): el `priority` de NgOptimizedImage
+ *   (preload en el servidor, carga inmediata, fetchpriority alto) con un único formato,
+ *   WebP. Con un <source> AVIF el preload del framework haría descargar dos formatos; en
+ *   la imagen principal medida, WebP pesa lo mismo que AVIF (680 frente a 690 kB).
  *
  * También acepta contenido proyectado (<img>, <video>) o un fondo provisional (`tone`).
  *
@@ -43,18 +42,33 @@ export type MediaTone = 'dawn' | 'sea' | 'desert' | 'forest' | 'road' | 'night';
       <div class="media__frame" [style.aspect-ratio]="fill() ? null : aspectRatio()">
         @if (image(); as img) {
           <picture class="media__picture">
-            <source type="image/avif" [attr.srcset]="avifSrcset()" [attr.sizes]="sourceSizes()" />
-            <img
-              [ngSrc]="img.path"
-              [ngSrcset]="widthDescriptors()"
-              [loaderParams]="loaderParams()"
-              fill
-              [sizes]="sizes()"
-              [alt]="alt() ?? img.alt"
-              [loading]="priority() ? 'eager' : 'lazy'"
-              [placeholder]="img.placeholder"
-              [style.object-position]="objectPosition()"
-            />
+            @if (priority()) {
+              <!-- Imagen principal: un solo formato, con el preload y la prioridad del framework;
+                   sin vista previa difuminada (llega antes y el desenfoque a pantalla completa es caro). -->
+              <img
+                [ngSrc]="img.path"
+                [ngSrcset]="widthDescriptors()"
+                [loaderParams]="loaderParams()"
+                fill
+                priority
+                [sizes]="sizes()"
+                [alt]="alt() ?? img.alt"
+                [style.object-position]="objectPosition()"
+              />
+            } @else {
+              <source type="image/avif" [attr.srcset]="avifSrcset()" [attr.sizes]="sourceSizes()" />
+              <img
+                [ngSrc]="img.path"
+                [ngSrcset]="widthDescriptors()"
+                [loaderParams]="loaderParams()"
+                fill
+                [sizes]="sizes()"
+                [alt]="alt() ?? img.alt"
+                loading="lazy"
+                [placeholder]="img.placeholder"
+                [style.object-position]="objectPosition()"
+              />
+            }
           </picture>
         }
         <ng-content />
@@ -109,9 +123,8 @@ export type MediaTone = 'dawn' | 'sea' | 'desert' | 'forest' | 'road' | 'night';
   `,
   styleUrl: './media.scss',
 })
-export class Media implements OnInit {
+export class Media {
   private readonly base = inject(MEDIA_BASE_URL);
-  private readonly document = inject(DOCUMENT);
 
   /** Fotografía optimizada (registro de Media). */
   readonly image = input<MediaAsset>();
@@ -149,10 +162,8 @@ export class Media implements OnInit {
     const image = this.image();
     return image ? mediaSrcset(this.base, image.path, image.widths, 'avif') : null;
   });
-  /** Mismo valor que NgOptimizedImage pone en el <img> (añade «auto» en carga diferida). */
-  protected readonly sourceSizes = computed(() =>
-    this.priority() ? this.sizes() : `auto, ${this.sizes()}`,
-  );
+  /** Mismo valor que NgOptimizedImage pone en el <img> en carga diferida («auto» delante). */
+  protected readonly sourceSizes = computed(() => `auto, ${this.sizes()}`);
   protected readonly objectPosition = computed(() => {
     const focal = this.image()?.focal;
     return focal ? `${Math.round(focal.x * 100)}% ${Math.round(focal.y * 100)}%` : null;
@@ -161,26 +172,4 @@ export class Media implements OnInit {
     const image = this.image();
     return image && this.showCredit() ? creditLine(image.credit) : null;
   });
-
-  ngOnInit(): void {
-    const image = this.image();
-    if (image && this.priority() && typeof ngServerMode !== 'undefined' && ngServerMode) {
-      addAvifPreload(this.document, this.base, image, this.sizes());
-    }
-  }
-}
-
-/** Precarga del AVIF de la imagen principal (solo navegadores que lo admiten, por `type`). */
-export function addAvifPreload(document: Document, base: string, image: MediaAsset, sizes: string) {
-  const selector = `link[rel="preload"][data-media="${image.path}"]`;
-  if (document.head.querySelector(selector)) return;
-  const link = document.createElement('link');
-  link.setAttribute('rel', 'preload');
-  link.setAttribute('as', 'image');
-  link.setAttribute('type', 'image/avif');
-  link.setAttribute('fetchpriority', 'high');
-  link.setAttribute('imagesrcset', mediaSrcset(base, image.path, image.widths, 'avif'));
-  link.setAttribute('imagesizes', sizes);
-  link.setAttribute('data-media', image.path);
-  document.head.appendChild(link);
 }

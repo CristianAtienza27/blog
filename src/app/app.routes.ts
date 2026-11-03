@@ -1,6 +1,7 @@
 import { Route, Routes } from '@angular/router';
 import { SeoData } from './core/seo/seo';
-import { HOME_PAGE, NavPage, NavSection, SECONDARY_PAGES, SECTIONS } from './layout/navigation';
+import { homeResolver } from './features/home/home.resolver';
+import { NavPage, NavSection, SECONDARY_PAGES, SECTIONS } from './layout/navigation';
 
 const loadPlaceholder = () =>
   import('./features/placeholder/placeholder').then((m) => m.Placeholder);
@@ -44,7 +45,13 @@ const devRoutes: Routes =
     : [];
 
 export const routes: Routes = [
-  placeholderRoute(HOME_PAGE),
+  {
+    path: '',
+    loadComponent: () => import('./features/home/home').then((m) => m.Home),
+    resolve: { home: homeResolver },
+    // Contenido de demostración: sin indexar hasta que sea definitivo.
+    data: { seo: { noindex: true } satisfies SeoData },
+  },
   ...SECTIONS.map((section) => placeholderRoute(section, section.label)),
   ...SECONDARY_PAGES.map((page) => placeholderRoute(page, page.label)),
   ...devRoutes,

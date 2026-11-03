@@ -78,8 +78,9 @@
       "lng": 10.4533
     },
     "summary": "Puerto de montaña de los Alpes italianos, a 2757 metros de altitud.",
-    "demo": true,
-    "cover": "motor-stelvio-bormio"
+    "elevation": 2757,
+    "cover": "motor-stelvio-bormio",
+    "demo": true
   },
   {
     "id": "bormio",

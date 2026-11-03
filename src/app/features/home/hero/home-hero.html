@@ -1,0 +1,97 @@
+<section class="hero scheme-dark" data-header-overlay aria-labelledby="hero-title">
+  <!-- Plano 1: fotografía. GSAP mueve el envoltorio; CSS hace el zoom de entrada en el interior. -->
+  <div class="hero__media" data-hero-media>
+    <div class="hero__zoom">
+      <app-media [image]="hero().media" fill priority [sizes]="sizes" [showCredit]="false" />
+    </div>
+  </div>
+
+  <!-- Plano 2: velo de luz para la legibilidad del texto y del header. -->
+  <div class="hero__veil" aria-hidden="true"></div>
+
+  <!-- Plano 3: tipografía y metadatos. -->
+  <div class="hero__layout">
+    <div class="hero__top" data-hero-chrome>
+      @if (place(); as p) {
+        <dl class="hero__meta t-meta hero__enter">
+          <div>
+            <dt class="visually-hidden">Coordenadas</dt>
+            <dd>{{ p.coordinates }}</dd>
+          </div>
+          @if (p.elevation) {
+            <div>
+              <dt class="visually-hidden">Altitud</dt>
+              <dd>{{ p.elevation }}</dd>
+            </div>
+          }
+          <div>
+            <dt class="visually-hidden">Lugar</dt>
+            <dd>{{ p.name }} · {{ p.area }}</dd>
+          </div>
+        </dl>
+      }
+    </div>
+
+    <div class="hero__copy" data-hero-copy>
+      <p class="hero__kicker t-meta hero__enter">
+        <span>{{ hero().kicker }}</span>
+        <span class="hero__sections">{{ sections }}</span>
+      </p>
+      <h1 id="hero-title" class="hero__title">
+        <span class="hero__line"
+          ><span style="--i: 0">{{ name.first }}</span></span
+        >
+        <span class="hero__line"
+          ><em style="--i: 1">{{ name.last }}</em></span
+        >
+      </h1>
+      <p class="hero__tagline">
+        @for (line of hero().tagline; track line; let i = $index) {
+          <span [style.--i]="i">{{ line }}</span>
+        }
+      </p>
+    </div>
+
+    <div class="hero__bottom" data-hero-chrome>
+      <a
+        class="hero__cue t-meta hero__enter"
+        routerLink="/"
+        fragment="portada"
+        aria-label="Ir al contenido de la portada"
+      >
+        <span class="hero__cue-line" aria-hidden="true"></span>
+        Desplázate
+      </a>
+
+      @if (credit(); as c) {
+        <!-- Una línea en escritorio; en móvil, tres líneas (autor, fuente, licencia) sin separadores. -->
+        <p class="hero__credit t-meta hero__enter">
+          <span>Foto: {{ c.author }}</span>
+          @if (c.source) {
+            <span
+              ><span class="hero__credit-sep"> · </span>
+              @if (c.sourceUrl) {
+                <a [href]="c.sourceUrl" rel="noopener" target="_blank">{{ c.source }}</a>
+              } @else {
+                {{ c.source }}
+              }
+            </span>
+          }
+          @if (c.license) {
+            <span
+              ><span class="hero__credit-sep"> · </span>
+              @if (c.licenseUrl) {
+                <a [href]="c.licenseUrl" rel="license noopener" target="_blank">{{ c.license }}</a>
+              } @else {
+                {{ c.license }}
+              }
+              @if (c.adapted) {
+                · adaptada
+              }
+            </span>
+          }
+        </p>
+      }
+    </div>
+  </div>
+</section>

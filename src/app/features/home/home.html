@@ -1,0 +1,26 @@
+@if (home().hero; as hero) {
+  <app-home-hero [hero]="hero" />
+}
+
+<!-- Provisional hasta las siguientes subfases de la portada. -->
+<section id="portada" class="page-grid section home__next" aria-labelledby="home-next-title">
+  <div class="grid">
+    <div class="span-5 stack">
+      <app-eyebrow>En preparación</app-eyebrow>
+      <h2 id="home-next-title" class="t-h3">
+        Las secciones de la portada se están <em>componiendo</em>.
+      </h2>
+    </div>
+    <ol class="span-6 start-7 home__index" role="list">
+      @for (section of sections; track section.id) {
+        <li>
+          <a [routerLink]="section.path" [attr.data-section]="section.id">
+            <span class="t-meta">{{ pad(section.index) }}</span>
+            <span class="home__index-label">{{ section.label }}</span>
+            <span class="t-meta home__index-teaser">{{ section.teaser }}</span>
+          </a>
+        </li>
+      }
+    </ol>
+  </div>
+</section>

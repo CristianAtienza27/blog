@@ -107,7 +107,7 @@ export const SECONDARY_PAGES: readonly NavPage[] = [
     path: '/sobre-mi',
     heading: 'Quién escribe',
     emphasis: 'esta revista',
-    lead: 'Viajero, fotógrafo aficionado y desarrollador de software. La historia detrás del nombre.',
+    lead: 'Un espacio personal sobre viajes, fotografía, motor, experiencias y tecnología.',
     tone: 'dawn',
   },
 ];

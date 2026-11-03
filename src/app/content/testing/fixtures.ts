@@ -230,6 +230,7 @@ export function fixtureCollections(): ContentCollections {
         name: 'Paso del Stelvio',
         country: 'IT',
         location: { lat: 46.53, lng: 10.45 },
+        elevation: 2757,
         summary: 'Destino de prueba',
         demo: true,
       },

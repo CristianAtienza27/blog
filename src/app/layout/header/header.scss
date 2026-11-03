@@ -13,6 +13,13 @@
   border-block-end: var(--border-width) solid transparent;
 }
 
+// Sobre una fotografía a sangre (hero de la portada) y sin scroll: transparente y con tinta
+// clara. Los colores usan light-dark(), así que basta con forzar el esquema oscuro.
+:host-context(html:has([data-header-overlay])):not(.is-scrolled) {
+  color-scheme: dark;
+  color: var(--color-ink);
+}
+
 :host(.is-scrolled) {
   background-color: color-mix(in oklab, var(--color-bg) 90%, transparent);
   border-block-end-color: var(--color-line);
