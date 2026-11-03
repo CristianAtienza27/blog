@@ -176,7 +176,11 @@
   font-weight: var(--weight-light);
   line-height: var(--leading-none);
   letter-spacing: var(--tracking-tight);
-  transition: transform var(--duration-slow) var(--ease-expo);
+
+  // El desplazamiento al señalar usa `translate`, no `transform`: GSAP anima `transform`
+  // en la apertura y una transición CSS sobre la misma propiedad suavizaría sus estados
+  // iniciales (las palabras se verían, bajarían y volverían a subir).
+  transition: translate var(--duration-slow) var(--ease-expo);
 }
 
 .menu__teaser {
@@ -204,7 +208,7 @@
   color: var(--accent);
 
   .menu__label {
-    transform: translateX(0.12em);
+    translate: 0.12em 0;
   }
 
   .menu__teaser {

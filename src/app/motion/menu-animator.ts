@@ -12,29 +12,59 @@ const COLLAPSED_TOP = 'inset(0% 0% 100% 0%)';
 const COLLAPSED_BOTTOM = 'inset(100% 0% 0% 0%)';
 
 /**
- * Coreografía del menú overlay.
- * Apertura: la cortina cae desde arriba, las secciones suben línea a línea desde su máscara
- * y la fotografía se descubre de abajo arriba. Cierre: todo sube y la cortina se recoge.
- * Con reduced motion: fundido corto.
+ * Coreografía del menú overlay, controlada desde un único timeline.
+ *
+ * Secuencia de apertura:
+ * 1. `prepare()` fija los estados iniciales (cortina recogida, palabras bajo su máscara,
+ *    fotografía oculta) ANTES de que el diálogo se muestre: el primer fotograma visible
+ *    ya es el inicial y nunca aparece el estado final.
+ * 2. `open()` anima desde el estado actual hasta el final. Si llega en mitad de un cierre,
+ *    lo interrumpe y vuelve a abrir desde donde estaba, sin saltos.
+ *
+ * El cierre hace el recorrido inverso. Con reduced motion, un fundido corto.
  */
 @Injectable({ providedIn: 'root' })
 export class MenuAnimator {
   private readonly motion = inject(MotionService);
   private timeline: gsap.core.Timeline | null = null;
 
-  async open(dialog: HTMLDialogElement): Promise<void> {
-    const api = await this.motion.load();
-    if (!api || !dialog.open) return;
+  /**
+   * Carga el motor (si aún no lo está) y deja el menú en su estado inicial.
+   * Devuelve false si no hay animación disponible: el menú se mostrará sin animar.
+   */
+  async prepare(dialog: HTMLDialogElement): Promise<boolean> {
+    const api = this.motion.loaded ?? (await this.motion.load());
+    if (!api) return false;
+    const { gsap } = api;
+    const q = gsap.utils.selector(dialog);
+    this.timeline?.kill();
+    this.timeline = null;
+    // Solo opacidad (no visibility): el botón de cerrar debe poder recibir el autofocus
+    // de showModal() aunque todavía no se vea.
+    if (this.motion.reducedMotion()) {
+      gsap.set(dialog, { opacity: 0 });
+    } else {
+      gsap.set(q(CURTAIN), { clipPath: COLLAPSED_TOP });
+      gsap.set(q(LINES), { yPercent: 115 });
+      gsap.set(q(FADES), { opacity: 0, y: 12 });
+      gsap.set(q(PREVIEW), { clipPath: COLLAPSED_BOTTOM });
+    }
+    return true;
+  }
+
+  /** Anima hasta el estado abierto desde el estado actual (preparado o a medio cerrar). */
+  open(dialog: HTMLDialogElement): void {
+    const api = this.motion.loaded;
+    if (!api) return;
     const { gsap } = api;
     const q = gsap.utils.selector(dialog);
     const d = (name: Parameters<MotionService['duration']>[0]) => this.motion.duration(name);
 
+    // Interrumpe un cierre en curso: su promesa se resuelve como interrumpida.
     this.timeline?.kill();
 
     if (this.motion.reducedMotion()) {
-      this.timeline = gsap
-        .timeline()
-        .fromTo(dialog, { autoAlpha: 0 }, { autoAlpha: 1, duration: d('fast') });
+      this.timeline = gsap.timeline().to(dialog, { autoAlpha: 1, duration: d('fast') });
       return;
     }
 
@@ -44,29 +74,10 @@ export class MenuAnimator {
         // Al terminar se limpian los estilos en línea: los hover de CSS vuelven a funcionar.
         onComplete: () => gsap.set(q(ALL), { clearProps: 'all' }),
       })
-      .fromTo(
-        q(CURTAIN),
-        { clipPath: COLLAPSED_TOP },
-        { clipPath: OPEN, duration: d('cinematic') * 0.8 },
-      )
-      .fromTo(
-        q(LINES),
-        { yPercent: 115 },
-        { yPercent: 0, duration: d('cinematic') * 0.75, stagger: 0.07 },
-        0.28,
-      )
-      .fromTo(
-        q(FADES),
-        { autoAlpha: 0, y: 12 },
-        { autoAlpha: 1, y: 0, duration: d('slow'), ease: 'ca-out', stagger: 0.03 },
-        0.5,
-      )
-      .fromTo(
-        q(PREVIEW),
-        { clipPath: COLLAPSED_BOTTOM },
-        { clipPath: OPEN, duration: d('cinematic') },
-        0.35,
-      );
+      .to(q(CURTAIN), { clipPath: OPEN, duration: d('cinematic') * 0.8 })
+      .to(q(LINES), { yPercent: 0, duration: d('cinematic') * 0.75, stagger: 0.07 }, 0.28)
+      .to(q(FADES), { autoAlpha: 1, y: 0, duration: d('slow'), ease: 'ca-out', stagger: 0.03 }, 0.5)
+      .to(q(PREVIEW), { clipPath: OPEN, duration: d('cinematic') }, 0.35);
   }
 
   /** Resuelve true al terminar, o false si se interrumpe (por ejemplo, al reabrir). */

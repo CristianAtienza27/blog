@@ -58,11 +58,13 @@ export class Menu {
   private readonly animator = inject(MenuAnimator);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private closeImmediately = false;
+  /** Contador de interacciones: cada apertura o cierre invalida las anteriores. */
+  private run = 0;
 
   constructor() {
     effect(() => {
       const open = this.state.isOpen();
-      untracked(() => (open ? this.openDialog() : this.closeDialog()));
+      untracked(() => void (open ? this.openDialog() : this.closeDialog()));
     });
 
     this.router.events
@@ -108,26 +110,45 @@ export class Menu {
     return String(index).padStart(2, '0');
   }
 
-  private openDialog(): void {
+  /**
+   * Apertura: primero se fijan los estados iniciales y solo después se muestra el diálogo,
+   * de modo que el primer fotograma visible ya es el de partida. Si el menú se estaba
+   * cerrando, la animación de apertura continúa desde donde estaba.
+   */
+  private async openDialog(): Promise<void> {
     if (!this.isBrowser) return;
     const dialog = this.dialog().nativeElement;
-    if (dialog.open) return;
-    dialog.showModal();
-    void this.animator.open(dialog);
+    const run = ++this.run;
+
+    if (!dialog.open) {
+      await this.animator.prepare(dialog);
+      // Mientras se preparaba, el menú se cerró o una apertura posterior tomó el relevo.
+      if (run !== this.run || !this.state.isOpen()) {
+        if (!this.state.isOpen()) this.animator.reset(dialog);
+        return;
+      }
+      dialog.showModal();
+    }
+    this.animator.open(dialog);
   }
 
   private async closeDialog(): Promise<void> {
     if (!this.isBrowser) return;
     const dialog = this.dialog().nativeElement;
-    if (!dialog.open) return;
+    const run = ++this.run;
+    if (!dialog.open) {
+      // Se cerró antes de llegar a mostrarse: se descartan los estados preparados.
+      this.animator.reset(dialog);
+      return;
+    }
 
     const immediate = this.closeImmediately;
     this.closeImmediately = false;
 
     if (!immediate) {
       const finished = await this.animator.close(dialog);
-      // Si se volvió a abrir durante la animación, no se cierra.
-      if (!finished || this.state.isOpen()) return;
+      // Si se volvió a abrir durante la animación, la apertura ya la ha interrumpido.
+      if (!finished || run !== this.run) return;
     }
     dialog.close();
     // Tras cerrar (nunca antes, para no mostrar un fotograma suelto) se limpian los estilos.
