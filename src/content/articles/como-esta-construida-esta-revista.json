@@ -1,0 +1,97 @@
+{
+  "slug": "como-esta-construida-esta-revista",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Artículo de demostración.</em> Este texto prueba la composición de un reportaje técnico con bloques de código y ficha de datos. A diferencia de otros contenidos de ejemplo, describe decisiones reales de esta web.</p><p>La revista combina dos objetivos que a menudo chocan: una presentación editorial cuidada, con fotografía grande y movimiento, y una web rápida que funcione bien en cualquier dispositivo. Casi todas las decisiones técnicas buscan reconciliar ambas cosas.</p>"
+    },
+    {
+      "type": "chapter",
+      "id": "renderizado",
+      "number": 1,
+      "title": "Renderizado híbrido",
+      "kicker": "HTML desde el primer byte"
+    },
+    {
+      "type": "text",
+      "html": "<p>La web usa <strong>Angular 22</strong> con renderizado en servidor. Las páginas estáticas se generan como HTML durante el build (<em>prerender</em>) y el resto se renderiza en cada petición. El navegador recibe el contenido completo antes de ejecutar JavaScript, lo que favorece tanto a los buscadores como a la primera impresión.</p>"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "filename": "app.routes.server.ts",
+      "code": "export const serverRoutes: ServerRoute[] = [\n  { path: '', renderMode: RenderMode.Prerender },\n  ...STATIC_PATHS.map((path): ServerRoute => ({ path, renderMode: RenderMode.Prerender })),\n  { path: '**', renderMode: RenderMode.Server },\n];",
+      "caption": "Rutas estáticas prerenderizadas; el resto, en el servidor."
+    },
+    {
+      "type": "chapter",
+      "id": "diseno",
+      "number": 2,
+      "title": "Un sistema de diseño propio",
+      "kicker": "Tokens, no colores sueltos"
+    },
+    {
+      "type": "text",
+      "html": "<p>Colores, tipografías, espacios y tiempos de animación viven en un único conjunto de <strong>tokens</strong> en SCSS que se publican como propiedades personalizadas de CSS. Los colores usan <code>light-dark()</code>, de modo que el modo claro y el oscuro se resuelven sin duplicar estilos.</p>"
+    },
+    {
+      "type": "code",
+      "language": "scss",
+      "filename": "_root.scss",
+      "code": "@each $name, $pair in $neutrals {\n  --color-#{$name}: light-dark(#{list.nth($pair, 1)}, #{list.nth($pair, 2)});\n}"
+    },
+    {
+      "type": "chapter",
+      "id": "movimiento",
+      "number": 3,
+      "title": "Movimiento que no estorba",
+      "kicker": "Animación bajo demanda"
+    },
+    {
+      "type": "text",
+      "html": "<p>Las animaciones usan <strong>GSAP</strong>, pero la librería no forma parte de la carga inicial: se descarga en segundo plano, solo en el navegador, cuando hace falta. Con <em>reduced motion</em> activado no se anima nada, y el contenido visible al cargar nunca se oculta para animarlo después.</p>"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "filename": "motion.ts",
+      "code": "const [{ gsap }, { ScrollTrigger }, { SplitText }, { CustomEase }] = await Promise.all([\n  import('gsap'),\n  import('gsap/ScrollTrigger'),\n  import('gsap/SplitText'),\n  import('gsap/CustomEase'),\n]);"
+    },
+    {
+      "type": "image",
+      "media": "tecnologia-codigo-pantalla",
+      "layout": "wide",
+      "caption": "Imagen de ejemplo: código en un editor."
+    },
+    {
+      "type": "chapter",
+      "id": "imagenes",
+      "number": 4,
+      "title": "Fotografías optimizadas",
+      "kicker": "AVIF, WebP y originales intactos"
+    },
+    {
+      "type": "text",
+      "html": "<p>Las fotografías pasan por un procesador propio que se ejecuta en un contenedor Docker con <strong>libvips</strong>. Conserva los originales sin modificarlos, respeta la orientación y el perfil de color Display P3 del iPhone y genera versiones AVIF y WebP en varios anchos, sin GPS ni metadatos personales. En la página, cada imagen se sirve con <code>&lt;picture&gt;</code> y <strong>NgOptimizedImage</strong>: carga diferida, tamaños adecuados a cada pantalla y una vista previa difuminada mientras llega.</p>"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "filename": "tools/media-worker/src/config.mjs",
+      "code": "export const MEDIA_CONFIG = {\n  widths: [640, 1024, 1600, 2400],\n  avif: { quality: 60, effort: 3, chromaSubsampling: '4:2:0', bitdepth: 8 },\n  webp: { quality: 78, effort: 5, smartSubsample: true },\n};"
+    },
+    {
+      "type": "specs",
+      "title": "Pila técnica",
+      "items": [
+        { "label": "Framework", "value": "Angular 22" },
+        { "label": "Lenguaje", "value": "TypeScript 6" },
+        { "label": "Estilos", "value": "SCSS con tokens propios" },
+        { "label": "Renderizado", "value": "SSR híbrido con prerender" },
+        { "label": "Animación", "value": "GSAP 3, carga diferida" },
+        { "label": "Imágenes", "value": "libvips 8.18 · AVIF y WebP" },
+        { "label": "Backend previsto", "value": "Java 21 · Spring Boot · PostgreSQL" }
+      ]
+    }
+  ]
+}

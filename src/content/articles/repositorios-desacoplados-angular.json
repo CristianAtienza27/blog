@@ -1,0 +1,91 @@
+{
+  "slug": "repositorios-desacoplados-angular",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Nota de demostración.</em> Este texto prueba la composición de una nota técnica con varios bloques de código. Describe la capa de datos real de esta web.</p><p>Hoy el contenido de la revista vive en archivos JSON dentro del proyecto. Mañana vendrá de una API REST en Spring Boot. Para que ese cambio no obligue a reescribir la interfaz, los componentes no saben de dónde salen los datos: solo conocen unos <strong>contratos</strong>.</p>"
+    },
+    {
+      "type": "chapter",
+      "id": "contratos",
+      "number": 1,
+      "title": "Contratos abstractos",
+      "kicker": "Lo único que ven los componentes"
+    },
+    {
+      "type": "text",
+      "html": "<p>Cada repositorio es una clase abstracta que Angular usa también como token de inyección. Todos los métodos devuelven promesas, lo que encaja con <code>resource()</code>, con los resolvers y con el prerender.</p>"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "filename": "article-repository.ts",
+      "code": "export abstract class ArticleRepository {\n  abstract list(query?: ArticleQuery): Promise<Page<ArticleSummary>>;\n  abstract bySlug(slug: string): Promise<Article | null>;\n  abstract search(term: string, query?: ArticleQuery): Promise<Page<ArticleSummary>>;\n  abstract related(slug: string, limit?: number): Promise<ArticleSummary[]>;\n  abstract slugs(): Promise<string[]>;\n}"
+    },
+    {
+      "type": "chapter",
+      "id": "adaptadores",
+      "number": 2,
+      "title": "Adaptadores intercambiables",
+      "kicker": "Una línea de configuración"
+    },
+    {
+      "type": "text",
+      "html": "<p>El adaptador se elige al arrancar la aplicación. Cambiar los JSON locales por la API consistirá en sustituir <code>withJsonContent()</code> por un adaptador HTTP; ningún componente tendrá que cambiar.</p>"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "filename": "app.config.ts",
+      "code": "providers: [\n  // Contenido: JSON locales. Con la API de Spring Boot bastará con cambiar el adaptador.\n  provideContent(withJsonContent()),\n]"
+    },
+    {
+      "type": "text",
+      "html": "<p>Además, la implementación del adaptador no forma parte de la carga inicial. Cada repositorio se registra como un conjunto de métodos que, la primera vez que se usan, descargan el adaptador y le reenvían la llamada. El bundle inicial solo contiene esos reenvíos.</p>"
+    },
+    {
+      "type": "chapter",
+      "id": "ssr",
+      "number": 3,
+      "title": "SSR sin parpadeo",
+      "kicker": "TransferState"
+    },
+    {
+      "type": "text",
+      "html": "<p>Lo que el servidor ya consultó viaja al navegador dentro del HTML. Durante la hidratación, el navegador reutiliza esos datos sin volver a cargarlos, así que la página no parpadea. Después, las consultas se resuelven con normalidad.</p>"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "filename": "content-cache.ts",
+      "code": "async get<T>(key: string, load: () => Promise<T>): Promise<T> {\n  const stateKey = makeStateKey<T | null>(`content:${key}`);\n  if (this.hydrating && this.state.hasKey(stateKey)) {\n    return this.state.get(stateKey, null) as T;\n  }\n  const value = await load();\n  if (this.server) this.state.set(stateKey, value ?? null);\n  return value;\n}"
+    },
+    {
+      "type": "image",
+      "media": "tecnologia-teclado",
+      "layout": "content",
+      "caption": "Imagen de ejemplo: teclado de un portátil."
+    },
+    {
+      "type": "chapter",
+      "id": "garantias",
+      "number": 4,
+      "title": "Garantías",
+      "kicker": "Que nadie se salte la capa"
+    },
+    {
+      "type": "text",
+      "html": "<p>Una regla de ESLint impide importar los JSON o el adaptador desde fuera de la capa de contenido, y una batería de tests valida la estructura de cada archivo, las relaciones entre colecciones y el comportamiento de los repositorios, también en el servidor.</p>"
+    },
+    {
+      "type": "specs",
+      "title": "La capa de datos en cifras",
+      "items": [
+        { "label": "Repositorios", "value": "6" },
+        { "label": "Colecciones JSON", "value": "9" },
+        { "label": "Tipos de bloque de contenido", "value": "9" },
+        { "label": "Adaptadores", "value": "JSON (actual) · HTTP (previsto)" }
+      ]
+    }
+  ]
+}

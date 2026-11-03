@@ -35,6 +35,53 @@ module.exports = defineConfig([
     },
   },
   {
+    // Capa de contenido: solo el adaptador JSON lee src/content.
+    files: ['src/**/*.ts'],
+    ignores: ['src/app/content/json/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/*.json'],
+              message: 'Los JSON de contenido solo se leen desde el adaptador (content/json).',
+            },
+          ],
+        },
+      ],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'ImportExpression[source.value=/\\.json$/]',
+          message: 'Los JSON de contenido solo se leen desde el adaptador (content/json).',
+        },
+        {
+          selector: 'ImportExpression > TemplateLiteral',
+          message: 'Los imports dinámicos con plantilla solo se permiten en el adaptador.',
+        },
+      ],
+    },
+  },
+  {
+    // Fuera de la capa de contenido solo se usan los repositorios abstractos y los modelos.
+    files: ['src/**/*.ts'],
+    ignores: ['src/app/content/**', 'src/app/app.config.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/content/json/*', '**/content/records/*', '**/content/testing/*'],
+              message: 'Inyecta los repositorios de content/repositories, no el adaptador.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['**/*.html'],
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
     rules: {},

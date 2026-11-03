@@ -1,0 +1,32 @@
+[
+  {
+    "id": "viajes",
+    "slug": "viajes",
+    "name": "Viajes",
+    "description": "Rutas, ciudades y paisajes contados despacio."
+  },
+  {
+    "id": "fotografia",
+    "slug": "fotografia",
+    "name": "Fotografía",
+    "description": "Series fotográficas, procesos y la historia que hay detrás de cada imagen."
+  },
+  {
+    "id": "motor",
+    "slug": "motor",
+    "name": "Motor",
+    "description": "Motos, coches, puertos de montaña y la cultura del motor vista desde la carretera."
+  },
+  {
+    "id": "experiencias",
+    "slug": "experiencias",
+    "name": "Experiencias",
+    "description": "Momentos, encuentros y aprendizajes que no caben en una guía de viaje."
+  },
+  {
+    "id": "tecnologia",
+    "slug": "tecnologia",
+    "name": "Tecnología",
+    "description": "Desarrollo web, arquitectura y herramientas."
+  }
+]

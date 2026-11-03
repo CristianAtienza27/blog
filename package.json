@@ -16,7 +16,15 @@
     "lint": "ng lint",
     "lint:styles": "stylelint \"src/**/*.scss\" --allow-empty-input",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "media:build": "docker compose -f tools/media-worker/compose.yaml build media-worker",
+    "media:codecs": "docker compose -f tools/media-worker/compose.yaml run --rm media-worker src/check-codecs.mjs",
+    "media:test": "docker compose -f tools/media-worker/compose.yaml run --rm media-worker src/synthetic.mjs generar && docker compose -f tools/media-worker/compose.yaml --profile fixtures run --rm heic-fixture && docker compose -f tools/media-worker/compose.yaml run --rm media-worker src/synthetic.mjs verificar",
+    "media:poc": "docker compose -f tools/media-worker/compose.yaml run --rm media-worker src/poc.mjs",
+    "media:externa": "docker compose -f tools/media-worker/compose.yaml run --rm media-worker src/media.mjs externa",
+    "media:propia": "docker compose -f tools/media-worker/compose.yaml run --rm media-worker src/media.mjs propia",
+    "media:sync": "docker compose -f tools/media-worker/compose.yaml run --rm media-worker src/media.mjs sincronizar && prettier --write src/content/media.json",
+    "media:verify": "docker compose -f tools/media-worker/compose.yaml run --rm media-worker src/media.mjs verificar"
   },
   "dependencies": {
     "@angular/common": "^22.2.0",

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { MediaRepository } from '../../content/repositories/media-repository';
 import { MenuAnimator } from '../../motion/menu-animator';
 import { Menu } from './menu';
 import { MenuState } from './menu-state';
@@ -50,6 +51,7 @@ async function setup() {
     providers: [
       provideRouter([{ path: '', component: Blank }]),
       { provide: MenuAnimator, useValue: animator },
+      { provide: MediaRepository, useValue: { mediaList: () => Promise.resolve([]) } },
     ],
   });
   const fixture = TestBed.createComponent(Menu);

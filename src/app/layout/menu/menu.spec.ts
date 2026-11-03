@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import type { Media as MediaAsset } from '../../content/models';
+import { MediaRepository } from '../../content/repositories/media-repository';
 import { MotionService } from '../../motion/motion';
 import { Menu } from './menu';
 import { MenuState } from './menu-state';
@@ -31,7 +33,36 @@ const motionWithoutGsap: Partial<MotionService> = {
   refresh: () => undefined,
 };
 
+/** Repositorio simulado: devuelve una foto por id y registra las peticiones. */
+const requested: string[][] = [];
+const mediaRepository: Partial<MediaRepository> = {
+  mediaList: (ids: readonly string[]) => {
+    requested.push([...ids]);
+    return Promise.resolve(
+      ids.map((id): MediaAsset => ({
+        id,
+        path: `viajes/${id}.0000000a`,
+        width: 1600,
+        height: 1067,
+        widths: [640, 1024, 1600],
+        alt: `Foto ${id}`,
+        focal: { x: 0.5, y: 0.5 },
+        placeholder: 'data:image/webp;base64,AAAA',
+        credit: {
+          author: 'Autoría de prueba',
+          source: 'wikimedia',
+          sourceUrl: 'https://commons.wikimedia.org/wiki/File:X.jpg',
+          license: 'CC-BY-SA-4.0',
+          licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+        },
+        demo: true,
+      })),
+    );
+  },
+};
+
 async function setup() {
+  requested.length = 0;
   TestBed.configureTestingModule({
     providers: [
       provideRouter([
@@ -39,6 +70,7 @@ async function setup() {
         { path: 'viajes', component: Blank },
       ]),
       { provide: MotionService, useValue: motionWithoutGsap },
+      { provide: MediaRepository, useValue: mediaRepository },
     ],
   });
   const fixture = TestBed.createComponent(Menu);
@@ -94,6 +126,28 @@ describe('Menu', () => {
     await settle();
     expect(state.isOpen()).toBe(false);
     expect(dialog.open).toBe(false);
+  });
+
+  it('pide las fotos de vista previa solo al abrirse y muestra su crédito', async () => {
+    const { element, state, settle } = await setup();
+    expect(requested).toEqual([]);
+    expect(element.querySelector('.menu__preview picture')).toBeNull();
+
+    state.show();
+    await settle();
+    expect(requested).toEqual([
+      [
+        'viajes-cadaques-bahia',
+        'paisaje-seceda-panorama',
+        'motor-stelvio-bormio',
+        'naturaleza-fanal-niebla',
+        'tecnologia-codigo-pantalla',
+      ],
+    ]);
+    expect(element.querySelectorAll('.menu__preview picture')).toHaveLength(5);
+    const credit = element.querySelector('.menu__credit')?.textContent?.replace(/\s+/g, ' ');
+    expect(credit).toContain('Foto: Autoría de prueba');
+    expect(credit).toContain('CC BY-SA 4.0');
   });
 
   it('lista las cinco secciones numeradas', async () => {

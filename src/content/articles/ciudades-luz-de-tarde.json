@@ -1,0 +1,90 @@
+{
+  "slug": "ciudades-luz-de-tarde",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Artículo de demostración.</em> Este reportaje prueba la composición de un texto largo con capítulos, imágenes anchas, mapa y citas destacadas. Las ciudades son reales; el texto no narra un viaje del autor.</p><p>Hay ciudades que se entienden mejor al final del día. Cuando el sol baja, la luz rasante dibuja los volúmenes de los tejados, los ríos se vuelven espejos y las fachadas cambian de color en pocos minutos. Lisboa, Florencia, Praga y Oporto comparten dos rasgos que lo hacen especialmente visible: un río que las atraviesa y colinas desde las que mirarlo.</p>"
+    },
+    {
+      "type": "map",
+      "destinations": ["lisboa", "florencia", "praga", "oporto"],
+      "route": false,
+      "caption": "Cuatro ciudades de río y colina."
+    },
+    {
+      "type": "chapter",
+      "id": "lisboa",
+      "number": 1,
+      "title": "Lisboa",
+      "kicker": "Miradores sobre el Tajo"
+    },
+    {
+      "type": "text",
+      "html": "<p>Lisboa se levanta sobre colinas que descienden hacia el estuario del Tajo. Sus <strong>miradouros</strong>, como el de Santa Luzia junto a la Alfama, son terrazas públicas pensadas precisamente para mirar la ciudad. Al atardecer, los tejados de teja y las cúpulas de las iglesias se recortan sobre el agua.</p><p>El tranvía que sube hacia el castillo pasa a pocos metros del mirador y permite enlazar varios puntos altos sin grandes caminatas.</p>"
+    },
+    {
+      "type": "image",
+      "media": "ciudades-lisboa-alfama",
+      "layout": "wide",
+      "caption": "La Alfama y el Tajo desde el mirador de Santa Luzia."
+    },
+    {
+      "type": "chapter",
+      "id": "florencia",
+      "number": 2,
+      "title": "Florencia",
+      "kicker": "El Arno y sus puentes"
+    },
+    {
+      "type": "text",
+      "html": "<p>Desde el <strong>Piazzale Michelangelo</strong>, en la orilla sur del Arno, se ve la ciudad entera: la cúpula de la catedral, el campanario, la torre del Palazzo Vecchio y la sucesión de puentes. El más conocido es el <strong>Ponte Vecchio</strong>, con sus tiendas suspendidas sobre el río.</p><p>El mirador queda orientado hacia el oeste, de modo que el sol se pone detrás de los puentes y el río refleja el cielo durante largo rato.</p>"
+    },
+    {
+      "type": "quote",
+      "text": "Al final del día, el río deja de ser un obstáculo y se convierte en el escenario.",
+      "variant": "pull"
+    },
+    {
+      "type": "chapter",
+      "id": "praga",
+      "number": 3,
+      "title": "Praga",
+      "kicker": "El Moldava entre dos colinas"
+    },
+    {
+      "type": "text",
+      "html": "<p>Praga se organiza a ambos lados del <strong>Moldava</strong>. En una orilla, la Ciudad Vieja; en la otra, el barrio de Malá Strana y, sobre la colina, el castillo. El puente de Carlos une ambas partes y es el recorrido más fotografiado de la ciudad.</p><p>Los puentes situados aguas arriba ofrecen vistas menos concurridas del río, con el castillo al fondo y la luz de la tarde de cara.</p>"
+    },
+    {
+      "type": "image",
+      "media": "ciudades-praga-moldava",
+      "layout": "wide",
+      "caption": "El Moldava y sus puentes en Praga."
+    },
+    {
+      "type": "chapter",
+      "id": "oporto",
+      "number": 4,
+      "title": "Oporto",
+      "kicker": "La Ribeira frente a Gaia"
+    },
+    {
+      "type": "text",
+      "html": "<p>En Oporto, el Duero separa la ciudad de <strong>Vila Nova de Gaia</strong>, donde se alinean las bodegas de vino de Oporto. Frente a ellas, el barrio de la <strong>Ribeira</strong> sube en terrazas de fachadas estrechas y coloridas, dentro del centro histórico declarado Patrimonio Mundial.</p><p>Los <strong>barcos rabelos</strong> amarrados en la orilla de Gaia recuerdan el transporte tradicional del vino río abajo. Desde ese muelle, al caer la tarde, la Ribeira queda iluminada de frente.</p>"
+    },
+    {
+      "type": "image",
+      "media": "ciudades-oporto-ribeira",
+      "layout": "content",
+      "caption": "Barcos rabelos y la Ribeira desde el muelle de Gaia."
+    },
+    {
+      "type": "divider",
+      "variant": "line"
+    },
+    {
+      "type": "text",
+      "html": "<p>Las cuatro ciudades se prestan a una misma rutina: buscar un punto alto, llegar antes de que el sol se oculte y quedarse un rato después. La luz más interesante suele llegar cuando parece que ya ha terminado todo.</p>"
+    }
+  ]
+}

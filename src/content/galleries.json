@@ -1,0 +1,65 @@
+[
+  {
+    "id": "costa-brava",
+    "slug": "costa-brava",
+    "title": "Costa Brava",
+    "description": "Tres paradas del itinerario de ejemplo, de sur a norte.",
+    "layout": "grid",
+    "items": [
+      {
+        "media": "viajes-tossa-vila-vella",
+        "caption": "Tossa de Mar"
+      },
+      {
+        "media": "viajes-calella-banyera",
+        "caption": "Calella de Palafrugell"
+      },
+      {
+        "media": "viajes-cadaques-bahia",
+        "caption": "Cadaqués"
+      }
+    ],
+    "demo": true
+  },
+  {
+    "id": "mediterraneo",
+    "slug": "mediterraneo",
+    "title": "Mediterráneo",
+    "description": "Calas y pueblos de costa: agua clara, roca y cal.",
+    "layout": "grid",
+    "items": [
+      {
+        "media": "viajes-mallorca-almunia"
+      },
+      {
+        "media": "viajes-calella-banyera"
+      },
+      {
+        "media": "viajes-cadaques-bahia"
+      }
+    ],
+    "demo": true
+  },
+  {
+    "id": "puertos-de-montana",
+    "slug": "puertos-de-montana",
+    "title": "Puertos de montaña",
+    "description": "Tres carreteras de alta montaña con trazados muy distintos.",
+    "layout": "grid",
+    "items": [
+      {
+        "media": "motor-stelvio-curvas",
+        "caption": "Paso del Stelvio (Italia)"
+      },
+      {
+        "media": "paisaje-sella-frea",
+        "caption": "Paso de Gardena y grupo del Sella (Italia)"
+      },
+      {
+        "media": "motor-transfagarasan",
+        "caption": "Transfăgărășan (Rumanía)"
+      }
+    ],
+    "demo": true
+  }
+]

@@ -1,12 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
+import { MediaRepository } from './content/repositories/media-repository';
 
 describe('App (estructura común)', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: MediaRepository, useValue: { mediaList: () => Promise.resolve([]) } },
+      ],
     }).compileComponents();
   });
 

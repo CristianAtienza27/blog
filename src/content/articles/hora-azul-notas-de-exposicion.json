@@ -1,0 +1,40 @@
+{
+  "slug": "hora-azul-notas-de-exposicion",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Nota de demostración.</em> Este texto prueba la composición de una nota técnica breve con imagen y ficha de ajustes. Los valores de la ficha son orientativos y no proceden de una toma concreta.</p><p>Se llama <strong>hora azul</strong> al periodo del crepúsculo en que el sol ya está por debajo del horizonte pero el cielo conserva luz difusa. La luz directa desaparece, el cielo adquiere un azul profundo y las luces artificiales de una ciudad o un puerto empiezan a equilibrarse con él. Dura poco: según la latitud y la época del año, apenas unos minutos.</p>"
+    },
+    {
+      "type": "image",
+      "media": "viajes-tossa-vila-vella",
+      "layout": "wide",
+      "caption": "Primera luz sobre Tossa de Mar: el cielo todavía azul y las murallas iluminadas."
+    },
+    {
+      "type": "text",
+      "html": "<h3>Preparar la toma</h3><ul><li><strong>Trípode.</strong> Con poca luz, las exposiciones se alargan a varios segundos; un apoyo estable es imprescindible.</li><li><strong>Sensibilidad baja.</strong> Mantener un ISO bajo reduce el ruido en un cielo que debe verse limpio.</li><li><strong>Diafragma intermedio.</strong> Valores como f/8 dan nitidez en todo el plano y convierten las luces puntuales en pequeñas estrellas.</li><li><strong>Balance de blancos fijo.</strong> El modo automático tiende a neutralizar el azul; fijarlo conserva el ambiente.</li></ul>"
+    },
+    {
+      "type": "specs",
+      "title": "Ajustes de ejemplo",
+      "items": [
+        { "label": "Sensibilidad", "value": "ISO 100" },
+        { "label": "Diafragma", "value": "f/8" },
+        { "label": "Exposición", "value": "4", "unit": "s" },
+        { "label": "Balance de blancos", "value": "5000", "unit": "K" },
+        { "label": "Soporte", "value": "Trípode y disparador remoto" }
+      ],
+      "note": "Valores orientativos de ejemplo; dependen de la escena y de la luz disponible."
+    },
+    {
+      "type": "text",
+      "html": "<p>Una forma sencilla de trabajar consiste en llegar antes del atardecer, encuadrar con luz y repetir la misma toma cada pocos minutos. Al comparar la serie es fácil ver en qué momento el cielo y las luces artificiales quedan equilibrados.</p>"
+    },
+    {
+      "type": "quote",
+      "text": "La hora azul no se persigue: se espera con el encuadre ya hecho.",
+      "variant": "pull"
+    }
+  ]
+}

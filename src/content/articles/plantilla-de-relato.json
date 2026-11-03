@@ -1,0 +1,61 @@
+{
+  "slug": "plantilla-de-relato",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Texto provisional de demostración.</em> Este artículo no cuenta una experiencia real: ocupa el lugar de los futuros relatos de la sección Experiencias para comprobar cómo se lee un texto largo, con capítulos, citas e imágenes. Cuando exista un relato definitivo, sustituirá a esta plantilla.</p>"
+    },
+    {
+      "type": "chapter",
+      "id": "inicio",
+      "number": 1,
+      "title": "El comienzo",
+      "kicker": "Situar al lector"
+    },
+    {
+      "type": "text",
+      "html": "<p>Un relato de esta sección empezaría situando al lector: dónde, cuándo y por qué. Unas pocas líneas bastan para crear un escenario, sin adelantar lo que ocurrirá después. Este párrafo ocupa ese espacio con un texto neutro de la longitud habitual, para que la maqueta muestre el ritmo real de lectura.</p><p>Un segundo párrafo podría introducir el primer detalle concreto: un sonido, un olor, un cambio de luz. En la plantilla solo marca la transición entre la presentación y el cuerpo del relato.</p>"
+    },
+    {
+      "type": "image",
+      "media": "naturaleza-niebla-bosque",
+      "layout": "wide",
+      "caption": "Imagen de ejemplo: niebla entre los árboles al final de la tarde."
+    },
+    {
+      "type": "chapter",
+      "id": "nudo",
+      "number": 2,
+      "title": "Lo que ocurre entre un lugar y otro",
+      "kicker": "El cuerpo del relato"
+    },
+    {
+      "type": "text",
+      "html": "<p>El centro del relato concentraría los encuentros, los imprevistos y los aprendizajes que no caben en una guía de viaje. En la plantilla, estos párrafos sirven para comprobar la medida de línea, el interlineado y el espacio entre bloques en un texto de lectura continuada.</p><p>Una cita destacada puede romper el ritmo y señalar una idea importante. En los relatos reales, procederá del propio texto, nunca de declaraciones inventadas.</p>"
+    },
+    {
+      "type": "quote",
+      "text": "Algunos lugares se recuerdan por lo que se vio; otros, por lo que se tardó en llegar.",
+      "variant": "pull"
+    },
+    {
+      "type": "text",
+      "html": "<p>Los capítulos permiten al lector orientarse y retomar la lectura más tarde. En la maqueta, cada capítulo tiene un número, un título y una entradilla, y sirve de ancla para un futuro índice.</p>"
+    },
+    {
+      "type": "divider",
+      "variant": "pause"
+    },
+    {
+      "type": "chapter",
+      "id": "cierre",
+      "number": 3,
+      "title": "El cierre",
+      "kicker": "Volver al principio"
+    },
+    {
+      "type": "text",
+      "html": "<p>El final de un relato suele volver a la imagen del comienzo, ya transformada por lo que ha ocurrido. En esta plantilla, el cierre solo confirma que el texto termina con el mismo cuidado tipográfico con que empezó.</p>"
+    }
+  ]
+}

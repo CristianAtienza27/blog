@@ -1,0 +1,62 @@
+[
+  {
+    "id": "costa-brava",
+    "slug": "costa-brava",
+    "title": "Itinerario de ejemplo por la Costa Brava",
+    "summary": "Ruta de demostración de sur a norte por la costa de Girona. Distancias aproximadas por carretera.",
+    "stops": [
+      {
+        "order": 1,
+        "destination": "tossa-de-mar",
+        "mode": "coche"
+      },
+      {
+        "order": 2,
+        "destination": "calella-de-palafrugell",
+        "distanceKm": 42,
+        "mode": "coche"
+      },
+      {
+        "order": 3,
+        "destination": "begur",
+        "distanceKm": 10,
+        "mode": "coche"
+      },
+      {
+        "order": 4,
+        "destination": "cadaques",
+        "distanceKm": 65,
+        "mode": "coche"
+      }
+    ],
+    "cover": "viajes-cadaques-bahia",
+    "demo": true
+  },
+  {
+    "id": "stelvio",
+    "slug": "stelvio",
+    "title": "Itinerario de ejemplo por el paso del Stelvio",
+    "summary": "Travesía de demostración de norte a sur por la carretera SS38. Distancias aproximadas.",
+    "stops": [
+      {
+        "order": 1,
+        "destination": "prato-allo-stelvio",
+        "mode": "moto"
+      },
+      {
+        "order": 2,
+        "destination": "paso-del-stelvio",
+        "distanceKm": 25,
+        "mode": "moto"
+      },
+      {
+        "order": 3,
+        "destination": "bormio",
+        "distanceKm": 21,
+        "mode": "moto"
+      }
+    ],
+    "cover": "motor-stelvio-bormio",
+    "demo": true
+  }
+]

@@ -1,0 +1,40 @@
+{
+  "slug": "equipaje-ruta-varios-dias",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Nota de demostración.</em> Esta lista prueba la composición de una nota práctica con listas, citas y separadores. Es una lista general de comprobación, no el equipaje de un viaje concreto.</p><p>En una ruta de varias etapas, cada objeto ocupa espacio y añade peso. La regla más útil es llevar solo lo que se usará más de una vez, y repartir el resto entre lo imprescindible y lo que puede comprarse por el camino.</p>"
+    },
+    {
+      "type": "text",
+      "html": "<h3>Documentación</h3><ul><li>Documento de identidad o pasaporte, y permiso de conducir.</li><li>Documentación del vehículo y del seguro, incluida la asistencia en carretera.</li><li>Tarjeta sanitaria europea si el viaje cruza fronteras dentro de la Unión Europea.</li><li>Copias digitales de todo lo anterior, guardadas fuera del teléfono.</li></ul>"
+    },
+    {
+      "type": "text",
+      "html": "<h3>Ropa por capas</h3><ul><li>Una capa base transpirable, una intermedia de abrigo y una exterior impermeable.</li><li>Guantes y prendas de repuesto para días de lluvia, sobre todo en moto.</li><li>Calzado cómodo para las paradas, además del de conducción.</li></ul>"
+    },
+    {
+      "type": "quote",
+      "text": "Lo que no se usa dos veces suele sobrar desde el primer día.",
+      "variant": "pull"
+    },
+    {
+      "type": "text",
+      "html": "<h3>Herramientas y repuestos</h3><ul><li>Kit de reparación de pinchazos y compresor pequeño.</li><li>Juego básico de herramientas adecuado al vehículo.</li><li>Bridas, cinta americana y una linterna frontal.</li><li>Cargadores y una batería externa.</li></ul>"
+    },
+    {
+      "type": "divider",
+      "variant": "line"
+    },
+    {
+      "type": "image",
+      "media": "motor-transfagarasan",
+      "layout": "content",
+      "caption": "Imagen de ejemplo: la Transfăgărășan, en Rumanía, una de las carreteras de montaña más conocidas de Europa."
+    },
+    {
+      "type": "text",
+      "html": "<p>Antes de salir, conviene pesar el equipaje cargado y comprobar que el vehículo lo admite. En moto, además, el reparto del peso cambia el comportamiento en curva: lo más pesado, cuanto más bajo y más cerca del centro, mejor.</p>"
+    }
+  ]
+}

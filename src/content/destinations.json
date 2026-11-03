@@ -1,0 +1,153 @@
+[
+  {
+    "id": "tossa-de-mar",
+    "slug": "tossa-de-mar",
+    "name": "Tossa de Mar",
+    "country": "ES",
+    "region": "Girona",
+    "location": {
+      "lat": 41.7197,
+      "lng": 2.933
+    },
+    "summary": "Villa costera de la Costa Brava con un recinto amurallado medieval junto al mar.",
+    "demo": true,
+    "cover": "viajes-tossa-vila-vella"
+  },
+  {
+    "id": "calella-de-palafrugell",
+    "slug": "calella-de-palafrugell",
+    "name": "Calella de Palafrugell",
+    "country": "ES",
+    "region": "Girona",
+    "location": {
+      "lat": 41.8869,
+      "lng": 3.1856
+    },
+    "summary": "Antiguo pueblo de pescadores de casas blancas y pequeñas playas entre rocas.",
+    "demo": true,
+    "cover": "viajes-calella-banyera"
+  },
+  {
+    "id": "begur",
+    "slug": "begur",
+    "name": "Begur",
+    "country": "ES",
+    "region": "Girona",
+    "location": {
+      "lat": 41.9542,
+      "lng": 3.2077
+    },
+    "summary": "Pueblo en lo alto de una colina, rodeado de calas y coronado por un castillo.",
+    "demo": true
+  },
+  {
+    "id": "cadaques",
+    "slug": "cadaques",
+    "name": "Cadaqués",
+    "country": "ES",
+    "region": "Girona",
+    "location": {
+      "lat": 42.2889,
+      "lng": 3.2779
+    },
+    "summary": "Pueblo blanco en la península del cabo de Creus, en el extremo nororiental de la costa.",
+    "demo": true,
+    "cover": "viajes-cadaques-bahia"
+  },
+  {
+    "id": "prato-allo-stelvio",
+    "slug": "prato-allo-stelvio",
+    "name": "Prato allo Stelvio",
+    "country": "IT",
+    "region": "Tirol del Sur",
+    "location": {
+      "lat": 46.6197,
+      "lng": 10.5917
+    },
+    "summary": "Localidad del valle de Venosta donde comienza la subida norte al paso del Stelvio.",
+    "demo": true
+  },
+  {
+    "id": "paso-del-stelvio",
+    "slug": "paso-del-stelvio",
+    "name": "Paso del Stelvio",
+    "country": "IT",
+    "region": "Lombardía y Tirol del Sur",
+    "location": {
+      "lat": 46.5286,
+      "lng": 10.4533
+    },
+    "summary": "Puerto de montaña de los Alpes italianos, a 2757 metros de altitud.",
+    "demo": true,
+    "cover": "motor-stelvio-bormio"
+  },
+  {
+    "id": "bormio",
+    "slug": "bormio",
+    "name": "Bormio",
+    "country": "IT",
+    "region": "Lombardía",
+    "location": {
+      "lat": 46.4667,
+      "lng": 10.3667
+    },
+    "summary": "Localidad alpina de Valtellina, al pie de la vertiente sur del Stelvio.",
+    "demo": true
+  },
+  {
+    "id": "lisboa",
+    "slug": "lisboa",
+    "name": "Lisboa",
+    "country": "PT",
+    "region": "Lisboa",
+    "location": {
+      "lat": 38.7223,
+      "lng": -9.1393
+    },
+    "summary": "Capital portuguesa sobre el estuario del Tajo, de colinas, miradores y tranvías.",
+    "cover": "ciudades-lisboa-alfama",
+    "demo": true
+  },
+  {
+    "id": "florencia",
+    "slug": "florencia",
+    "name": "Florencia",
+    "country": "IT",
+    "region": "Toscana",
+    "location": {
+      "lat": 43.7696,
+      "lng": 11.2558
+    },
+    "summary": "Ciudad renacentista atravesada por el Arno y sus puentes históricos.",
+    "cover": "ciudades-florencia-arno",
+    "demo": true
+  },
+  {
+    "id": "praga",
+    "slug": "praga",
+    "name": "Praga",
+    "country": "CZ",
+    "region": "Bohemia",
+    "location": {
+      "lat": 50.0755,
+      "lng": 14.4378
+    },
+    "summary": "Capital checa a orillas del Moldava, con su castillo sobre la colina y sus puentes.",
+    "cover": "ciudades-praga-moldava",
+    "demo": true
+  },
+  {
+    "id": "oporto",
+    "slug": "oporto",
+    "name": "Oporto",
+    "country": "PT",
+    "region": "Norte",
+    "location": {
+      "lat": 41.1579,
+      "lng": -8.6291
+    },
+    "summary": "Ciudad del Duero, con el barrio de la Ribeira frente a las bodegas de Vila Nova de Gaia.",
+    "cover": "ciudades-oporto-ribeira",
+    "demo": true
+  }
+]

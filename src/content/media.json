@@ -1,0 +1,684 @@
+[
+  {
+    "id": "viajes-calella-banyera",
+    "path": "viajes/viajes-calella-banyera.adb5629e",
+    "width": 1600,
+    "height": 1120,
+    "widths": [640, 1024, 1600],
+    "alt": "Cala de roca con agua turquesa transparente y tres barcas fondeadas, vista desde lo alto.",
+    "caption": "Una cala de roca en Calella de Palafrugell.",
+    "focal": {
+      "x": 0.42,
+      "y": 0.6
+    },
+    "placeholder": "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAAAwBQCdASoYABEAPt1cqU6opKOiMBgIARAbiUAY3rF6zHa6IZHOSSpUOuzUg/76GxdmAAD+MUAUvbRV64Heb8UwMesE0tzQfe+Bnadp+fiATVJfPAuDYr+Yasigt6TdCug8KkaoaNXgb0W7A+rlOh9tFed3DPNfhMtgmPowSb30iKvUMILmvQv878qmz6fzPiWmcT18+G3OHBN6GV4AAA==",
+    "credit": {
+      "author": "Alberto-g-rovi",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:La_banyera_de_la_russa-calella_de_palafurgell-8-2013.JPG",
+      "license": "CC-BY-SA-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+    },
+    "original": {
+      "file": "viajes-calella-banyera.jpg",
+      "format": "jpeg",
+      "width": 4067,
+      "height": 2848,
+      "bytes": 11016838,
+      "sha256": "3f685fd06d7e66029e8cf1279729290bb24b7d497bcdfbc23300ba610efae67b",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/La_banyera_de_la_russa-calella_de_palafurgell-8-2013.JPG"
+    },
+    "demo": true
+  },
+  {
+    "id": "viajes-tossa-vila-vella",
+    "path": "viajes/viajes-tossa-vila-vella.627684c3",
+    "width": 1600,
+    "height": 938,
+    "widths": [640, 1024, 1600],
+    "alt": "Murallas y torres medievales de Tossa de Mar sobre un promontorio junto a la playa, con el cielo del amanecer.",
+    "caption": "La Vila Vella de Tossa de Mar al amanecer.",
+    "focal": {
+      "x": 0.4,
+      "y": 0.5
+    },
+    "placeholder": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAABwBACdASoYAA4APt1cpkyopSOiMAgBEBuJQBOmUGMACQvfu0vwcXERJlXKgAD+1KoI5w2iWVTu2GZc53Ry3kddxAU/d45M9PaA8DJQjxFuvEXHinryfOirWgs8hXI9ZZ/EWfpQkaOJZaRot37eq8NG4u2dOsKjJszXZgAAAAA=",
+    "credit": {
+      "author": "Moahim",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:WLM_-_2020_-_Castillo_de_Tosa_de_Mar.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "viajes-tossa-vila-vella.jpg",
+      "format": "jpeg",
+      "width": 4923,
+      "height": 2886,
+      "bytes": 5396081,
+      "sha256": "cc5cb80279bb8cd389e6e9a12385c7149328f8f3de4aeb31a82478c95a53c8e7",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/9d/WLM_-_2020_-_Castillo_de_Tosa_de_Mar.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "viajes-cadaques-bahia",
+    "path": "viajes/viajes-cadaques-bahia.f527ee90",
+    "width": 2400,
+    "height": 1596,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Tejados de Cadaqués y casas blancas frente a la bahía, con barcas en el agua y colinas al fondo.",
+    "caption": "Cadaqués desde la iglesia de Santa María.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "placeholder": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABQBACdASoYABAAPt1cp00opSOiMAgBEBuJYgCdMoMYA0jtvkObyhoTUqAIAP7FOZbU4572EONes7v6QaVoLc/FmktouzQ0deGXOjmSmdhsmHGa+zLvwHsoI2Tta2wdmFQ2pV4A0k85ra9M72Z6D+qJWBrMIeXqeLZhw1i5vGk3Su0Drt2d+o9IJrwD/unycCgAAA==",
+    "credit": {
+      "author": "Berthold Werner",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cadaqu%C3%A9s_BW_2019-10-08_11-14-46.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "viajes-cadaques-bahia.jpg",
+      "format": "jpeg",
+      "width": 6016,
+      "height": 4000,
+      "bytes": 15128559,
+      "sha256": "4a5ebd6f19e11b6cb10fdb64164e31c885add413fc192713e589187262438543",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Cadaqu%C3%A9s_BW_2019-10-08_11-14-46.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "viajes-mallorca-almunia",
+    "path": "viajes/viajes-mallorca-almunia.b4f99b4c",
+    "width": 1600,
+    "height": 1067,
+    "widths": [640, 1024, 1600],
+    "alt": "Pequeña cala mallorquina de agua azul rodeada de rocas calizas y pinos.",
+    "caption": "Cala de s'Almunia, en Mallorca.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.6
+    },
+    "placeholder": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAAAwBACdASoYABAAPt1cp0yopSOiMAgBEBuJYwC06CB/R+GoMeXMdSIqrAAA/pqxomyGEw9Dyw8kOSwmMcAQjhxyGjhAWfnuPgCErGVtgWtkI80eRXS86OoQKvEQz0oFXjpf8nup4vTDJEcmzRNwHQtbf8MXDnf3cojKs1JDPqM6thCMNamC9wdYyKasAAAA",
+    "credit": {
+      "author": "Kritzolina",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cala_l%27Almunia_in_February_02.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "viajes-mallorca-almunia.jpg",
+      "format": "jpeg",
+      "width": 5327,
+      "height": 3551,
+      "bytes": 3828132,
+      "sha256": "b6b476e03c4580e465df057f3ac420a88cdd79e64cfda9e994ff81fc20fe0129",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/52/Cala_l%27Almunia_in_February_02.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "viajes-alicante-panorama",
+    "path": "viajes/viajes-alicante-panorama.c03b9c7d",
+    "width": 2400,
+    "height": 734,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Panorámica de Alicante con el puerto, la bahía y la ciudad extendida hacia el interior.",
+    "caption": "Alicante desde el castillo de Santa Bárbara.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "placeholder": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADwAwCdASoYAAcAPt1apkyopSOiMAgBEBuJZACdACHKQOZ3kkN6WQXAAPyndNUhnGis4P04TvByLpvF2CfSGRKu7wM+YIOl1rXidjeJEVqdBw5HXqpSYK2QKsBiI7fxBZ4gAA==",
+    "credit": {
+      "author": "Diego Delso",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vista_de_Alicante,_Espa%C3%B1a,_2014-07-04,_DD_67-70_PAN.JPG",
+      "license": "CC-BY-SA-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+    },
+    "original": {
+      "file": "viajes-alicante-panorama.jpg",
+      "format": "jpeg",
+      "width": 9501,
+      "height": 2907,
+      "bytes": 21100882,
+      "sha256": "29717b038e8644e98ff272a0f1f59415685d2e52b439b284fbf168040f7f03fb",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/66/Vista_de_Alicante%2C_Espa%C3%B1a%2C_2014-07-04%2C_DD_67-70_PAN.JPG"
+    },
+    "demo": true
+  },
+  {
+    "id": "ciudades-lisboa-alfama",
+    "path": "viajes/ciudades-lisboa-alfama.06b75e1a",
+    "width": 1600,
+    "height": 1028,
+    "widths": [640, 1024, 1600],
+    "alt": "Tejados rojos del barrio de la Alfama descendiendo hacia el río Tajo, con iglesias blancas entre las casas.",
+    "caption": "La Alfama y el Tajo desde el mirador de Santa Luzia.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "placeholder": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACQBACdASoYAA8APt1apkyopSOiMAgBEBuJYgCdMoR4GCWKlqmSYtfMk1R0PgAA/lRLIEgyBGG4ws8tW2lA/dlipGOyTrCurvuGalgh5Tg3kg5HjStvVfGdgWuVfLBC1iMiXkl0Hs7Rrb30gU3AAOQ//C61dTx75QtXsEu7MAAAAA==",
+    "credit": {
+      "author": "Diego Delso",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vistas_de_Lisboa_desde_el_Mirador_de_Santa_Luzia,_Portugal,_2012-05-12,_DD_06.JPG",
+      "license": "CC-BY-SA-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+    },
+    "original": {
+      "file": "ciudades-lisboa-alfama.jpg",
+      "format": "jpeg",
+      "width": 5506,
+      "height": 3537,
+      "bytes": 5567781,
+      "sha256": "ed2491fcf8ec323529f574a872822e2d0ddc6b06ac5588d981db16346be441f1",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/76/Vistas_de_Lisboa_desde_el_Mirador_de_Santa_Luzia%2C_Portugal%2C_2012-05-12%2C_DD_06.JPG"
+    },
+    "demo": true
+  },
+  {
+    "id": "ciudades-florencia-arno",
+    "path": "viajes/ciudades-florencia-arno.548ab777",
+    "width": 2400,
+    "height": 1786,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "El Ponte Vecchio sobre el río Arno al atardecer, con el cielo anaranjado reflejado en el agua.",
+    "caption": "El Ponte Vecchio al atardecer desde el Piazzale Michelangelo.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "placeholder": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABQBQCdASoYABIAPt1ep04opSOiKA1REBuJZQCw7BEhb2JJhW+Yeba3VVYbJjYyB80WpAAA/t8ipc0/c1kh3Fitu1QSllZn9Q4YYG3b0CHfYDkPu0P8EB27ro4cJmNMCTf5RECE2LBtD3OL9jF4wIzy8DyaDRPe8h6yT/LAH3rdcwmPQV03BrLtICAw0TvJ8QAAAA==",
+    "credit": {
+      "author": "Daniel Lu",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ponte_Vecchio_at_sunset_from_Piazzale_Michelangelo_Florence_2023_dllu.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "ciudades-florencia-arno.jpg",
+      "format": "jpeg",
+      "width": 11514,
+      "height": 8567,
+      "bytes": 26136573,
+      "sha256": "6a4f00517f201a2ca3b14695cf195e900df49d90dd3ca1a22d06eededaeedf62",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Ponte_Vecchio_at_sunset_from_Piazzale_Michelangelo_Florence_2023_dllu.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "ciudades-praga-moldava",
+    "path": "viajes/ciudades-praga-moldava.1c454f26",
+    "width": 1600,
+    "height": 1067,
+    "widths": [640, 1024, 1600],
+    "alt": "El río Moldava atravesando Praga, con varios puentes, árboles otoñales y edificios históricos en las orillas.",
+    "caption": "El Moldava y sus puentes en Praga.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "placeholder": "data:image/webp;base64,UklGRqwAAABXRUJQVlA4IKAAAACwBACdASoYABAAPt1apkyopSOiMAgBEBuJZACdMoM6D8AboAfiqrGPggqUnJMAAP7V4OQyasAUw1Pe5TbO/UXLICvw5jJ/G62P2LNa2ChNVeTkyb6J3uR7RJSFWZHMETjbDsoDb/nITh5MgO0/YyhmW/HAsa2CxvnYTYxdWoxXto+Uh8ZN4hwQ6LiYNn69pqiaIck2o9/9gD1oqFksKHQA",
+    "credit": {
+      "author": "Dmitry A. Mottl",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vltava_river_in_Prague.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "ciudades-praga-moldava.jpg",
+      "format": "jpeg",
+      "width": 5419,
+      "height": 3613,
+      "bytes": 7074054,
+      "sha256": "8cd0e6595f18bbf4c60277752f257fdc8cd873aa3cc85120251a0b2c8c8f1837",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Vltava_river_in_Prague.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "ciudades-oporto-ribeira",
+    "path": "viajes/ciudades-oporto-ribeira.f2fe2693",
+    "width": 1600,
+    "height": 1068,
+    "widths": [640, 1024, 1600],
+    "alt": "Barcos rabelos amarrados en el Duero con las fachadas de colores de la Ribeira de Oporto al fondo.",
+    "caption": "Barcos rabelos frente a la Ribeira de Oporto.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.45
+    },
+    "placeholder": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAACQBACdASoYABAAPt1cpkyopSOiMAgBEBuJQBOmUGPhz/gPJ//XdltBo/jqVVAA/tUFvVdHsNDu/SAxNHHjauIUQAcNiCiG8s1FFqNhfmIjaOH2rV/UBcGHn89emZcMu0mDd6fyQRgYctHux7n+9OW1Ic6L3tjlhXQankH2Pa3hXisASUpHQpdO28AAAA==",
+    "credit": {
+      "author": "Jakub Hałun",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rabelo_boats_and_Ribeira_seen_from_Cais_de_Gaia,_20250605_1623_9879.jpg",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+    },
+    "original": {
+      "file": "ciudades-oporto-ribeira.jpg",
+      "format": "jpeg",
+      "width": 5920,
+      "height": 3951,
+      "bytes": 19449809,
+      "sha256": "e8c6beb6c74cf5c7719aa96cafae06dacc4653f25b82120f9a5d146889c1bcd9",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/21/Rabelo_boats_and_Ribeira_seen_from_Cais_de_Gaia%2C_20250605_1623_9879.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "motor-stelvio-bormio",
+    "path": "motor/motor-stelvio-bormio.e245c382",
+    "width": 2400,
+    "height": 1333,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Carretera de montaña serpenteando por la ladera del paso del Stelvio entre cumbres con nieve.",
+    "caption": "La carretera del paso del Stelvio entre cumbres nevadas.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.6
+    },
+    "placeholder": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAAAQBACdASoYAA0APt1apkyopSOiMAgBEBuJYgCdACIKnrEwQ2M2fXbOAAD49jpSwXqOSUcpdqbwkhFyBGI+gSdRQZV62PydQ8myPeKx3eR6w4/TnWinbYlSb9Z2xh/f1HJQpqjqik4rnNRaBQJZZ/lHXVfiBLyalqqP0qdMiPddcBwycWPiPGRYweHTuQ0QAAA=",
+    "credit": {
+      "author": "kallerna",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Stelvio_Pass_Bormio_side_2.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "motor-stelvio-bormio.jpg",
+      "format": "jpeg",
+      "width": 7200,
+      "height": 4000,
+      "bytes": 14085014,
+      "sha256": "bc0c0f9d7d768ef4d7b8c78658effb78c13d747cedf97ab706220d502f225274",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/92/Stelvio_Pass_Bormio_side_2.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "motor-stelvio-curvas",
+    "path": "motor/motor-stelvio-curvas.52ffda1a",
+    "width": 1600,
+    "height": 962,
+    "widths": [640, 1024, 1600],
+    "alt": "Sucesión de curvas de herradura en una ladera verde del paso del Stelvio.",
+    "caption": "Curvas de herradura del paso del Stelvio.",
+    "focal": {
+      "x": 0.6,
+      "y": 0.55
+    },
+    "placeholder": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAAAwBACdASoYAA4APt1cpkyopSOiMAgBEBuJYwDCgywTnwv36mp4jSFXbsAA/iam+ULT0S+qOyKsTLlcUwA6D5EBJOhOk0AbDc3ZjDMBQ3wkZZCfCMibNlpx92J8Zjn6S0gQAfwFuDDRhoy1te95SmtZF2zGzdPt10/2DC9kA5GUXcw8qbOESxXKlE8UZokwzAbKEwAA",
+    "credit": {
+      "author": "kallerna",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Stelvio_Pass_Bormio_side_1.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "motor-stelvio-curvas.jpg",
+      "format": "jpeg",
+      "width": 5230,
+      "height": 3145,
+      "bytes": 9025085,
+      "sha256": "2635fa4165c6c796d5d36dd829b7ed241a43ad5a6a86805f537c2cd49f62bce5",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Stelvio_Pass_Bormio_side_1.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "motor-transfagarasan",
+    "path": "motor/motor-transfagarasan.c011a825",
+    "width": 1600,
+    "height": 1067,
+    "widths": [640, 1024, 1600],
+    "alt": "Carretera Transfăgărășan trazando curvas cerradas por un valle de montaña verde.",
+    "caption": "La Transfăgărășan, en los montes Făgăraș (Rumanía).",
+    "focal": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "placeholder": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAADQAwCdASoYABAAPt1apkyopSOiMAgBEBuJQBdgAgt29wl09IG0gLAA/uTujsLG4OuVZco5p4TlYAIqDPC87GIgmQZFrc8LDpjWGpaCa5OFh3G75NxI04ml/iw2Bn75zpEkTGnWU4GlXYp1co4mop0meBI1WQAA",
+    "credit": {
+      "author": "Pudelek",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Transf%C4%83g%C4%83r%C4%83%C8%99an_road_(by_Pudelek)_01.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "motor-transfagarasan.jpg",
+      "format": "jpeg",
+      "width": 3056,
+      "height": 2038,
+      "bytes": 13113914,
+      "sha256": "25b8dcd0febb034d0ea0efedccec9291a207fd35cf769c3d433148358957ed46",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Transf%C4%83g%C4%83r%C4%83%C8%99an_road_%28by_Pudelek%29_01.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "motor-moto-trail",
+    "path": "motor/motor-moto-trail.1bfef2ba",
+    "width": 2400,
+    "height": 1800,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Moto trail gris de perfil, aparcada sobre hierba.",
+    "caption": "Una moto trail de turismo.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "placeholder": "data:image/webp;base64,UklGRsgAAABXRUJQVlA4ILwAAADwBACdASoYABIAPt1iq08opSOiKAqpEBuJaCd/kWUPcfoBjnRP6//dPQi3zybRlcAA/rVEcEQFNayvAEmihBuaGq1RDIGeoVO4094sFDYjXymokqPJCv/hG8m8PLNE2A/mww/XmjrBt8AsVo1fc2/pI9vdhiXcBazB1kuUPEZX8N1IjJMz6FjxkWkVm4hMwOjnUdJx3mrn+reqTrHFJ2vnyWUJ78NtsnUldTc5XX05wVkJ2CwRz1sZxdIAAA==",
+    "credit": {
+      "author": "CheminduCret",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Moto_Guzzi_Stelvio_2024_left.jpg",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+    },
+    "original": {
+      "file": "motor-moto-trail.jpg",
+      "format": "jpeg",
+      "width": 4032,
+      "height": 3024,
+      "bytes": 2520872,
+      "sha256": "26e3c995b09c3c5cd5a67e8d8fcac3bc99a1d9c46c3d537642dbf2b66bbd8ec4",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Moto_Guzzi_Stelvio_2024_left.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "motor-moto-cuadro",
+    "path": "motor/motor-moto-cuadro.f72f482f",
+    "width": 1600,
+    "height": 1200,
+    "widths": [640, 1024, 1600],
+    "alt": "Puesto de conducción de una moto: manillar, instrumentación digital y cúpula vistos desde el asiento.",
+    "caption": "El puesto de conducción de una moto de turismo.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "placeholder": "data:image/webp;base64,UklGRt4AAABXRUJQVlA4INIAAACQBQCdASoYABIAPt1kqk+opaOiKAqpEBuJYgC1GtzNUAWHTEkpmpsOrhEVucbyTfaDjljYAAD+UdgHtQWhb/o7vYJEfqx19qLC0Hn0KTgCVBj8/BjqaDd7trf8TvGMrkL9B4w5mn6qn53sYbqq1H70EI4uxwyC6JmgztODo82oKmo8pxT7a1StMMYjbabBWCvOr7NMpqhze/2e0n3ueURRMwZgeZ5KA8DZpP4sTq/MEltWM8hkmZHfFyZkd+iqx3yZAnQv054y4Ajj0Q58tyh9QAA=",
+    "credit": {
+      "author": "CheminduCret",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Moto_Guzzi_Stelvio_2024_Cockpit1.jpg",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+    },
+    "original": {
+      "file": "motor-moto-cuadro.jpg",
+      "format": "jpeg",
+      "width": 4032,
+      "height": 3024,
+      "bytes": 3077189,
+      "sha256": "bc4416152a795e7a38d871243bd05e50eceebe5d4a484aa2b70448f5bbefcae8",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/42/Moto_Guzzi_Stelvio_2024_Cockpit1.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "motor-moto-costa",
+    "path": "motor/motor-moto-costa.cf211986",
+    "width": 2400,
+    "height": 1536,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Moto de turismo deportiva aparcada junto al mar, con la costa y el cielo despejado al fondo.",
+    "caption": "Una moto de turismo junto a la costa.",
+    "focal": {
+      "x": 0.38,
+      "y": 0.6
+    },
+    "placeholder": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAABwBACdASoYAA8APt1apkyopSOiMAgBEBuJZgCdEf/jeAHngwb9B8g5QLaDQAD+jhEuV5ZYclTtklkcbmU9/D6eSt1KP7ouE5U9XboyZ71+iStTOFPspWU5RVroXK0gpsOET7wJzZHwslmg0uTj4fm9xKaSs0IRj4NDM/2dzvHgHMFyipgG74Hxtk7EhuOceUqhWj5imjsZmZQ8OgA=",
+    "credit": {
+      "author": "Laitche",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:YAMAHA_MT-09_Tracer,_photographed_in_Takurazaki,_October_2024_-_7956.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "motor-moto-costa.jpg",
+      "format": "jpeg",
+      "width": 6720,
+      "height": 4300,
+      "bytes": 20459601,
+      "sha256": "79dfbe462ce5bfc7ff77a81f2c3089157c0b751dd7030a23990f71fed4d6b5a3",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/YAMAHA_MT-09_Tracer%2C_photographed_in_Takurazaki%2C_October_2024_-_7956.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "naturaleza-fanal-niebla",
+    "path": "experiencias/naturaleza-fanal-niebla.2b26686d",
+    "width": 2400,
+    "height": 1600,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Viejos laureles de troncos retorcidos sobre una pradera envuelta en niebla.",
+    "caption": "La laurisilva de Fanal, en Madeira, con niebla.",
+    "focal": {
+      "x": 0.55,
+      "y": 0.45
+    },
+    "placeholder": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAADwAwCdASoYABAAPt1ep00opSOiMAgBEBuJQBOgBDnGll05V6X/Xg9AAP7vxCL6nh4d/hckpX7h9fLKQPYixcriyVIA1iVdam0TG6sEtz76h5uP+shdgj089Guqkqmip3da+19tZQAAAA==",
+    "credit": {
+      "author": "Dietmar Rabich",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fanal_(Madeira,_Portugal),_Lorbeerwald_--_2025_--_1532.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "naturaleza-fanal-niebla.jpg",
+      "format": "jpeg",
+      "width": 6610,
+      "height": 4407,
+      "bytes": 12965263,
+      "sha256": "1ea4265956f0fdb8bea0dc2d35644fb410d68f1906d3db15ad2fb3773d6f8665",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Fanal_%28Madeira%2C_Portugal%29%2C_Lorbeerwald_--_2025_--_1532.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "naturaleza-niebla-bosque",
+    "path": "experiencias/naturaleza-niebla-bosque.8d532328",
+    "width": 1600,
+    "height": 1067,
+    "widths": [640, 1024, 1600],
+    "alt": "Siluetas de árboles entre la niebla con el sol bajo atravesándola.",
+    "caption": "Niebla de noviembre en un bosque de Suiza.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "placeholder": "data:image/webp;base64,UklGRrAAAABXRUJQVlA4IKQAAABwBACdASoYABAAPt1apkyopSOiMAgBEBuJZACdMoADRdyDaz4ty0QVCYG76AD+kbZs8UjPUtOmoWWSDXHF8OUT177q6EZWKWdtKkLHffCLSjhUX6wtKd7gJlUqld925l511/iSBiwsFvJvX942s2mppYGO73sA4d2TkOT0wWU8zIc2Udn2pNkDBhDsHmkyTr9f7bwr/0UkJrTPOJe5KoPKR+gAAA==",
+    "credit": {
+      "author": "Kuhnmi",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Baumsilhouetten_am_Uetliberg_mit_Novembernebel_und_Sonnenstrahlen.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+    },
+    "original": {
+      "file": "naturaleza-niebla-bosque.jpg",
+      "format": "jpeg",
+      "width": 7411,
+      "height": 4941,
+      "bytes": 4305161,
+      "sha256": "bfb6cbb7b9747a81bc1ca8bde69465775cc9b718eeed679f0d9af30676983b35",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Baumsilhouetten_am_Uetliberg_mit_Novembernebel_und_Sonnenstrahlen.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "paisaje-seceda-panorama",
+    "path": "fotografia/paisaje-seceda-panorama.ed26d3fe",
+    "width": 2400,
+    "height": 889,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Panorámica de los Dolomitas desde la Seceda, con cumbres rocosas cubiertas de nieve y nubes.",
+    "caption": "Los Dolomitas de Val Gardena desde la Seceda.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.4
+    },
+    "placeholder": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAACwAwCdASoYAAkAPt1cpkyopSOiMAgBEBuJZwAASc0rW/eeo7AHAAD975/FX4i/au060lxoTpGvNVKcqRcQtB3ZhPTvyhQKGnJZ0Jd5is643UMjzbzTG3SgTiPNRiLr3lqzoh9X4WAFHvwendgAAA==",
+    "credit": {
+      "author": "Wolfgang Moroder",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cr%C3%ABpes_de_Gherd%C3%ABina_da_Sec%C3%ABda_n%C3%ABif_d%27agost.jpg",
+      "license": "CC-BY-SA-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+    },
+    "original": {
+      "file": "paisaje-seceda-panorama.jpg",
+      "format": "jpeg",
+      "width": 17908,
+      "height": 6630,
+      "bytes": 68100226,
+      "sha256": "b3ff45f3a79ccef9d9d847b81acfab70327a17e68a721a8d8effd38df88e4248",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Cr%C3%ABpes_de_Gherd%C3%ABina_da_Sec%C3%ABda_n%C3%ABif_d%27agost.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "paisaje-sella-frea",
+    "path": "fotografia/paisaje-sella-frea.effb777f",
+    "width": 2400,
+    "height": 1273,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Paredes de roca del grupo del Sella sobre praderas verdes junto al paso de Gardena.",
+    "caption": "El grupo del Sella sobre el paso de Gardena.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.35
+    },
+    "placeholder": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAABQBACdASoYAA0APt1cpkyopSOiMAgBEBuJbACdIExCvF41xSZAhHUzRRowAP3OrwbtLJfRarTRWZrjI3oUrouaRR/h292KIwdDSDv7dXkAIrIVBBrsp3q2/w79LLP9e3huwmDvyai9NvgAiT1fsGtWp6jlvgN1iXSGh+MWuffKY4W1nc4EAAAA",
+    "credit": {
+      "author": "Wolfgang Moroder",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Frea_pass_Sella_group_Pisciadu_Dolomites_South_Tyrol.jpg",
+      "license": "CC-BY-SA-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+    },
+    "original": {
+      "file": "paisaje-sella-frea.jpg",
+      "format": "jpeg",
+      "width": 13500,
+      "height": 7163,
+      "bytes": 81767512,
+      "sha256": "4ce0aa5892f411ba1db2fe261e6fcb1be439cbb4c0fad0516c3fc9b69574c4ca",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Frea_pass_Sella_group_Pisciadu_Dolomites_South_Tyrol.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "paisaje-hora-azul-dique",
+    "path": "fotografia/paisaje-hora-azul-dique.1dbd0044",
+    "width": 2400,
+    "height": 1502,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Dique de piedra adentrándose en un mar en calma bajo un cielo azul y rosado del crepúsculo.",
+    "caption": "Un dique en la playa del Lazaret, en Sète, al anochecer.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.55
+    },
+    "placeholder": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAABwBACdASoYAA8APt1ep00opSOiMAgBEBuJQBdiP/wHleBHri12VaTZ7rFA1AD+8g+ZpiohPUBrYN0RJjZx3Cf9om9zXnkU6wt1gDlnggqI7BLtOlWVdD7WxQfrN+wg1RMOOv67yACHwI+hcLoaM62FxCYAAA==",
+    "credit": {
+      "author": "Christian Ferrer",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Dike_-_Lazaret_01.jpg",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+    },
+    "original": {
+      "file": "paisaje-hora-azul-dique.jpg",
+      "format": "jpeg",
+      "width": 7360,
+      "height": 4605,
+      "bytes": 20918126,
+      "sha256": "f7cd22a615336038539083a9dcf46b6780effc321a14798e182ec766d8086e29",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Dike_-_Lazaret_01.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "tecnologia-codigo-pantalla",
+    "path": "tecnologia/tecnologia-codigo-pantalla.1c5ad899",
+    "width": 2400,
+    "height": 1600,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Pantalla con código CSS en un editor de texto de fondo oscuro.",
+    "caption": "Código en un editor.",
+    "focal": {
+      "x": 0.45,
+      "y": 0.5
+    },
+    "placeholder": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAAAwBACdASoYABAAPt1ep00opSOiMAgBEBuJZwDM0CGunq2IsmvIKrTsAAAA/uWQTB9KRh6yMg1HHAGUANZj0f+N5Ef6YbtrRp4X/X0O/tOlfoUAo6w/vkcAeiGkAA==",
+    "credit": {
+      "author": "Sai Kiran Anagani _imkiran",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:CSS_code_on_a_screen_(Unsplash).jpg",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+    },
+    "original": {
+      "file": "tecnologia-codigo-pantalla.jpg",
+      "format": "jpeg",
+      "width": 6000,
+      "height": 4000,
+      "bytes": 5000230,
+      "sha256": "c1a1e58a0469d3c6aa6bd200a5eea1624730de6edbaf71d88f1bf75ba3ab5b1b",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3d/CSS_code_on_a_screen_%28Unsplash%29.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "tecnologia-teclado",
+    "path": "tecnologia/tecnologia-teclado.fb939a79",
+    "width": 2400,
+    "height": 1600,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Teclas negras de un teclado de portátil en primer plano.",
+    "caption": "El teclado de un portátil.",
+    "focal": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "placeholder": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQAwCdASoYABAAPt1apkyopSOiMAgBEBuJaTuAAKjrk22CoAD+8AIdTQmDyp++K5FSaBrMg0V/lYleCgTwU74sDOhWs53ec/LaiD0VEKEC9RWDW1yMtiofTGbCfJ8X94x6Z15tL+58vybzhaFAAA==",
+    "credit": {
+      "author": "MichaelMaggs",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:QWERTY_keyboard.jpg",
+      "license": "CC-BY-SA-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+    },
+    "original": {
+      "file": "tecnologia-teclado.jpg",
+      "format": "jpeg",
+      "width": 3504,
+      "height": 2336,
+      "bytes": 3631173,
+      "sha256": "da65933afd1d582e0ffe7fe0f8237ad38540b4ce22a91c2870a9c398d6d073d7",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/QWERTY_keyboard.jpg"
+    },
+    "demo": true
+  }
+]

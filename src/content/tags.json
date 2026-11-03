@@ -1,0 +1,19 @@
+[
+  { "id": "mediterraneo", "slug": "mediterraneo", "label": "Mediterráneo" },
+  { "id": "costa", "slug": "costa", "label": "Costa" },
+  { "id": "ciudades", "slug": "ciudades", "label": "Ciudades" },
+  { "id": "europa", "slug": "europa", "label": "Europa" },
+  { "id": "montana", "slug": "montana", "label": "Montaña" },
+  { "id": "puertos-de-montana", "slug": "puertos-de-montana", "label": "Puertos de montaña" },
+  { "id": "motocicletas", "slug": "motocicletas", "label": "Motocicletas" },
+  { "id": "rutas", "slug": "rutas", "label": "Rutas" },
+  { "id": "naturaleza", "slug": "naturaleza", "label": "Naturaleza" },
+  { "id": "paisaje", "slug": "paisaje", "label": "Paisaje" },
+  { "id": "tecnica-fotografica", "slug": "tecnica-fotografica", "label": "Técnica fotográfica" },
+  { "id": "equipaje", "slug": "equipaje", "label": "Equipaje" },
+  { "id": "angular", "slug": "angular", "label": "Angular" },
+  { "id": "typescript", "slug": "typescript", "label": "TypeScript" },
+  { "id": "ssr", "slug": "ssr", "label": "SSR" },
+  { "id": "gsap", "slug": "gsap", "label": "GSAP" },
+  { "id": "arquitectura", "slug": "arquitectura", "label": "Arquitectura de software" }
+]

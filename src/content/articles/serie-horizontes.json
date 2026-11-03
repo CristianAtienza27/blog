@@ -1,0 +1,60 @@
+{
+  "slug": "serie-horizontes",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Ensayo fotográfico de demostración.</em> Esta serie prueba la composición de imágenes panorámicas a todo el ancho de la pantalla, galerías y pausas entre bloques. Las fotografías son de sus autores, con licencia libre; sus créditos aparecen junto a cada imagen.</p>"
+    },
+    {
+      "type": "chapter",
+      "id": "mediterraneo",
+      "number": 1,
+      "title": "Mediterráneo",
+      "kicker": "La línea del agua"
+    },
+    {
+      "type": "image",
+      "media": "viajes-alicante-panorama",
+      "layout": "full",
+      "caption": "Alicante y su bahía desde el castillo de Santa Bárbara."
+    },
+    {
+      "type": "text",
+      "html": "<p>En una panorámica, el horizonte deja de ser un borde y pasa a ser el tema. La ciudad, el puerto y la costa se leen de izquierda a derecha, como una frase larga. Por eso este formato pide mirarse sin prisa, recorriendo la imagen igual que se recorre un paisaje desde un mirador.</p>"
+    },
+    {
+      "type": "gallery",
+      "gallery": "mediterraneo"
+    },
+    {
+      "type": "divider",
+      "variant": "pause"
+    },
+    {
+      "type": "chapter",
+      "id": "alpes",
+      "number": 2,
+      "title": "Alpes",
+      "kicker": "El horizonte en vertical"
+    },
+    {
+      "type": "text",
+      "html": "<p>En alta montaña el horizonte se rompe. Las cumbres de los Dolomitas, formadas por roca dolomítica clara, cambian de color con la luz del día y con la nieve. Desde la Seceda, por encima de los 2500 metros, la línea de picos ocupa todo el encuadre.</p>"
+    },
+    {
+      "type": "image",
+      "media": "paisaje-sella-frea",
+      "layout": "full",
+      "caption": "El grupo del Sella y el paso de Gardena, en los Dolomitas."
+    },
+    {
+      "type": "quote",
+      "text": "Una panorámica no se mira: se recorre.",
+      "variant": "pull"
+    },
+    {
+      "type": "text",
+      "html": "<p>La serie alterna mar y montaña para comprobar cómo responde la maqueta a imágenes muy distintas: horizontes limpios y casi vacíos frente a perfiles recortados y llenos de detalle.</p>"
+    }
+  ]
+}

@@ -39,6 +39,9 @@ testem.log
 /typings
 __screenshots__/
 
+# Fotografías originales, manifiesto privado (GPS) y pruebas del procesador
+/media-src/
+
 # Environment and secrets
 .env
 .env.*

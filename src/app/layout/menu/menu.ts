@@ -7,6 +7,7 @@ import {
   PLATFORM_ID,
   computed,
   effect,
+  resource,
   inject,
   signal,
   untracked,
@@ -22,11 +23,14 @@ import {
   RouterLinkActive,
 } from '@angular/router';
 import { filter } from 'rxjs';
+import type { Media as MediaAsset } from '../../content/models';
+import { MediaRepository } from '../../content/repositories/media-repository';
 import { MenuAnimator } from '../../motion/menu-animator';
 import { Link } from '../../shared/ui/link/link';
 import { Media } from '../../shared/ui/media/media';
+import { creditLine } from '../../shared/ui/media/media-credit';
 import { ThemeToggle } from '../../shared/ui/theme-toggle/theme-toggle';
-import { SECONDARY_PAGES, SECTIONS, SectionId } from '../navigation';
+import { NavSection, SECONDARY_PAGES, SECTIONS, SectionId } from '../navigation';
 import { MenuState } from './menu-state';
 
 /**
@@ -52,6 +56,21 @@ export class Menu {
   protected readonly previewSection = computed(
     () => SECTIONS.find((section) => section.id === this.preview()) ?? SECTIONS[0],
   );
+
+  /**
+   * Fotografías de vista previa: se piden al repositorio la primera vez que se abre
+   * el menú (nunca en el servidor ni en la carga inicial).
+   */
+  private readonly mediaRepository = inject(MediaRepository);
+  private readonly requested = signal(false);
+  private readonly previews = resource({
+    params: () => (this.requested() ? SECTIONS.map((section) => section.preview) : undefined),
+    loader: ({ params }) => this.mediaRepository.mediaList(params),
+  });
+  protected readonly activeCredit = computed(() => {
+    const media = this.mediaFor(this.previewSection());
+    return media ? creditLine(media.credit) : null;
+  });
 
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
   private readonly router = inject(Router);
@@ -106,6 +125,10 @@ export class Menu {
     if (current === path) this.state.hide();
   }
 
+  protected mediaFor(section: NavSection): MediaAsset | undefined {
+    return this.previews.value()?.find((media) => media.id === section.preview);
+  }
+
   protected pad(index: number): string {
     return String(index).padStart(2, '0');
   }
@@ -119,6 +142,7 @@ export class Menu {
     if (!this.isBrowser) return;
     const dialog = this.dialog().nativeElement;
     const run = ++this.run;
+    this.requested.set(true);
 
     if (!dialog.open) {
       await this.animator.prepare(dialog);

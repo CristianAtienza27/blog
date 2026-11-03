@@ -1,6 +1,7 @@
+import type { SectionId } from '../content/models/taxonomy';
 import { MediaTone } from '../shared/ui/media/media';
 
-export type SectionId = 'viajes' | 'fotografia' | 'motor' | 'experiencias' | 'tecnologia';
+export type { SectionId };
 
 /** Contenido editorial de una página (provisional hasta la fase 4). */
 export interface PageCopy {
@@ -16,6 +17,8 @@ export interface NavSection extends PageCopy {
   label: string;
   path: string;
   teaser: string;
+  /** Fotografía de la vista previa del menú (id de media.json). */
+  preview: string;
 }
 
 export interface NavPage extends PageCopy {
@@ -34,6 +37,7 @@ export const SECTIONS: readonly NavSection[] = [
     label: 'Viajes',
     path: '/viajes',
     teaser: 'Rutas y relatos',
+    preview: 'viajes-cadaques-bahia',
     heading: 'Carreteras, mapas y',
     emphasis: 'lugares lejanos',
     lead: 'Relatos de viaje en primera persona: rutas, ciudades y paisajes contados despacio.',
@@ -45,6 +49,7 @@ export const SECTIONS: readonly NavSection[] = [
     label: 'Fotografía',
     path: '/fotografia',
     teaser: 'Series y procesos',
+    preview: 'paisaje-seceda-panorama',
     heading: 'La luz como',
     emphasis: 'materia prima',
     lead: 'Series fotográficas, procesos y la historia que hay detrás de cada imagen.',
@@ -56,6 +61,7 @@ export const SECTIONS: readonly NavSection[] = [
     label: 'Motor',
     path: '/motor',
     teaser: 'Coches y carreteras',
+    preview: 'motor-stelvio-bormio',
     heading: 'Curvas, asfalto y',
     emphasis: 'máquinas',
     lead: 'Coches, puertos de montaña y la cultura del motor vista desde la carretera.',
@@ -67,6 +73,7 @@ export const SECTIONS: readonly NavSection[] = [
     label: 'Experiencias',
     path: '/experiencias',
     teaser: 'Momentos y encuentros',
+    preview: 'naturaleza-fanal-niebla',
     heading: 'Lo que ocurre',
     emphasis: 'entre un lugar y otro',
     lead: 'Momentos, encuentros y aprendizajes que no caben en una guía de viaje.',
@@ -78,6 +85,7 @@ export const SECTIONS: readonly NavSection[] = [
     label: 'Tecnología',
     path: '/tecnologia',
     teaser: 'Desarrollo y notas',
+    preview: 'tecnologia-codigo-pantalla',
     heading: 'Construir software',
     emphasis: 'con oficio',
     lead: 'Desarrollo web, arquitectura y herramientas: notas de un desarrollador.',

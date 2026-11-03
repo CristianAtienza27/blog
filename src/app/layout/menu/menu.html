@@ -44,20 +44,54 @@
       </ol>
     </nav>
 
-    <div class="menu__preview" aria-hidden="true" data-menu-preview>
-      @for (section of sections; track section.id) {
-        <app-media
-          class="menu__frame"
-          [class.is-active]="preview() === section.id"
-          fill
-          [tone]="section.tone"
-          label=""
-        />
-      }
-      <span class="menu__caption t-meta">
-        {{ pad(previewSection().index) }} · {{ previewSection().label }} ·
-        {{ previewSection().teaser }}
-      </span>
+    <div class="menu__preview" data-menu-preview>
+      <div class="menu__frames" aria-hidden="true">
+        @for (section of sections; track section.id) {
+          @if (mediaFor(section); as media) {
+            <app-media
+              class="menu__frame"
+              [class.is-active]="preview() === section.id"
+              fill
+              [image]="media"
+              alt=""
+              sizes="(width >= 1200px) 34vw, 40vw"
+              [showCredit]="false"
+            />
+          } @else {
+            <app-media
+              class="menu__frame"
+              [class.is-active]="preview() === section.id"
+              fill
+              [tone]="section.tone"
+              label=""
+            />
+          }
+        }
+      </div>
+      <p class="menu__caption t-meta">
+        <span aria-hidden="true"
+          >{{ pad(previewSection().index) }} · {{ previewSection().label }} ·
+          {{ previewSection().teaser }}</span
+        >
+        @if (activeCredit(); as c) {
+          <span class="menu__credit"
+            >Foto: {{ c.author }}
+            @if (c.source) {
+              · {{ c.source }}
+            }
+            @if (c.license) {
+              ·
+              @if (c.licenseUrl) {
+                <a [href]="c.licenseUrl" rel="license noopener" target="_blank" tabindex="-1">{{
+                  c.license
+                }}</a>
+              } @else {
+                {{ c.license }}
+              }
+            }
+          </span>
+        }
+      </p>
     </div>
 
     <div class="menu__bottom" data-menu-fade>

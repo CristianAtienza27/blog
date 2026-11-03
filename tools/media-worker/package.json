@@ -1,0 +1,22 @@
+{
+  "name": "media-worker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Procesador de fotografías de la revista (prueba de concepto). Se ejecuta solo dentro de su contenedor Docker.",
+  "type": "module",
+  "engines": {
+    "node": ">=26.13.0"
+  },
+  "scripts": {
+    "codecs": "node src/check-codecs.mjs",
+    "poc": "node src/poc.mjs",
+    "test:sintetico": "node src/synthetic.mjs"
+  },
+  "dependencies": {
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "node-addon-api": "8.9.2",
+    "node-gyp": "13.1.0"
+  }
+}

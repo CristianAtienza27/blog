@@ -1,0 +1,13 @@
+[
+  {
+    "id": "revista-cristian-atienza",
+    "slug": "revista-cristian-atienza",
+    "name": "Revista Cristian Atienza",
+    "summary": "Esta revista digital: Angular 22 con renderizado híbrido, un sistema de diseño editorial propio y animaciones con GSAP.",
+    "status": "activo",
+    "year": 2026,
+    "stack": ["angular", "typescript", "ssr", "gsap"],
+    "cover": "tecnologia-codigo-pantalla",
+    "demo": true
+  }
+]

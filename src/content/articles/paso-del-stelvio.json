@@ -1,0 +1,100 @@
+{
+  "slug": "paso-del-stelvio",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Ficha de demostración.</em> Este artículo prueba la composición de una ficha técnica con mapa, datos y galería. Los datos son de referencia y están redondeados; no describe un viaje realizado.</p><p>El <strong>paso del Stelvio</strong> une el valle de Venosta, en el Tirol del Sur, con Bormio, en la Valtellina lombarda. Con sus 2757 metros es uno de los puertos asfaltados más altos de los Alpes, y su vertiente nororiental es famosa por las curvas de herradura numeradas una a una.</p>"
+    },
+    {
+      "type": "specs",
+      "title": "Datos de referencia",
+      "items": [
+        {
+          "label": "Altitud máxima",
+          "value": "2757",
+          "unit": "m"
+        },
+        {
+          "label": "Curvas numeradas (vertiente de Prato)",
+          "value": "48"
+        },
+        {
+          "label": "Carretera",
+          "value": "SS38"
+        },
+        {
+          "label": "Construcción",
+          "value": "1820–1825"
+        },
+        {
+          "label": "Prato allo Stelvio – cima",
+          "value": "25",
+          "unit": "km aprox."
+        },
+        {
+          "label": "Cima – Bormio",
+          "value": "21",
+          "unit": "km aprox."
+        },
+        {
+          "label": "Apertura habitual",
+          "value": "De finales de primavera a otoño"
+        }
+      ],
+      "note": "Datos redondeados. La apertura depende de la nieve: conviene consultar el estado de la carretera antes de viajar."
+    },
+    {
+      "type": "map",
+      "trip": "stelvio",
+      "route": true,
+      "caption": "Travesía de ejemplo de norte a sur por la SS38."
+    },
+    {
+      "type": "image",
+      "media": "motor-stelvio-curvas",
+      "layout": "wide",
+      "caption": "Curvas de herradura en el Stelvio."
+    },
+    {
+      "type": "chapter",
+      "id": "vertiente-norte",
+      "number": 1,
+      "title": "La vertiente de Prato",
+      "kicker": "Curva a curva"
+    },
+    {
+      "type": "text",
+      "html": "<p>Desde Prato allo Stelvio la carretera sube por el valle de Trafoi y, en el tramo final, encadena las curvas de herradura que han hecho célebre el puerto. Cada una lleva un cartel con su número, de modo que el ascenso funciona casi como una cuenta atrás.</p><p>El trazado fue construido en la primera mitad del siglo XIX, cuando la región pertenecía al Imperio austríaco, para comunicar Lombardía con el Tirol. Su anchura es limitada y en verano comparte espacio con ciclistas, motos y autobuses.</p>"
+    },
+    {
+      "type": "chapter",
+      "id": "vertiente-sur",
+      "number": 2,
+      "title": "Hacia Bormio",
+      "kicker": "Túneles y galerías"
+    },
+    {
+      "type": "text",
+      "html": "<p>La bajada hacia Bormio tiene otro carácter: curvas más abiertas, túneles excavados en la roca y galerías que protegen la calzada de los aludes. Las vistas se abren hacia los valles y glaciares del parque nacional del Stelvio.</p>"
+    },
+    {
+      "type": "divider",
+      "variant": "line"
+    },
+    {
+      "type": "chapter",
+      "id": "otros-puertos",
+      "number": 3,
+      "title": "Otros puertos para comparar",
+      "kicker": "Tres trazados de alta montaña"
+    },
+    {
+      "type": "text",
+      "html": "<p>El <strong>paso de Gardena</strong>, en los Dolomitas, alcanza 2121 metros bajo las paredes del grupo del Sella. La <strong>Transfăgărășan</strong>, en Rumanía, cruza los montes Făgăraș y llega a unos 2040 metros junto al lago Bâlea; se construyó en la década de 1970 y solo abre durante unos meses al año.</p>"
+    },
+    {
+      "type": "gallery",
+      "gallery": "puertos-de-montana"
+    }
+  ]
+}

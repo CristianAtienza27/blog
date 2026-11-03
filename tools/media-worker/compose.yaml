@@ -1,0 +1,26 @@
+name: cristian-atienza-media
+
+services:
+  media-worker:
+    build: .
+    image: cristian-atienza/media-worker:poc
+    # Solo se montan datos; node_modules vive dentro de la imagen.
+    volumes:
+      # Originales, manifiesto privado y pruebas (fuera de Git).
+      - ../../media-src:/data
+      # Fotos propias pendientes de importar: solo lectura, nunca se modifican.
+      - ../../media-src/entrada:/data/entrada:ro
+      # Registros de imágenes (media.json) y contenido que decide los anchos.
+      - ../../src/content:/content
+      # Versiones públicas optimizadas.
+      - ../../public/media:/public-media
+
+  # Solo para la autoprueba: genera una HEIC (HEVC) sintética. Lleva x265; el worker no.
+  heic-fixture:
+    build:
+      context: .
+      dockerfile: test/heic-fixture.Dockerfile
+    image: cristian-atienza/media-worker:heic-fixture
+    profiles: [fixtures]
+    volumes:
+      - ../../media-src:/data

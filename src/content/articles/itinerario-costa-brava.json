@@ -1,0 +1,96 @@
+{
+  "slug": "itinerario-costa-brava",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Artículo de demostración.</em> Esta guía sirve para probar la composición de un itinerario: capítulos por etapa, mapa, galería y ficha de datos. Describe lugares reales, pero no relata un viaje realizado.</p><p>La Costa Brava ocupa el litoral de la provincia de Girona, desde Blanes hasta la frontera con Francia. Su nombre alude al relieve: acantilados, calas estrechas y pinares que bajan casi hasta el agua. El itinerario propuesto recorre cuatro paradas de sur a norte y puede hacerse en coche en varias jornadas tranquilas.</p>"
+    },
+    {
+      "type": "map",
+      "trip": "costa-brava",
+      "route": true,
+      "caption": "Recorrido de ejemplo: Tossa de Mar, Calella de Palafrugell, Begur y Cadaqués."
+    },
+    {
+      "type": "chapter",
+      "id": "tossa-de-mar",
+      "number": 1,
+      "title": "Tossa de Mar",
+      "kicker": "Murallas junto al mar"
+    },
+    {
+      "type": "text",
+      "html": "<p>Tossa conserva la <strong>Vila Vella</strong>, un recinto amurallado medieval con torres que se asoma directamente a la playa. Recorrer su perímetro permite entender cómo se defendían estas poblaciones costeras y ofrece una de las vistas más reconocibles de la costa.</p><p>Fuera de las murallas, el camino de ronda conecta calas pequeñas que solo se alcanzan a pie. Es una buena primera etapa para ajustar el ritmo del viaje: distancias cortas, mucho que mirar.</p>"
+    },
+    {
+      "type": "image",
+      "media": "viajes-tossa-vila-vella",
+      "layout": "wide",
+      "caption": "El castillo y la Vila Vella de Tossa de Mar con la primera luz del día."
+    },
+    {
+      "type": "chapter",
+      "id": "calella-de-palafrugell",
+      "number": 2,
+      "title": "Calella de Palafrugell",
+      "kicker": "Barcas, rocas y agua transparente"
+    },
+    {
+      "type": "text",
+      "html": "<p>Calella de Palafrugell mantiene la escala de un antiguo pueblo de pescadores: casas blancas, porches abiertos al mar y barcas varadas en la arena. A pocos minutos se encuentran los <strong>Jardines de Cap Roig</strong>, sobre un acantilado.</p><p>Las calas cercanas tienen fondos de roca y agua muy clara, ideales para fotografiar desde arriba a media mañana, cuando el sol ilumina el fondo sin sombras duras.</p>"
+    },
+    {
+      "type": "image",
+      "media": "viajes-calella-banyera",
+      "layout": "wide",
+      "caption": "Una cala de roca en Calella de Palafrugell, vista desde lo alto."
+    },
+    {
+      "type": "chapter",
+      "id": "begur",
+      "number": 3,
+      "title": "Begur",
+      "kicker": "Un castillo sobre la colina"
+    },
+    {
+      "type": "text",
+      "html": "<p>Begur se levanta en lo alto de una colina coronada por los restos de su castillo. Desde allí se ve buena parte de la costa del Baix Empordà. El municipio reúne varias calas conocidas, como <strong>Aiguablava</strong> o <strong>Sa Tuna</strong>, a las que se llega por carreteras estrechas y con aparcamiento limitado en temporada alta.</p><p>Es la etapa más corta del recorrido y conviene dedicarla a caminar: los senderos entre calas son tan interesantes como las propias playas.</p>"
+    },
+    {
+      "type": "quote",
+      "text": "En la Costa Brava, las distancias se miden mejor en calas que en kilómetros.",
+      "variant": "pull"
+    },
+    {
+      "type": "chapter",
+      "id": "cadaques",
+      "number": 4,
+      "title": "Cadaqués",
+      "kicker": "El extremo nororiental"
+    },
+    {
+      "type": "text",
+      "html": "<p>Cadaqués cierra el itinerario en la península del <strong>cabo de Creus</strong>, el punto más oriental de la península ibérica. La carretera de acceso atraviesa un paisaje de pizarra y matorral que anuncia el cambio de carácter de la costa.</p><p>El pueblo, de casas blancas alrededor de la iglesia de Santa María, ha atraído a pintores y escritores durante más de un siglo. En la cercana bahía de Portlligat se encuentra la casa-museo de Salvador Dalí.</p>"
+    },
+    {
+      "type": "gallery",
+      "gallery": "costa-brava"
+    },
+    {
+      "type": "divider",
+      "variant": "ornament"
+    },
+    {
+      "type": "specs",
+      "title": "Datos del itinerario",
+      "items": [
+        { "label": "Etapas", "value": "4" },
+        { "label": "Distancia total", "value": "117", "unit": "km" },
+        { "label": "Medio de transporte", "value": "Coche" },
+        { "label": "Duración sugerida", "value": "3 a 4", "unit": "días" },
+        { "label": "Época recomendada", "value": "Primavera y otoño" }
+      ],
+      "note": "Itinerario de ejemplo. Distancias aproximadas por carretera entre paradas."
+    }
+  ]
+}

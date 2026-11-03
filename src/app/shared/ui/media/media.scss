@@ -25,6 +25,20 @@ app-media {
       block-size: 100%;
       object-fit: cover;
     }
+
+    // <picture> optimizado: NgOptimizedImage (fill) posiciona el <img> sobre él.
+    > .media__picture {
+      position: absolute;
+      inset: 0;
+      display: block;
+    }
+  }
+
+  .media__credit a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
   }
 
   &[data-fill] .media {
