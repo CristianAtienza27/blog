@@ -46,6 +46,67 @@ describe('SeoService', () => {
     expect(tags.meta('robots')).toBeNull();
   });
 
+  it('artículo: imagen con medidas y texto alternativo, sección y etiquetas', () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: PUBLIC_SITE_URL, useValue: 'https://dominio.test' }],
+    });
+    const seo = TestBed.inject(SeoService);
+    seo.update(
+      {
+        title: 'Calas',
+        type: 'article',
+        image: '/media/viajes/cala-1600.webp',
+        imageAlt: 'Una cala',
+        imageWidth: 1600,
+        imageHeight: 1067,
+        article: { section: 'Viajes', tags: ['Costa', 'Mediterráneo'] },
+      },
+      '/viajes/calas',
+    );
+    const tags = head();
+    expect(tags.meta('og:type')).toBe('article');
+    expect(tags.meta('og:image')).toBe('https://dominio.test/media/viajes/cala-1600.webp');
+    expect(tags.meta('og:image:alt')).toBe('Una cala');
+    expect(tags.meta('og:image:width')).toBe('1600');
+    expect(tags.meta('og:image:height')).toBe('1067');
+    expect(tags.meta('twitter:card')).toBe('summary_large_image');
+    expect(tags.meta('twitter:image:alt')).toBe('Una cala');
+    expect(tags.meta('article:section')).toBe('Viajes');
+    expect(tags.meta('article:published_time')).toBeNull();
+    const document = TestBed.inject(DOCUMENT);
+    const articleTags = () =>
+      [...document.head.querySelectorAll('meta[property="article:tag"]')].map((meta) =>
+        meta.getAttribute('content'),
+      );
+    expect(articleTags()).toEqual(['Costa', 'Mediterráneo']);
+
+    // La página siguiente no hereda nada del artículo.
+    seo.update({ title: 'Viajes' }, '/viajes');
+    expect(articleTags()).toEqual([]);
+    expect(head().meta('article:section')).toBeNull();
+    expect(head().meta('og:image:alt')).toBeNull();
+    expect(head().meta('og:image:width')).toBeNull();
+  });
+
+  it('sin dominio público ni URL absoluta no hay imagen social (ni sus medidas)', () => {
+    TestBed.inject(SeoService).update(
+      { image: '/media/a-1600.webp', imageAlt: 'A', imageWidth: 1600, imageHeight: 900 },
+      '/a',
+    );
+    expect(head().meta('og:image')).toBeNull();
+    expect(head().meta('og:image:width')).toBeNull();
+    expect(head().meta('twitter:card')).toBe('summary');
+  });
+
+  it('una imagen ya absoluta (Azure Blob Storage o CDN) se usa tal cual', () => {
+    TestBed.inject(SeoService).update(
+      { image: 'https://cdn.test/media/a-1600.webp', imageWidth: 1600, imageHeight: 900 },
+      '/a',
+    );
+    expect(head().meta('og:image')).toBe('https://cdn.test/media/a-1600.webp');
+    expect(head().meta('og:image:height')).toBe('900');
+  });
+
   it('noindex añade robots y elimina la canónica', () => {
     TestBed.configureTestingModule({
       providers: [{ provide: PUBLIC_SITE_URL, useValue: 'https://dominio.test' }],

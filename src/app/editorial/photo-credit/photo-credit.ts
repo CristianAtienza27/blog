@@ -37,6 +37,11 @@ import { creditLine } from '../../shared/ui/media/media-credit';
     a {
       text-underline-offset: 2px;
     }
+
+    // Opcional: los enlaces (procedencia y licencia) no se parten entre dos líneas.
+    :host(.photo-credit--keep) a {
+      white-space: nowrap;
+    }
   `,
 })
 export class PhotoCredit {

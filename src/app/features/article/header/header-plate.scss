@@ -1,0 +1,67 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+.plate {
+  row-gap: var(--space-5);
+  padding-block: var(--space-7) var(--space-8);
+}
+
+.plate__title {
+  max-inline-size: 15ch;
+  font-size: clamp(2.5rem, 11vw, var(--text-4xl));
+  line-height: var(--leading-none);
+}
+
+.plate__dek {
+  max-inline-size: 36rem;
+}
+
+.plate__photo {
+  grid-column: full;
+  aspect-ratio: 3 / 2;
+  margin-block-start: var(--space-5);
+
+  app-media {
+    block-size: 100%;
+  }
+}
+
+.plate__credit {
+  margin-block-start: calc(var(--space-5) * -1 + var(--space-2));
+}
+
+@include mq(md) {
+  .plate__title {
+    font-size: clamp(var(--text-3xl), 7.2vw, var(--text-4xl));
+  }
+
+  .plate__dek {
+    grid-column: c 1 / c 8;
+  }
+
+  .plate__facts {
+    grid-column: c 9 / content-end;
+    align-self: end;
+  }
+
+  .plate__dek,
+  .plate__facts {
+    grid-row: 3;
+  }
+
+  // Apaisada o panorámica: a lo ancho y con su propia proporción (o 16:9 si es más alta).
+  .plate__photo {
+    grid-column: wide;
+    aspect-ratio: var(--cover-ratio, 16 / 9);
+    margin-block-start: var(--space-6);
+  }
+
+  .plate__credit {
+    grid-column: c 7 / wide-end;
+    justify-self: end;
+    text-align: end;
+  }
+}

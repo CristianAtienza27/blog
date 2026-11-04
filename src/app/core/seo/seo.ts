@@ -8,9 +8,23 @@ export interface SeoData {
   description?: string;
   /** Imagen para redes sociales (absoluta o relativa al dominio público). */
   image?: string;
+  /** Texto alternativo y medidas en píxeles de la imagen. */
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   type?: 'website' | 'article';
+  /** Metadatos Open Graph de artículo (article:*). */
+  article?: ArticleMeta;
   /** Excluye la página de los buscadores (páginas provisionales, 404, desarrollo). */
   noindex?: boolean;
+}
+
+export interface ArticleMeta {
+  /** Fechas ISO: solo en contenido definitivo, nunca fechas de demostración. */
+  publishedTime?: string;
+  modifiedTime?: string;
+  section?: string;
+  tags?: string[];
 }
 
 export const DEFAULT_DESCRIPTION =
@@ -41,11 +55,16 @@ export class SeoService {
     this.setProperty('og:description', description);
     this.setProperty('og:url', url);
     this.setProperty('og:image', image);
+    this.setProperty('og:image:alt', image ? (data.imageAlt ?? null) : null);
+    this.setProperty('og:image:width', image ? dimension(data.imageWidth) : null);
+    this.setProperty('og:image:height', image ? dimension(data.imageHeight) : null);
+    this.setArticle(data.type === 'article' ? data.article : undefined);
 
     this.setName('twitter:card', image ? 'summary_large_image' : 'summary');
     this.setName('twitter:title', title);
     this.setName('twitter:description', description);
     this.setName('twitter:image', image);
+    this.setName('twitter:image:alt', image ? (data.imageAlt ?? null) : null);
 
     this.setCanonical(data.noindex ? null : url);
   }
@@ -68,6 +87,17 @@ export class SeoService {
     else this.meta.removeTag(`property="${property}"`);
   }
 
+  /** article:*. Las etiquetas pueden ser varias: se sustituyen todas en cada página. */
+  private setArticle(article: ArticleMeta | undefined): void {
+    this.setProperty('article:published_time', article?.publishedTime ?? null);
+    this.setProperty('article:modified_time', article?.modifiedTime ?? null);
+    this.setProperty('article:section', article?.section ?? null);
+    for (const tag of this.meta.getTags('property="article:tag"')) this.meta.removeTagElement(tag);
+    this.meta.addTags(
+      (article?.tags ?? []).map((content) => ({ property: 'article:tag', content })),
+    );
+  }
+
   private setCanonical(url: string | null): void {
     let link = this.document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!url) {
@@ -81,4 +111,9 @@ export class SeoService {
     }
     link.setAttribute('href', url);
   }
+}
+
+/** Medida en píxeles como texto; nada si no es válida. */
+function dimension(value: number | undefined): string | null {
+  return value && value > 0 ? String(Math.round(value)) : null;
 }

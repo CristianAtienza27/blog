@@ -1,0 +1,83 @@
+// =============================================================================
+// Retícula de las páginas de artículo
+// ·
+// Mismas líneas que .page-grid (full, wide, content) y, dentro del contenido, doce
+// columnas con nombre «c» (c 1 … c 13) y tres franjas:
+//   rail  → índice y números de capítulo (margen izquierdo)
+//   text  → columna de lectura
+//   aside → pies de foto, fichas y notas (margen derecho)
+// ·
+//   Móvil (< md)   rail = text = aside = contenido completo.
+//   Tableta (md)   texto en 8 columnas y margen derecho en 4; el índice va encima.
+//   Escritorio (lg) margen 3 · texto 6 · margen 3.
+// ·
+// Los hijos van a «text» por defecto. Las piezas asimétricas usan las líneas numeradas:
+//   grid-column: c 7 / full-end   → de la séptima columna al borde derecho.
+// Sin separación entre columnas: el aire entre piezas vecinas lo pone cada pieza.
+// =============================================================================
+@use 'sass:map';
+@use 'sass:string';
+@use '../abstracts' as *;
+
+/// Columnas de la retícula. $names: nombres extra de la línea N (1 … 13).
+@function article-columns($names) {
+  $out: '[full-start] minmax(var(--page-margin), 1fr) [wide-start] var(--_breakout)';
+
+  @for $line from 1 through 12 {
+    $out: $out + ' [c #{map.get($names, $line) or ''}] var(--_col)';
+  }
+
+  $end: ' [c #{map.get($names, 13)}] var(--_breakout) [wide-end]';
+  $out: $out + $end + ' minmax(var(--page-margin), 1fr) [full-end]';
+
+  @return string.unquote($out);
+}
+
+// Anchos fijos (como .page-grid): el contenido llega a su máximo antes de que crezca el
+// ancho extra, y los márgenes se quedan el resto. Los % se resuelven sobre la retícula.
+.article-grid {
+  --_col: min(var(--width-content) / 12, (100% - 2 * var(--page-margin)) / 12);
+  --_breakout: clamp(
+    0px,
+    (100% - var(--width-content)) / 2 - var(--page-margin),
+    (var(--width-wide) - var(--width-content)) / 2
+  );
+
+  display: grid;
+  grid-template-columns: article-columns(
+    (
+      1: content-start rail-start text-start aside-start,
+      13: content-end rail-end text-end aside-end,
+    )
+  );
+
+  > * {
+    grid-column: text;
+  }
+
+  // Cabeceras y piezas a lo ancho del contenido (sin las franjas de margen).
+  &--content > * {
+    grid-column: content;
+  }
+
+  @include mq(md) {
+    grid-template-columns: article-columns(
+      (
+        1: content-start rail-start text-start,
+        9: text-end aside-start,
+        13: content-end rail-end aside-end,
+      )
+    );
+  }
+
+  @include mq(lg) {
+    grid-template-columns: article-columns(
+      (
+        1: content-start rail-start,
+        4: rail-end text-start,
+        10: text-end aside-start,
+        13: content-end aside-end,
+      )
+    );
+  }
+}

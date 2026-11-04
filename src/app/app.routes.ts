@@ -32,19 +32,18 @@ function placeholderRoute(page: NavPage | NavSection, title?: string): Route {
   };
 }
 
-const loadArticlePreview = () =>
-  import('./features/article/article-preview').then((m) => m.ArticlePreview);
+const loadArticlePage = () => import('./features/article/article-page').then((m) => m.ArticlePage);
 
 /**
- * Artículo de una sección: /<sección>/<slug>. Provisional (título, entradilla y aviso de
- * demostración) hasta la página de artículo definitiva. Slug inexistente o de otra sección: 404.
+ * Artículo de una sección: /<sección>/<slug>. Slug inexistente o de otra sección: 404.
+ * Sin indexar mientras sea contenido de demostración o su cuerpo no se muestre.
  */
 function articleRoute(section: NavSection): Route {
   return {
     path: `${section.path.slice(1)}/:slug`,
-    loadComponent: loadArticlePreview,
+    loadComponent: loadArticlePage,
     title: articleTitleResolver,
-    resolve: { article: articleResolver, seo: articleSeoResolver },
+    resolve: { page: articleResolver, seo: articleSeoResolver },
     data: { section: section.id },
   };
 }

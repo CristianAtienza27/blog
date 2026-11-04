@@ -1,24 +1,20 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
-import type { ArticleSummary, Category, SectionId } from '../../content/models';
+import type { Article, SectionId } from '../../content/models';
 import { ArticleRepository } from '../../content/repositories/article-repository';
+import { MEDIA_BASE_URL } from '../../core/media/media-delivery';
 import type { SeoData } from '../../core/seo/seo';
-
-/** Lo que muestra la página provisional de un artículo. */
-export interface ArticlePreviewData {
-  title: string;
-  dek: string;
-  category: Category;
-  demo: boolean;
-}
+import { ArticlePageData, articlePresentation } from './article-presentation';
+import { articleSeo } from './article-seo';
 
 export const NOT_FOUND_TITLE = 'Página no encontrada';
 
 /**
  * El artículo de la URL, solo si pertenece a la sección de la ruta: /motor/<slug de viajes>
- * no existe. Llamar al principio del resolver (usa inject).
+ * no existe. Llamar al principio del resolver (usa inject). El repositorio guarda el
+ * resultado: los tres resolvers comparten una sola carga, también al hidratar.
  */
-function findArticle(route: ActivatedRouteSnapshot): Promise<ArticleSummary | null> {
+function findArticle(route: ActivatedRouteSnapshot): Promise<Article | null> {
   const repository = inject(ArticleRepository);
   const slug = route.paramMap.get('slug') ?? '';
   const section = route.data['section'] as SectionId;
@@ -27,19 +23,19 @@ function findArticle(route: ActivatedRouteSnapshot): Promise<ArticleSummary | nu
     .then((article) => (article?.category.id === section ? article : null));
 }
 
-/** null si no existe o es de otra sección: la página responde 404. */
-export const articleResolver: ResolveFn<ArticlePreviewData | null> = async (route) => {
+/** Artículo completo y su cabecera; null si no existe o es de otra sección (404). */
+export const articleResolver: ResolveFn<ArticlePageData | null> = async (route) => {
   const article = await findArticle(route);
-  return article
-    ? { title: article.title, dek: article.dek, category: article.category, demo: article.demo }
-    : null;
+  return article ? articlePresentation(article) : null;
 };
 
 export const articleTitleResolver: ResolveFn<string> = async (route) =>
   (await findArticle(route))?.title ?? NOT_FOUND_TITLE;
 
-/** Siempre noindex mientras el contenido sea provisional (y en el 404). */
+/** Descripción, Open Graph y metadatos del artículo; el 404 no se indexa. */
 export const articleSeoResolver: ResolveFn<SeoData> = async (route) => {
+  const base = inject(MEDIA_BASE_URL);
   const article = await findArticle(route);
-  return article ? { description: article.dek, type: 'article', noindex: true } : { noindex: true };
+  if (!article) return { noindex: true };
+  return articleSeo(article, articlePresentation(article).header, base);
 };

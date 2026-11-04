@@ -1,0 +1,153 @@
+@use 'abstracts' as *;
+
+// Móvil primero: foto 4:5 arriba y el resto sobre fondo oscuro. Desde md, fotograma completo.
+:host {
+  --photo: 125vw;
+
+  display: block;
+}
+
+.cinema {
+  position: relative;
+  isolation: isolate;
+
+  // Sube bajo el header del sitio, que queda transparente sobre la foto.
+  margin-block-start: calc(var(--header-height) * -1);
+  overflow: clip;
+}
+
+.cinema__media,
+.cinema__veil {
+  position: absolute;
+  inset: 0 0 auto;
+  block-size: var(--photo);
+}
+
+.cinema__media {
+  z-index: -2;
+  animation: cinema-settle 2400ms var(--ease-out) both;
+
+  app-media {
+    block-size: 100%;
+  }
+}
+
+// Velo: oscurece bajo el header y funde la foto con el fondo donde empieza el texto.
+.cinema__veil {
+  z-index: -1;
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-bg) 60%, transparent),
+      transparent calc(var(--header-height) * 2.2)
+    ),
+    linear-gradient(
+      to top,
+      var(--color-bg) 0%,
+      color-mix(in oklab, var(--color-bg) 62%, transparent) 26%,
+      transparent 56%
+    );
+}
+
+.cinema__layout {
+  grid-template-rows: minmax(var(--photo), auto) auto auto auto;
+  row-gap: var(--space-4);
+  padding-block-end: var(--space-7);
+}
+
+.cinema__lede {
+  // Sobre la foto, el antetítulo va en tinta clara: el acento no contrasta con todas.
+  --accent: var(--color-ink);
+
+  display: grid;
+  gap: var(--space-4);
+  align-self: end;
+  padding-block-start: calc(var(--header-height) + var(--space-6));
+  text-shadow: 0 1px 24px rgb(0 0 0 / 40%);
+}
+
+.cinema__title {
+  max-inline-size: 16ch;
+  font-size: clamp(2.25rem, 10.5vw, var(--text-3xl));
+  line-height: var(--leading-none);
+}
+
+.cinema__dek {
+  max-inline-size: 36rem;
+}
+
+.cinema__credit {
+  color: var(--color-ink-muted);
+}
+
+@include mq(md) {
+  :host {
+    --photo: auto;
+  }
+
+  .cinema__media,
+  .cinema__veil {
+    inset: 0;
+  }
+
+  .cinema__veil {
+    background:
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--color-bg) 70%, transparent),
+        transparent calc(var(--header-height) * 3)
+      ),
+      linear-gradient(
+        to top,
+        color-mix(in oklab, var(--color-bg) 82%, transparent),
+        transparent 58%
+      ),
+      radial-gradient(
+        110% 80% at 0% 100%,
+        color-mix(in oklab, var(--color-bg) 62%, transparent),
+        transparent 72%
+      );
+  }
+
+  .cinema__layout {
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    row-gap: var(--space-5);
+    min-block-size: max(36rem, 88svh);
+    padding-block: calc(var(--header-height) + var(--space-7)) var(--space-6);
+    text-shadow: 0 1px 24px rgb(0 0 0 / 35%);
+  }
+
+  .cinema__lede {
+    grid-column: c 1 / c 11;
+    padding-block-start: 0;
+    text-shadow: none;
+  }
+
+  .cinema__title {
+    font-size: clamp(var(--text-3xl), 6.4vw, min(var(--text-4xl), 13svh));
+  }
+
+  .cinema__dek {
+    grid-column: c 1 / c 8;
+  }
+
+  .cinema__facts {
+    grid-column: c 1 / c 9;
+    align-self: end;
+  }
+
+  .cinema__credit {
+    grid-row: 3;
+    grid-column: c 9 / content-end;
+    place-self: end;
+    max-inline-size: 26rem;
+    text-align: end;
+  }
+}
+
+// Entrada: la foto se asienta despacio (CSS: empieza con el primer pintado, sin saltos al hidratar).
+@keyframes cinema-settle {
+  from {
+    transform: scale(1.05);
+  }
+}

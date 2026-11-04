@@ -1,0 +1,77 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+.compact {
+  row-gap: var(--space-5);
+  padding-block: var(--space-7);
+}
+
+.compact__title {
+  max-inline-size: 18ch;
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+}
+
+.compact__dek {
+  max-inline-size: 36rem;
+}
+
+// Dentro de los márgenes también en móvil: una nota no ocupa la pantalla entera.
+.compact__photo {
+  aspect-ratio: 16 / 9;
+  margin-block-start: var(--space-3);
+
+  app-media {
+    block-size: 100%;
+  }
+}
+
+.compact__credit {
+  margin-block-start: calc(var(--space-5) * -1 + var(--space-2));
+}
+
+@include mq(md) {
+  .compact {
+    padding-block: var(--space-8) var(--space-7);
+  }
+
+  .compact__title {
+    grid-column: c 1 / c 10;
+    font-size: clamp(var(--text-2xl), 5.4vw, var(--text-3xl));
+  }
+
+  .compact__dek,
+  .compact__facts {
+    grid-row: 3;
+  }
+
+  .compact__dek {
+    grid-column: c 1 / c 8;
+  }
+
+  .compact__facts {
+    grid-column: c 9 / content-end;
+    align-self: end;
+  }
+
+  .compact__photo {
+    aspect-ratio: var(--cover-ratio, 21 / 9);
+    margin-block-start: var(--space-5);
+
+    &--narrow {
+      grid-column: c 1 / c 9;
+    }
+  }
+
+  .compact__credit {
+    justify-self: end;
+    text-align: end;
+
+    &--narrow {
+      grid-column: c 1 / c 9;
+    }
+  }
+}

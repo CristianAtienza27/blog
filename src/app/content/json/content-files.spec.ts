@@ -5,8 +5,10 @@ import { existsSync } from 'node:fs';
 import { provideMediaDelivery } from '../../core/media/media-delivery';
 import { HomeIntro, IntroData } from '../../features/home/intro/home-intro';
 import { MotionService } from '../../motion/motion';
-import type { Media } from '../models';
+import type { Article, Media } from '../models';
 import { RETIRED_MEDIA } from '../../editorial/retired-media';
+import { FULL_BLEED_MIN, articlePresentation } from '../../features/article/article-presentation';
+import { ArticleRepository } from '../repositories/article-repository';
 import { HOME_COMPOSITION } from '../../features/home/home.composition';
 import { HomeData, homeResolver } from '../../features/home/home.resolver';
 import { provideContent } from '../provide-content';
@@ -232,5 +234,62 @@ describe('Fotografías de la portada en disco', () => {
     expect(urls.length).toBe(7);
     expect(source?.getAttribute('type')).toBe('image/avif');
     expect(urls.filter((url) => !existsSync(publicFile(url)))).toEqual([]);
+  });
+});
+
+/** Cabecera de cada artículo con el contenido real, como en el prerender. */
+async function articleHeaders() {
+  TestBed.configureTestingModule({ providers: [provideContent(withJsonContent())] });
+  const repository = TestBed.inject(ArticleRepository);
+  const slugs = await repository.slugs();
+  const articles = await Promise.all(slugs.map((slug) => repository.bySlug(slug)));
+  return articles
+    .filter((article): article is Article => !!article)
+    .map((article) => ({ article, header: articlePresentation(article).header }));
+}
+
+describe('Cabeceras de artículo con el contenido real', () => {
+  it('los artículos de referencia usan las cuatro variantes', async () => {
+    const variants = Object.fromEntries(
+      (await articleHeaders()).map(({ article, header }) => [article.slug, header.variant]),
+    );
+    expect(variants).toMatchObject({
+      'itinerario-costa-brava': 'cinema',
+      'ciudades-luz-de-tarde': 'cinema',
+      'calas-de-mallorca': 'split',
+      'paso-del-stelvio': 'plate',
+      // Ensayo panorámico: sin altura para el fotograma completo, a lo ancho.
+      'serie-horizontes': 'plate',
+      'alicante-desde-el-puerto': 'compact',
+    });
+  });
+
+  it('ninguna cabecera usa una fotografía retirada', async () => {
+    for (const { article, header } of await articleHeaders()) {
+      expect(RETIRED_MEDIA, article.slug).not.toContain(header.cover?.media.id);
+      if (RETIRED_MEDIA.includes(article.cover.id)) expect(header.cover).toBeNull();
+    }
+  });
+
+  it('las fotos a sangre (cine y lámina) tienen resolución suficiente', async () => {
+    for (const { article, header } of await articleHeaders()) {
+      if (header.variant !== 'cinema' && header.variant !== 'plate') continue;
+      expect(header.cover?.media.width, article.slug).toBeGreaterThanOrEqual(FULL_BLEED_MIN.width);
+      if (header.variant === 'cinema') {
+        expect(header.cover?.media.height, article.slug).toBeGreaterThanOrEqual(
+          FULL_BLEED_MIN.height,
+        );
+      }
+    }
+  });
+
+  it('ninguna cabecera de demostración muestra fechas', async () => {
+    for (const { article, header } of await articleHeaders()) {
+      expect(article.demo).toBe(true);
+      expect(
+        header.facts.filter((fact) => fact.datetime),
+        article.slug,
+      ).toEqual([]);
+    }
   });
 });

@@ -1,0 +1,71 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+.split {
+  row-gap: var(--space-6);
+  padding-block: var(--space-7) var(--space-8);
+}
+
+.split__copy {
+  display: grid;
+  gap: var(--space-5);
+  align-content: end;
+}
+
+.split__title {
+  max-inline-size: 14ch;
+  font-size: var(--text-3xl);
+  line-height: var(--leading-none);
+}
+
+// Móvil: a sangre y en vertical (recorte por el punto focal de la foto).
+.split__photo {
+  grid-column: full;
+  aspect-ratio: 4 / 5;
+
+  app-media {
+    block-size: 100%;
+  }
+}
+
+.split__credit {
+  margin-block-start: calc(var(--space-6) * -1 + var(--space-2));
+}
+
+@include mq(md) {
+  .split {
+    grid-template-rows: auto auto;
+    row-gap: var(--space-2);
+    align-items: end;
+    padding-block-start: var(--space-6);
+  }
+
+  .split__copy {
+    grid-row: 1;
+    grid-column: content-start / c 6;
+    padding-block-end: var(--space-2);
+  }
+
+  .split__title {
+    font-size: clamp(var(--text-2xl), 5vw, var(--text-3xl));
+  }
+
+  // Desde la séptima columna hasta el borde derecho, apaisada y sin pasar de la pantalla.
+  .split__photo {
+    grid-row: 1;
+    grid-column: c 7 / full-end;
+    aspect-ratio: 4 / 3;
+    max-block-size: calc(88svh - var(--header-height));
+  }
+
+  .split__credit {
+    grid-row: 2;
+    grid-column: c 7 / content-end;
+    justify-self: end;
+    margin-block-start: 0;
+    text-align: end;
+  }
+}
