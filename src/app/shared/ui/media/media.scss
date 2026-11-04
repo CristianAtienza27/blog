@@ -50,6 +50,10 @@ app-media {
     block-size: 100%;
   }
 
+  &[data-fill][data-flush] .media {
+    grid-template-rows: minmax(0, 1fr);
+  }
+
   .media__placeholder {
     position: absolute;
     inset: 0;

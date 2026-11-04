@@ -1,0 +1,41 @@
+{
+  "slug": "calas-de-mallorca",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Artículo de demostración.</em> Esta guía sirve para probar la composición de una pieza corta con mapa y galería. Describe un lugar real, pero no relata un viaje realizado.</p><p>El sureste de Mallorca alterna acantilados bajos de roca caliza con calas estrechas que se abren al mar entre pinares. Muchas no tienen acceso rodado: se llega a ellas por caminos de costa, y esa pequeña distancia a pie es parte de su encanto.</p>"
+    },
+    {
+      "type": "map",
+      "destinations": ["cala-s-almunia"],
+      "route": false,
+      "caption": "Cala s'Almunia, en el sureste de Mallorca."
+    },
+    {
+      "type": "chapter",
+      "id": "cuando-ir",
+      "number": 1,
+      "title": "Cuándo ir",
+      "kicker": "Luz temprana y menos gente"
+    },
+    {
+      "type": "text",
+      "html": "<p>La primavera y el otoño ofrecen agua todavía templada y caminos más tranquilos. A primera hora, la luz entra baja sobre el agua y el fondo de arena se ve con una claridad difícil de encontrar a mediodía.</p><p>Los aparcamientos cercanos a las calas más conocidas son pequeños: conviene llegar pronto o enlazar varias calas a pie por el camino de costa.</p>"
+    },
+    {
+      "type": "gallery",
+      "gallery": "mediterraneo"
+    },
+    {
+      "type": "chapter",
+      "id": "que-respetar",
+      "number": 2,
+      "title": "Qué respetar",
+      "kicker": "Un paisaje frágil"
+    },
+    {
+      "type": "text",
+      "html": "<p>Las praderas de <strong>posidonia</strong> que tiñen de oscuro algunas zonas del fondo están protegidas en las Islas Baleares: mantienen el agua limpia y sujetan la arena de las playas. Fondear sobre ellas está prohibido.</p><p>Lo demás es sentido común: no dejar residuos, no apilar piedras y respetar las zonas de baño señalizadas.</p>"
+    }
+  ]
+}

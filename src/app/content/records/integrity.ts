@@ -112,6 +112,12 @@ export function checkIntegrity(
     a.tags.forEach((t, j) => ref(tags, t, `${where}.tags[${j}]`, 'etiqueta'));
     ref(authors, a.author, `${where}.author`, 'autor');
     ref(trips, a.trip, `${where}.trip`, 'itinerario');
+    a.destinations?.forEach((d, j) =>
+      ref(destinations, d, `${where}.destinations[${j}]`, 'destino'),
+    );
+    const stops = data.trips.find((t) => t.id === a.trip)?.stops.map((s) => s.destination) ?? [];
+    for (const id of duplicates([...stops, ...(a.destinations ?? [])]))
+      issues.push(`${where}.destinations: destino repetido «${id}»`);
     ref(projects, a.project, `${where}.project`, 'proyecto');
     useMedia(a.cover, `${where}.cover`);
     if (a.updatedAt && a.updatedAt < a.publishedAt) {

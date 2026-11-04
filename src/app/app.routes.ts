@@ -1,5 +1,10 @@
 import { Route, Routes } from '@angular/router';
 import { SeoData } from './core/seo/seo';
+import {
+  articleResolver,
+  articleSeoResolver,
+  articleTitleResolver,
+} from './features/article/article.resolver';
 import { homeResolver } from './features/home/home.resolver';
 import { NavPage, NavSection, SECONDARY_PAGES, SECTIONS } from './layout/navigation';
 
@@ -24,6 +29,23 @@ function placeholderRoute(page: NavPage | NavSection, title?: string): Route {
       lead: page.lead,
       tone: page.tone,
     },
+  };
+}
+
+const loadArticlePreview = () =>
+  import('./features/article/article-preview').then((m) => m.ArticlePreview);
+
+/**
+ * Artículo de una sección: /<sección>/<slug>. Provisional (título, entradilla y aviso de
+ * demostración) hasta la página de artículo definitiva. Slug inexistente o de otra sección: 404.
+ */
+function articleRoute(section: NavSection): Route {
+  return {
+    path: `${section.path.slice(1)}/:slug`,
+    loadComponent: loadArticlePreview,
+    title: articleTitleResolver,
+    resolve: { article: articleResolver, seo: articleSeoResolver },
+    data: { section: section.id },
   };
 }
 
@@ -53,6 +75,7 @@ export const routes: Routes = [
     data: { seo: { noindex: true } satisfies SeoData },
   },
   ...SECTIONS.map((section) => placeholderRoute(section, section.label)),
+  ...SECTIONS.map(articleRoute),
   ...SECONDARY_PAGES.map((page) => placeholderRoute(page, page.label)),
   ...devRoutes,
   {

@@ -36,7 +36,7 @@ export type MediaTone = 'dawn' | 'sea' | 'desert' | 'forest' | 'road' | 'night';
   changeDetection: ChangeDetectionStrategy.OnPush,
   // Sin encapsulación: necesita dar estilo al contenido proyectado (img, video).
   encapsulation: ViewEncapsulation.None,
-  host: { '[attr.data-fill]': 'fill() || null' },
+  host: { '[attr.data-fill]': 'fill() || null', '[attr.data-flush]': 'flush() || null' },
   template: `
     <figure class="media">
       <div class="media__frame" [style.aspect-ratio]="fill() ? null : aspectRatio()">
@@ -65,7 +65,7 @@ export type MediaTone = 'dawn' | 'sea' | 'desert' | 'forest' | 'road' | 'night';
                 [sizes]="sizes()"
                 [alt]="alt() ?? img.alt"
                 loading="lazy"
-                [placeholder]="img.placeholder"
+                [placeholder]="blur() ? img.placeholder : false"
                 [style.object-position]="objectPosition()"
               />
             }
@@ -136,11 +136,27 @@ export class Media {
   readonly alt = input<string>();
   /** Muestra autor y licencia de la imagen. */
   readonly showCredit = input(true, { transform: booleanAttribute });
+  /**
+   * El marco recorta la foto (otra proporción u object-fit: cover): el ancho necesario lo
+   * indica `sizes`, no el del marco. Sin «auto», que solo mide el marco y elegiría un archivo
+   * demasiado pequeño para el recorte. Solo afecta al <source> AVIF (el que usa el navegador).
+   */
+  readonly cropped = input(false, { transform: booleanAttribute });
+  /**
+   * Vista previa difuminada mientras carga. Desactivarla en fotos que se muestran a más de
+   * 1000 px (a sangre): el desenfoque a ese tamaño es caro y NgOptimizedImage lo desaconseja.
+   */
+  readonly blur = input(true, { transform: booleanAttribute });
 
   /** Relación de aspecto CSS ('16/9', '4/5'…). Por defecto, la de la imagen o 3/2. */
   readonly ratio = input<string>();
   /** Ignora el ratio y ocupa la altura que le dé su contenedor (portadas a pantalla completa). */
   readonly fill = input(false, { transform: booleanAttribute });
+  /**
+   * Con `fill` y sin pie: la foto ocupa todo el alto, sin reservar el hueco del pie de foto.
+   * Opcional: el comportamiento de `fill` por defecto (con pie) no cambia.
+   */
+  readonly flush = input(false, { transform: booleanAttribute });
   readonly caption = input<string>();
   /** Metadatos de campo en mono: lugar, coordenadas o datos de cámara. */
   readonly meta = input<string>();
@@ -163,7 +179,9 @@ export class Media {
     return image ? mediaSrcset(this.base, image.path, image.widths, 'avif') : null;
   });
   /** Mismo valor que NgOptimizedImage pone en el <img> en carga diferida («auto» delante). */
-  protected readonly sourceSizes = computed(() => `auto, ${this.sizes()}`);
+  protected readonly sourceSizes = computed(() =>
+    this.cropped() ? this.sizes() : `auto, ${this.sizes()}`,
+  );
   protected readonly objectPosition = computed(() => {
     const focal = this.image()?.focal;
     return focal ? `${Math.round(focal.x * 100)}% ${Math.round(focal.y * 100)}%` : null;

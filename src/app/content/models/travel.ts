@@ -18,6 +18,12 @@ export interface Destination extends DemoFlag {
   cover?: Media;
 }
 
+/**
+ * Referencia ligera a un destino (sin portada ni descripción), para listados de artículos.
+ * El destino completo se obtiene de TravelRepository.
+ */
+export type DestinationRef = Omit<Destination, 'cover' | 'summary'>;
+
 export interface TripStop {
   /** Posición en la ruta, desde 1. */
   order: number;

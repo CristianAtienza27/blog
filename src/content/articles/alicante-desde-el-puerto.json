@@ -1,0 +1,25 @@
+{
+  "slug": "alicante-desde-el-puerto",
+  "blocks": [
+    {
+      "type": "text",
+      "html": "<p><em>Artículo de demostración.</em> Esta nota sirve para probar la composición de una fotografía panorámica a todo el ancho. Describe una ciudad real, pero no relata un viaje realizado.</p><p>Alicante se entiende mejor desde el agua. La bahía dibuja un arco amplio y, detrás del puerto, la ciudad se extiende hacia el interior a los pies del monte <strong>Benacantil</strong>, coronado por el castillo de Santa Bárbara.</p>"
+    },
+    {
+      "type": "image",
+      "media": "viajes-alicante-panorama",
+      "layout": "full",
+      "caption": "El puerto, la bahía y la ciudad de Alicante en una sola panorámica."
+    },
+    {
+      "type": "text",
+      "html": "<p>Una panorámica obliga a leer la imagen de izquierda a derecha, como un texto: primero el agua, después el puerto y, al fondo, la trama de calles que sube hacia las colinas. La luz baja de la mañana o de la tarde separa mejor esos planos que el sol vertical del mediodía.</p>"
+    },
+    {
+      "type": "map",
+      "destinations": ["alicante"],
+      "route": false,
+      "caption": "Alicante, en la costa mediterránea."
+    }
+  ]
+}

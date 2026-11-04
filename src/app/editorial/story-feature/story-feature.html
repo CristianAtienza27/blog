@@ -1,0 +1,35 @@
+@let s = story();
+<article class="feature" [attr.aria-labelledby]="'feature-' + s.article.slug">
+  <div class="feature__frame" appScrollZoom expand>
+    <app-media
+      [image]="s.article.cover"
+      fill
+      flush
+      cropped
+      [blur]="false"
+      [sizes]="sizes"
+      [showCredit]="false"
+    />
+    <div class="feature__veil" aria-hidden="true"></div>
+    <app-photo-credit class="feature__credit feature__credit--over" [media]="s.article.cover" />
+  </div>
+
+  <div class="feature__panel">
+    <div class="feature__copy" appReveal="stagger">
+      <p class="feature__area t-meta">{{ area() }}</p>
+      @if (s.place) {
+        <p class="feature__place">{{ s.place.name }}</p>
+      }
+      <h3 class="feature__title" [id]="'feature-' + s.article.slug">
+        <a [routerLink]="href()">{{ s.article.title }}</a>
+      </h3>
+      <p class="feature__dek">{{ s.article.dek }}</p>
+      <p class="feature__meta t-meta">{{ meta() }}</p>
+      <!-- Mismo destino que el título: fuera del orden de tabulación. -->
+      <a app-link variant="arrow" [routerLink]="href()" tabindex="-1" aria-hidden="true">{{
+        cta()
+      }}</a>
+    </div>
+    <app-photo-credit class="feature__credit feature__credit--below" [media]="s.article.cover" />
+  </div>
+</article>

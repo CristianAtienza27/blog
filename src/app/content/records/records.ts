@@ -132,6 +132,8 @@ export interface ArticleRecord {
   featured: boolean;
   demo: boolean;
   trip?: string;
+  /** Destinos que trata además de las paradas de su itinerario (ids de destinations.json). */
+  destinations?: string[];
   project?: string;
   seo?: ArticleSeo;
 }

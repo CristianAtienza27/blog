@@ -1,0 +1,157 @@
+@use 'abstracts' as *;
+
+// Móvil: foto 4:5 y texto debajo. Desde tableta: panorámica con el texto sobre la foto,
+// abajo a la izquierda, siempre en tinta clara (esquema oscuro local).
+
+:host {
+  display: block;
+}
+
+.feature {
+  display: grid;
+}
+
+.feature__frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background-color: var(--color-bg-sunken);
+
+  app-media {
+    position: absolute;
+    inset: 0;
+  }
+
+  @include mq(sm) {
+    aspect-ratio: 16 / 9;
+  }
+
+  @include mq(md) {
+    grid-area: 1 / 1;
+  }
+
+  @include mq(lg) {
+    aspect-ratio: 21 / 9;
+  }
+}
+
+.feature__veil {
+  display: none;
+
+  @include mq(md) {
+    position: absolute;
+    inset: 0;
+    display: block;
+    background:
+      linear-gradient(
+        to top,
+        rgb(0 0 0 / 72%),
+        rgb(0 0 0 / 40%) 42%,
+        rgb(0 0 0 / 14%) 72%,
+        transparent 88%
+      ),
+      // Hasta la parte alta del bloque de texto (región y país), también sobre agua clara.
+      radial-gradient(70% 120% at 0% 100%, rgb(0 0 0 / 52%), transparent 78%);
+  }
+}
+
+.feature__panel {
+  display: grid;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--page-margin) 0;
+
+  @include mq(md) {
+    z-index: 1;
+    grid-area: 1 / 1;
+    place-self: end start;
+    max-inline-size: 48rem;
+    padding: var(--space-8) var(--page-margin);
+    color-scheme: dark;
+    color: var(--color-ink);
+    text-shadow: 0 1px 24px rgb(0 0 0 / 35%);
+  }
+}
+
+.feature__copy {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.feature__place {
+  margin-block: var(--space-1) var(--space-2);
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 14vw, var(--text-4xl));
+  font-weight: var(--weight-light);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+
+  @include mq(md) {
+    font-size: clamp(var(--text-3xl), 8vw, var(--text-4xl));
+  }
+}
+
+.feature__title {
+  max-inline-size: 26ch;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+
+  a {
+    text-decoration: none;
+
+    @include hover {
+      text-decoration: underline;
+      text-decoration-thickness: var(--border-width);
+    }
+  }
+}
+
+.feature__dek {
+  max-inline-size: 42ch;
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-muted);
+  text-wrap: pretty;
+
+  @include mq(md) {
+    max-inline-size: 34ch;
+    color: var(--color-ink);
+  }
+}
+
+.feature__meta {
+  margin-block-end: var(--space-2);
+}
+
+// Sobre la foto, los metadatos en tinta plena: el gris atenuado no se leería.
+.feature__area,
+.feature__meta {
+  @include mq(md) {
+    color: var(--color-ink);
+  }
+}
+
+// Crédito: sobre la foto desde tableta (abajo a la derecha), bajo el texto en móvil.
+.feature__credit--over {
+  display: none;
+
+  @include mq(md) {
+    position: absolute;
+    inset: auto var(--page-margin) var(--space-5) auto;
+    z-index: 1;
+    display: block;
+    max-inline-size: 22rem;
+    color-scheme: dark;
+    color: var(--color-ink);
+    text-align: end;
+    text-shadow: 0 1px 16px rgb(0 0 0 / 45%);
+  }
+}
+
+.feature__credit--below {
+  @include mq(md) {
+    display: none;
+  }
+}

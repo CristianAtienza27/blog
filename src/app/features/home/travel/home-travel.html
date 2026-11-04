@@ -1,0 +1,31 @@
+<section class="travel" data-section="viajes" aria-labelledby="travel-title">
+  <header class="page-grid travel__head">
+    <div class="travel__heading">
+      <app-eyebrow [index]="section.index" appReveal="fade">{{ section.label }}</app-eyebrow>
+      <h2 id="travel-title" class="travel__title" appSplitText>
+        {{ section.heading }} <em>{{ section.emphasis }}</em>
+      </h2>
+    </div>
+    <a class="travel__all" app-link variant="arrow" [routerLink]="section.path" appReveal="fade"
+      >Todos los viajes</a
+    >
+  </header>
+
+  @if (travel().feature; as feature) {
+    <app-story-feature [story]="feature" cta="Descubrir el itinerario" />
+  }
+
+  @if (travel().stories.length) {
+    <div class="page-grid travel__stories">
+      @for (story of travel().stories; track story.article.id) {
+        <app-story [story]="story" />
+      }
+    </div>
+  }
+
+  @if (travel().index.length) {
+    <div class="page-grid travel__index">
+      <app-destination-index [entries]="travel().index" />
+    </div>
+  }
+</section>

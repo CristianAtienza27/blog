@@ -1,0 +1,26 @@
+@if (article(); as a) {
+  <article
+    class="page-grid section article-preview"
+    [attr.data-section]="a.category.id"
+    aria-labelledby="article-title"
+  >
+    <header class="stack article-preview__head">
+      <app-eyebrow [index]="section()?.index" appReveal="fade">{{ a.category.name }}</app-eyebrow>
+      <h1 id="article-title" class="t-display" appSplitText>{{ a.title }}</h1>
+      <div class="stack article-preview__lead" appReveal revealDelay="0.2">
+        <p class="t-lead">{{ a.dek }}</p>
+        <div class="cluster">
+          @if (a.demo) {
+            <app-tag tone="tint">Contenido de demostración</app-tag>
+          }
+          <span class="t-meta">Artículo en preparación</span>
+        </div>
+        @if (section(); as s) {
+          <a app-link variant="arrow" [routerLink]="s.path">Volver a {{ s.label }}</a>
+        }
+      </div>
+    </header>
+  </article>
+} @else {
+  <app-not-found />
+}

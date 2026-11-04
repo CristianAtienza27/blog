@@ -43,6 +43,30 @@ class PriorityHost {
   readonly image = photo;
 }
 
+@Component({
+  imports: [Media],
+  template: `<app-media
+    [image]="image"
+    fill
+    flush
+    cropped
+    [blur]="false"
+    [showCredit]="false"
+    sizes="(width < 640px) 200vw, 110vw"
+  />`,
+})
+class CroppedHost {
+  readonly image = photo;
+}
+
+@Component({
+  imports: [Media],
+  template: `<app-media [image]="image" fill sizes="100vw" />`,
+})
+class FillHost {
+  readonly image = photo;
+}
+
 async function render(image = photo) {
   TestBed.configureTestingModule({ providers: [provideMediaDelivery()] });
   const fixture = TestBed.createComponent(Host);
@@ -106,5 +130,33 @@ describe('app-media con fotografía optimizada', () => {
     expect(img.getAttribute('loading')).toBe('eager');
     expect(img.getAttribute('sizes')).toBe('100vw');
     expect(img.getAttribute('srcset')).toContain('-1600.webp 1600w');
+  });
+
+  it('foto recortada: sizes sin «auto», sin vista previa difuminada y sin hueco de pie', async () => {
+    TestBed.configureTestingModule({ providers: [provideMediaDelivery()] });
+    const fixture = TestBed.createComponent(CroppedHost);
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('source')?.getAttribute('sizes')).toBe(
+      '(width < 640px) 200vw, 110vw',
+    );
+    const img = element.querySelector('img') as HTMLImageElement;
+    expect(img.getAttribute('loading')).toBe('lazy');
+    expect(img.style.backgroundImage).toBe('');
+    const host = element.querySelector('app-media');
+    expect(host?.hasAttribute('data-fill')).toBe(true);
+    expect(host?.hasAttribute('data-flush')).toBe(true);
+    expect(element.querySelector('figcaption')).toBeNull();
+  });
+
+  it('sin flush, fill conserva su comportamiento predeterminado', async () => {
+    TestBed.configureTestingModule({ providers: [provideMediaDelivery()] });
+    const fixture = TestBed.createComponent(FillHost);
+    await fixture.whenStable();
+    const host = (fixture.nativeElement as HTMLElement).querySelector('app-media');
+    expect(host?.hasAttribute('data-fill')).toBe(true);
+    expect(host?.hasAttribute('data-flush')).toBe(false);
+    // El pie de foto sigue en su sitio.
+    expect(host?.querySelector('figcaption .media__credit')).not.toBeNull();
   });
 });

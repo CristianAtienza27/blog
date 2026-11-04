@@ -1,0 +1,92 @@
+@let s = story();
+<article class="story" [attr.aria-labelledby]="titleId()">
+  @switch (layout()) {
+    @case ('diptych') {
+      <!-- Díptico: dos fotos juntas con el mismo alto (70/30); el texto, debajo y en sus columnas. -->
+      <div class="story__pair" [class.story__pair--single]="!s.secondary">
+        <figure class="story__plate story__plate--wide">
+          <div class="story__frame" appReveal="mask">
+            <app-media
+              [image]="s.article.cover"
+              fill
+              flush
+              cropped
+              [sizes]="sizes.main"
+              [showCredit]="false"
+              appParallax="0.06"
+            />
+          </div>
+          <app-photo-credit class="story__credit" [media]="s.article.cover" />
+        </figure>
+        @if (s.secondary; as second) {
+          <figure class="story__plate story__plate--tall">
+            <div class="story__frame" appReveal="mask" revealDelay="0.12">
+              <app-media
+                [image]="second"
+                fill
+                flush
+                cropped
+                [sizes]="sizes.second"
+                [showCredit]="false"
+                appParallax="0.06"
+              />
+            </div>
+            <app-photo-credit class="story__credit" [media]="second" />
+          </figure>
+        }
+      </div>
+      <div class="story__text story__text--pair" appReveal="stagger">
+        <ng-container *ngTemplateOutlet="copy" />
+      </div>
+    }
+
+    @case ('strip') {
+      <div class="story__band" appScrollZoom="0.06">
+        <app-media
+          [image]="s.article.cover"
+          fill
+          flush
+          cropped
+          [blur]="false"
+          [sizes]="sizes.strip"
+          [showCredit]="false"
+        />
+        <div class="story__veil" aria-hidden="true"></div>
+        <app-photo-credit class="story__credit story__credit--over" [media]="s.article.cover" />
+      </div>
+      <div class="story__text story__text--band" appReveal="stagger">
+        <ng-container *ngTemplateOutlet="copy" />
+      </div>
+      <app-photo-credit class="story__credit story__credit--below" [media]="s.article.cover" />
+    }
+
+    @default {
+      <div class="story__portrait" appReveal="mask">
+        <app-media
+          [image]="s.article.cover"
+          ratio="4/5"
+          cropped
+          [sizes]="sizes.portrait"
+          appParallax="0.12"
+        />
+      </div>
+      <div class="story__text story__text--side" appReveal="stagger">
+        <ng-container *ngTemplateOutlet="copy" />
+      </div>
+    }
+  }
+</article>
+
+<ng-template #copy>
+  @let s = story();
+  <p class="story__meta t-meta">{{ meta() }}</p>
+  <h3 class="story__title" [id]="titleId()">
+    <a [routerLink]="href()">{{ s.article.title }}</a>
+  </h3>
+  <p class="story__dek">{{ s.article.dek }}</p>
+  @if (places(); as list) {
+    <p class="story__places t-meta">{{ list }}</p>
+  }
+  <!-- Mismo destino que el título: fuera del orden de tabulación. -->
+  <a app-link variant="arrow" [routerLink]="href()" tabindex="-1" aria-hidden="true">{{ cta() }}</a>
+</ng-template>

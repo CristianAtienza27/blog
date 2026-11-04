@@ -1,5 +1,16 @@
+import { Component, input } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, provideRouter } from '@angular/router';
+import { existsSync } from 'node:fs';
+import { provideMediaDelivery } from '../../core/media/media-delivery';
+import { HomeIntro, IntroData } from '../../features/home/intro/home-intro';
+import { MotionService } from '../../motion/motion';
+import type { Media } from '../models';
 import { RETIRED_MEDIA } from '../../editorial/retired-media';
 import { HOME_COMPOSITION } from '../../features/home/home.composition';
+import { HomeData, homeResolver } from '../../features/home/home.resolver';
+import { provideContent } from '../provide-content';
+import { withJsonContent } from './with-json-content';
 import { SECTIONS } from '../../layout/navigation';
 import { validateContent } from '../records/integrity';
 import { COLLECTION_NAMES, ContentCollections } from '../records/records';
@@ -84,5 +95,142 @@ describe('Contenido de src/content', () => {
   it('un slug desconocido o con caracteres de ruta no carga nada', async () => {
     expect(await jsonFileSource.body('no-existe')).toBeNull();
     expect(await jsonFileSource.body('../categories')).toBeNull();
+  });
+});
+
+/** La portada resuelta con el contenido real, como en el prerender. */
+async function resolveHome(): Promise<HomeData> {
+  TestBed.configureTestingModule({ providers: [provideContent(withJsonContent())] });
+  return TestBed.runInInjectionContext(
+    () =>
+      homeResolver({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot) as Promise<HomeData>,
+  );
+}
+
+describe('Portada con el contenido real', () => {
+  it('todas las piezas de la composición existen', async () => {
+    const { hero, intro, travel } = await resolveHome();
+    expect(hero).not.toBeNull();
+    expect(intro.media?.id).toBe(HOME_COMPOSITION.intro.media);
+    expect(travel.feature?.article.slug).toBe(HOME_COMPOSITION.travel.feature);
+    expect(travel.stories.map((story) => [story.article.slug, story.layout])).toEqual(
+      HOME_COMPOSITION.travel.stories.map((story) => [story.article, story.layout]),
+    );
+    expect(travel.stories[0].secondary?.id).toBe('ciudades-lisboa-alfama');
+  });
+
+  it('la historia principal es Cadaqués, con las cuatro paradas del itinerario', async () => {
+    const { feature } = (await resolveHome()).travel;
+    expect(feature?.place?.name).toBe('Cadaqués');
+    expect(feature?.article.destinations.map((d) => d.slug)).toEqual([
+      'tossa-de-mar',
+      'calella-de-palafrugell',
+      'begur',
+      'cadaques',
+    ]);
+  });
+
+  it('cada fotografía de la portada cumple una sola función y ninguna está retirada', async () => {
+    const { hero, intro, travel } = await resolveHome();
+    const photos = [
+      hero?.media.id,
+      intro.media?.id,
+      travel.feature?.article.cover.id,
+      ...travel.stories.flatMap((story) => [story.article.cover.id, story.secondary?.id]),
+    ].filter((id): id is string => !!id);
+    expect(new Set(photos).size).toBe(photos.length);
+    expect(photos.filter((id) => RETIRED_MEDIA.includes(id))).toEqual([]);
+  });
+
+  it('el índice enlaza todos los destinos y nunca repite el hero como vista previa', async () => {
+    const { travel } = await resolveHome();
+    expect(travel.index).toHaveLength(13);
+    expect(travel.index.filter((entry) => !entry.article).map((entry) => entry.id)).toEqual([]);
+    const previews = travel.index.flatMap((entry) => (entry.preview ? [entry.preview.id] : []));
+    expect(previews).not.toContain(HOME_COMPOSITION.hero.media);
+    expect(previews.filter((id) => RETIRED_MEDIA.includes(id))).toEqual([]);
+  });
+
+  it('cada artículo de viajes trata al menos un destino', async () => {
+    const { data } = await loadContent();
+    const tripIds = new Set(data.trips.map((t) => t.id));
+    const travel = data.articles.filter((a) => a.category === 'viajes');
+    expect(travel.length).toBe(4);
+    for (const article of travel) {
+      const hasPlaces =
+        (article.trip && tripIds.has(article.trip)) || !!article.destinations?.length;
+      expect(hasPlaces, article.slug).toBe(true);
+    }
+  });
+});
+
+/** Archivo publicado en public/ que corresponde a una URL de /media/. */
+function publicFile(url: string): string {
+  return 'public' + new URL(url, 'http://localhost').pathname;
+}
+
+/** Variantes que el componente puede pedir: cada ancho registrado, en AVIF y WebP. */
+function variants(media: Media): string[] {
+  return media.widths.flatMap((w) =>
+    ['avif', 'webp'].map((f) => `public/media/${media.path}-${w}.${f}`),
+  );
+}
+
+@Component({
+  imports: [HomeIntro],
+  template: `<app-home-intro [intro]="intro()" />`,
+})
+class IntroHost {
+  readonly intro = input.required<IntroData>();
+}
+
+describe('Fotografías de la portada en disco', () => {
+  it('cada foto de la portada tiene todas sus variantes publicadas', async () => {
+    const { hero, intro, travel } = await resolveHome();
+    const photos = [
+      hero?.media,
+      intro.media,
+      travel.feature?.article.cover,
+      ...travel.stories.flatMap((story) => [story.article.cover, story.secondary]),
+      ...travel.index.map((entry) => entry.preview),
+    ].filter((media): media is Media => !!media);
+    const missing = photos.flatMap(variants).filter((file) => !existsSync(file));
+    expect(missing).toEqual([]);
+  });
+
+  it('la foto de la presentación (bosque con niebla) se renderiza con fuentes válidas', async () => {
+    const { intro } = await resolveHome();
+    expect(intro.media?.id).toBe('naturaleza-niebla-bosque');
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        provideMediaDelivery(),
+        { provide: MotionService, useValue: { load: () => Promise.resolve(null) } },
+      ],
+    });
+    const fixture = TestBed.createComponent(IntroHost);
+    fixture.componentRef.setInput('intro', intro);
+    await fixture.whenStable();
+    const photo = (fixture.nativeElement as HTMLElement).querySelector('.intro__photo');
+    const img = photo?.querySelector('img');
+    const source = photo?.querySelector('source');
+    // Datos de la foto aprobada: texto alternativo, recorte 4:5 y crédito.
+    expect(img?.getAttribute('alt')).toBe(intro.media?.alt);
+    expect(photo?.querySelector('.media__frame')?.getAttribute('style')).toContain(
+      'aspect-ratio: 4/5',
+    );
+    expect(photo?.querySelector('.media__credit')?.textContent).toContain('Kuhnmi');
+    // Todas las URL que puede pedir el navegador existen: src, srcset del <img> y del <source>.
+    const urls = [
+      img?.getAttribute('src'),
+      ...(img?.getAttribute('srcset') ?? '').split(','),
+      ...(source?.getAttribute('srcset') ?? '').split(','),
+    ]
+      .map((candidate) => candidate?.trim().split(' ')[0])
+      .filter((url): url is string => !!url);
+    expect(urls.length).toBe(7);
+    expect(source?.getAttribute('type')).toBe('image/avif');
+    expect(urls.filter((url) => !existsSync(publicFile(url)))).toEqual([]);
   });
 });

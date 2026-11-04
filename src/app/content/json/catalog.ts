@@ -5,6 +5,7 @@ import type {
   Category,
   ContentBlock,
   Destination,
+  DestinationRef,
   Gallery,
   MapPoint,
   Media,
@@ -67,6 +68,32 @@ function toMedia(record: MediaRecord): Media {
   const media: Media & { original?: unknown } = { ...record };
   delete media.original;
   return media;
+}
+
+/** Referencia ligera para los listados: sin portada ni descripción. */
+function toRef(d: Destination): DestinationRef {
+  return {
+    id: d.id,
+    slug: d.slug,
+    name: d.name,
+    country: d.country,
+    ...(d.region ? { region: d.region } : {}),
+    location: d.location,
+    ...(d.elevation === undefined ? {} : { elevation: d.elevation }),
+    demo: d.demo,
+  };
+}
+
+/** Paradas del itinerario seguidas de los destinos propios, sin repetir. */
+function articleDestinations(
+  record: ArticleRecord,
+  tripById: ReadonlyMap<string, Trip>,
+  destinationById: ReadonlyMap<string, Destination>,
+): DestinationRef[] {
+  const where = `artículo ${record.id}`;
+  const stops = optionalRef(tripById, record.trip, where)?.stops.map((s) => s.destination) ?? [];
+  const own = (record.destinations ?? []).map((id) => required(destinationById, id, where));
+  return [...new Map([...stops, ...own].map((d) => [d.id, toRef(d)])).values()];
 }
 
 /** Compara fechas ISO y, a igualdad, títulos. */
@@ -137,6 +164,7 @@ export function buildCatalog(data: ContentCollections): Catalog {
       ...(a.updatedAt ? { updatedAt: a.updatedAt } : {}),
       readingMinutes: a.readingMinutes,
       featured: a.featured,
+      destinations: articleDestinations(a, tripById, destinationById),
       demo: a.demo,
     }))
     .sort(newestFirst);

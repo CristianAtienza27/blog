@@ -1,14 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, provideRouter } from '@angular/router';
-import type { Destination, Media as MediaAsset } from '../../content/models';
+import type { ArticleSummary, Destination, Media as MediaAsset } from '../../content/models';
+import { ArticleRepository } from '../../content/repositories/article-repository';
 import { MediaRepository } from '../../content/repositories/media-repository';
 import { TravelRepository } from '../../content/repositories/travel-repository';
 import { provideMediaDelivery } from '../../core/media/media-delivery';
+import { destination, photo, ref, summary } from '../../editorial/testing/editorial-fixtures';
 import { MotionApi, MotionService } from '../../motion/motion';
 import { HomeHero } from './hero/home-hero';
 import { HOME_COMPOSITION } from './home.composition';
 import { HeroData, HomeData, homeResolver } from './home.resolver';
+import { HomeIntro } from './intro/home-intro';
 
 const { hero: composition } = HOME_COMPOSITION;
 
@@ -42,16 +45,48 @@ const STELVIO: Destination = {
   demo: true,
 };
 
+/** Contenido de prueba de la portada: artículos, destinos y fotos que pide la composición. */
+const { intro, travel } = HOME_COMPOSITION;
+const CADAQUES = destination('cadaques', 'Cadaqués', { cover: photo('viajes-cadaques-bahia') });
+const TOSSA = destination('tossa-de-mar', 'Tossa de Mar', {
+  cover: photo('viajes-tossa-vila-vella'),
+});
+const ARTICLES = [
+  summary(travel.feature, {
+    cover: photo('viajes-cadaques-bahia'),
+    destinations: [ref(TOSSA), ref(CADAQUES)],
+  }),
+  ...travel.stories.map((story) => summary(story.article)),
+  summary('paso-del-stelvio', {
+    category: { id: 'motor', slug: 'motor', name: 'Motor', description: '' },
+    destinations: [ref(STELVIO)],
+  }),
+];
+const DESTINATIONS = [CADAQUES, TOSSA, { ...STELVIO, cover: PHOTO }];
+
 /** Repositorios simulados: la portada solo conoce las interfaces abstractas. */
-async function resolveHome(content: { media?: MediaAsset | null } = {}): Promise<HomeData> {
+async function resolveHome(
+  content: { media?: MediaAsset | null; articles?: ArticleSummary[] } = {},
+): Promise<HomeData> {
   const media = {
-    media: vi.fn(async () => (content.media === undefined ? PHOTO : content.media)),
+    media: vi.fn(async (id: string) =>
+      id === composition.media && content.media !== undefined ? content.media : photo(id),
+    ),
+    mediaList: vi.fn(async (ids: readonly string[]) => ids.map((id) => photo(id))),
   };
-  const travel = { destination: vi.fn(async () => STELVIO) };
+  const travelRepository = {
+    destination: vi.fn(async () => STELVIO),
+    destinations: vi.fn(async () => DESTINATIONS),
+  };
+  const items = content.articles ?? ARTICLES;
+  const articles = {
+    list: vi.fn(async () => ({ items, total: items.length, offset: 0, limit: 50 })),
+  };
   TestBed.configureTestingModule({
     providers: [
       { provide: MediaRepository, useValue: media },
-      { provide: TravelRepository, useValue: travel },
+      { provide: TravelRepository, useValue: travelRepository },
+      { provide: ArticleRepository, useValue: articles },
     ],
   });
   const data = await TestBed.runInInjectionContext(
@@ -59,13 +94,15 @@ async function resolveHome(content: { media?: MediaAsset | null } = {}): Promise
       homeResolver({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot) as Promise<HomeData>,
   );
   expect(media.media).toHaveBeenCalledWith(composition.media);
-  expect(travel.destination).toHaveBeenCalledWith(composition.destination);
+  expect(travelRepository.destination).toHaveBeenCalledWith(composition.destination);
+  // Una sola consulta de artículos para toda la portada.
+  expect(articles.list).toHaveBeenCalledTimes(1);
   return data;
 }
 
 describe('Resolver de la portada', () => {
   it('reúne la fotografía y el lugar del hero desde los repositorios', async () => {
-    const { hero } = await resolveHome();
+    const { hero } = await resolveHome({ media: PHOTO });
     expect(hero?.media).toBe(PHOTO);
     expect(hero?.destination).toBe(STELVIO);
     expect(hero?.kicker).toBe(composition.kicker);
@@ -74,6 +111,42 @@ describe('Resolver de la portada', () => {
 
   it('sin la fotografía, la portada se muestra sin hero', async () => {
     expect((await resolveHome({ media: null })).hero).toBeNull();
+  });
+
+  it('la presentación lleva los textos de la composición y su fotografía', async () => {
+    const data = await resolveHome();
+    expect(data.intro).toEqual({ ...intro, media: photo(intro.media) });
+  });
+
+  it('la historia principal toma como lugar el destino retratado en su portada', async () => {
+    const { feature } = (await resolveHome()).travel;
+    expect(feature?.article.slug).toBe(travel.feature);
+    expect(feature?.place?.name).toBe('Cadaqués');
+  });
+
+  it('cada pieza secundaria tiene su composición; el díptico, su segunda foto', async () => {
+    const { stories } = (await resolveHome()).travel;
+    expect(stories.map((s) => [s.article.slug, s.layout])).toEqual(
+      travel.stories.map((s) => [s.article, s.layout]),
+    );
+    expect(stories[0].secondary?.id).toBe('ciudades-lisboa-alfama');
+    expect(stories.slice(1).map((s) => s.secondary)).toEqual([null, null]);
+  });
+
+  it('omite las piezas cuyo artículo no existe', async () => {
+    const { travel: data } = await resolveHome({ articles: [ARTICLES[0]] });
+    expect(data.feature).not.toBeNull();
+    expect(data.stories).toEqual([]);
+  });
+
+  it('el índice no usa la foto del hero como vista previa', async () => {
+    const { index } = (await resolveHome()).travel;
+    const stelvio = index.find((entry) => entry.id === STELVIO.id);
+    expect(stelvio?.preview).toBeNull();
+    expect(stelvio?.article?.href).toBe('/motor/paso-del-stelvio');
+    expect(index.find((entry) => entry.id === 'tossa-de-mar')?.preview?.id).toBe(
+      'viajes-tossa-vila-vella',
+    );
   });
 });
 
@@ -218,6 +291,14 @@ describe('Hero de la portada', () => {
     expect(element.querySelector('.media__credit')).toBeNull();
   });
 
+  it('la foto llena todo el alto del hero, sin el hueco reservado al pie de foto', async () => {
+    const { element } = await renderHero();
+    const media = element.querySelector('.hero__media app-media');
+    expect(media?.hasAttribute('data-fill')).toBe(true);
+    expect(media?.hasAttribute('data-flush')).toBe(true);
+    expect(element.querySelector('.hero__media figcaption')).toBeNull();
+  });
+
   it('el indicador de scroll lleva al contenido de la portada', async () => {
     const { element } = await renderHero();
     const cue = element.querySelector('a.hero__cue');
@@ -242,5 +323,64 @@ describe('Hero de la portada', () => {
     const { gsap } = await renderHero(heroData(), { reduce: true, mobile: false });
     expect(gsap.timeline).not.toHaveBeenCalled();
     expect(gsap.to).not.toHaveBeenCalled();
+  });
+});
+
+@Component({
+  imports: [HomeIntro],
+  template: `<app-home-intro [intro]="intro" />`,
+})
+class IntroHost {
+  readonly intro = { ...HOME_COMPOSITION.intro, media: photo(HOME_COMPOSITION.intro.media) };
+}
+
+describe('Presentación de la portada', () => {
+  async function renderIntro() {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        provideMediaDelivery(),
+        { provide: MotionService, useValue: { load: () => Promise.resolve(null) } },
+      ],
+    });
+    const fixture = TestBed.createComponent(IntroHost);
+    await fixture.whenStable();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('titular con «Y código» en cursiva, entradilla y destino del indicador del hero', async () => {
+    const element = await renderIntro();
+    const section = element.querySelector('section');
+    expect(section?.id).toBe('portada');
+    expect(section?.querySelector('h2')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+      'Lugares, luz y máquinas. Y código.',
+    );
+    expect(section?.querySelector('h2 em')?.textContent).toBe('Y código.');
+    expect(section?.querySelector('.intro__lead')?.textContent?.trim()).toBe(
+      'Un espacio personal sobre viajes, fotografía, motor, experiencias y tecnología.',
+    );
+    expect(section?.querySelector('app-eyebrow')?.textContent).toContain('00');
+  });
+
+  it('foto vertical recortada en carga diferida, con su crédito', async () => {
+    const element = await renderIntro();
+    const img = element.querySelector('.intro__photo img');
+    expect(img?.getAttribute('loading')).toBe('lazy');
+    expect(element.querySelector('.intro__photo .media__frame')?.getAttribute('style')).toContain(
+      'aspect-ratio: 4/5',
+    );
+    expect(element.querySelector('.intro__photo .media__credit')?.textContent).toContain('Foto:');
+  });
+
+  it('accesos a las cinco secciones, cada uno con su acento', async () => {
+    const element = await renderIntro();
+    const links = [...element.querySelectorAll('.intro__sections a')];
+    expect(links.map((a) => [a.getAttribute('href'), a.getAttribute('data-section')])).toEqual([
+      ['/viajes', 'viajes'],
+      ['/fotografia', 'fotografia'],
+      ['/motor', 'motor'],
+      ['/experiencias', 'experiencias'],
+      ['/tecnologia', 'tecnologia'],
+    ]);
   });
 });

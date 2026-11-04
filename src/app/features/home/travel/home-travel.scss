@@ -1,0 +1,59 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+.travel {
+  padding-block-end: var(--section-l);
+}
+
+.travel__head {
+  padding-block-end: var(--section-s);
+  row-gap: var(--space-6);
+
+  @include mq(md) {
+    > * {
+      grid-column: content;
+    }
+  }
+}
+
+// Titular a la izquierda y enlace a la sección alineado con su última línea.
+.travel__heading {
+  display: grid;
+  grid-row: 1;
+  gap: var(--space-5);
+  justify-items: start;
+}
+
+.travel__title {
+  max-inline-size: 14ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 10vw, var(--text-3xl));
+  font-weight: var(--weight-light);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+
+  em {
+    font-style: italic;
+  }
+}
+
+.travel__stories {
+  row-gap: var(--section-m);
+  padding-block-start: var(--section-m);
+}
+
+.travel__index {
+  padding-block-start: var(--section-m);
+}
+
+.travel__all {
+  justify-self: start;
+
+  @include mq(md) {
+    grid-row: 1;
+    place-self: end end;
+  }
+}

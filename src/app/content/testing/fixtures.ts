@@ -294,6 +294,7 @@ export function fixtureCollections(): ContentCollections {
         cover: 'puerto',
         publishedAt: '2026-02-01',
         featured: false,
+        destinations: ['tossa'],
       }),
       article({
         id: 'paso-stelvio',

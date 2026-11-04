@@ -150,5 +150,33 @@
     "summary": "Ciudad del Duero, con el barrio de la Ribeira frente a las bodegas de Vila Nova de Gaia.",
     "cover": "ciudades-oporto-ribeira",
     "demo": true
+  },
+  {
+    "id": "cala-s-almunia",
+    "slug": "cala-s-almunia",
+    "name": "Cala s'Almunia",
+    "country": "ES",
+    "region": "Mallorca",
+    "location": {
+      "lat": 39.32,
+      "lng": 3.12
+    },
+    "summary": "Cala pequeña de roca caliza en el sureste de Mallorca, con casetas de pescadores junto al agua.",
+    "cover": "viajes-mallorca-almunia",
+    "demo": true
+  },
+  {
+    "id": "alicante",
+    "slug": "alicante",
+    "name": "Alicante",
+    "country": "ES",
+    "region": "Comunidad Valenciana",
+    "location": {
+      "lat": 38.3452,
+      "lng": -0.481
+    },
+    "summary": "Ciudad portuaria del Mediterráneo extendida a los pies del monte Benacantil.",
+    "cover": "viajes-alicante-panorama",
+    "demo": true
   }
 ]

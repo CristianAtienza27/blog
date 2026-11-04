@@ -1,0 +1,34 @@
+<!-- id="portada": destino del indicador de scroll del hero. -->
+<section id="portada" class="page-grid intro" aria-labelledby="intro-title">
+  <div class="intro__layout">
+    <app-eyebrow class="intro__eyebrow" [index]="0" appReveal="fade">{{
+      intro().label
+    }}</app-eyebrow>
+
+    <h2 id="intro-title" class="intro__title" appSplitText>
+      {{ intro().title }} <em>{{ intro().emphasis }}</em>
+    </h2>
+
+    <p class="intro__lead" appReveal revealDelay="0.15">{{ intro().lead }}</p>
+
+    @if (intro().media; as photo) {
+      <div class="intro__photo" appReveal="mask">
+        <app-media [image]="photo" ratio="4/5" cropped [sizes]="photoSizes" appParallax="0.12" />
+      </div>
+    }
+
+    <nav class="intro__sections" aria-label="Secciones de la revista">
+      <ol role="list" appReveal="stagger">
+        @for (section of sections; track section.id) {
+          <li>
+            <a [routerLink]="section.path" [attr.data-section]="section.id">
+              <span class="intro__number t-meta">{{ pad(section.index) }}</span>
+              <span class="intro__label">{{ section.label }}</span>
+              <span class="intro__teaser t-meta">{{ section.teaser }}</span>
+            </a>
+          </li>
+        }
+      </ol>
+    </nav>
+  </div>
+</section>

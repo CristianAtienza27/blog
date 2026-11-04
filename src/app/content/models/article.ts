@@ -4,7 +4,7 @@ import { Media } from './media';
 import { Author } from './author';
 import { Project } from './project';
 import { Category, Tag } from './taxonomy';
-import { Trip } from './travel';
+import { DestinationRef, Trip } from './travel';
 
 export const ARTICLE_FORMATS = [
   'reportaje',
@@ -33,6 +33,8 @@ export interface ArticleSummary extends DemoFlag {
   updatedAt?: string;
   readingMinutes: number;
   featured: boolean;
+  /** Lugares que trata: paradas del itinerario y destinos propios, sin repetir. */
+  destinations: DestinationRef[];
 }
 
 export interface ArticleSeo {

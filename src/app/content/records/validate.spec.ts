@@ -113,6 +113,17 @@ describe('Validación de la estructura de los registros', () => {
     ]);
   });
 
+  it('los destinos propios de un artículo son una lista opcional de slugs', () => {
+    const [article] = fixtureCollections().articles;
+    expect(collectionIssues('articles', [{ ...article, destinations: ['tossa'] }])).toEqual([]);
+    expect(collectionIssues('articles', [{ ...article, destinations: 'tossa' }])).toEqual([
+      expect.stringMatching(/^articles\[0\]\.destinations: /),
+    ]);
+    expect(collectionIssues('articles', [{ ...article, destinations: ['Tossa de Mar'] }])).toEqual([
+      expect.stringMatching(/^articles\[0\]\.destinations\[0\]: slug no válido/),
+    ]);
+  });
+
   it('la altitud de un destino es opcional, entera y en un rango terrestre', () => {
     const destinations = fixtureCollections().destinations;
     const stelvio = destinations.find((d) => d.id === 'stelvio')!;

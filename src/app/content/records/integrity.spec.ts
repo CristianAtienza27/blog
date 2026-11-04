@@ -53,6 +53,22 @@ describe('Integridad de las relaciones', () => {
     expect(issues.join('\n')).toContain('destino inexistente «fantasma»');
   });
 
+  it('los destinos propios de un artículo existen y no repiten las paradas', () => {
+    const issues = issuesFor((data) => {
+      const article = data.articles.find((a) => a.slug === 'calas-costa-brava')!;
+      article.destinations = ['tossa', 'atlantida'];
+    });
+    expect(issues).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(
+          /^articles\[\d\]\.destinations\[1\]: destino inexistente «atlantida»$/,
+        ),
+        // Tossa ya es parada del itinerario del artículo.
+        expect.stringMatching(/^articles\[\d\]\.destinations: destino repetido «tossa»$/),
+      ]),
+    );
+  });
+
   it('las paradas de un itinerario apuntan a destinos y van numeradas desde 1', () => {
     const issues = issuesFor((data) => {
       data.trips[0].stops[1] = { ...data.trips[0].stops[1], order: 3, destination: 'atlantida' };

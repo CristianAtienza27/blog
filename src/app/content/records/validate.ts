@@ -357,6 +357,7 @@ const article = shape({
   featured: bool,
   demo: bool,
   trip: optional(slug),
+  destinations: optional(list(slug)),
   project: optional(slug),
   seo: optional(shape({ description: optional(text()) })),
 });

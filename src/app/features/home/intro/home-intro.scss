@@ -1,0 +1,175 @@
+@use 'abstracts' as *;
+
+// Móvil: apilado, con la foto desplazada a la derecha. Tableta: entradilla y foto en dos
+// columnas. Escritorio: titular a siete columnas y foto a cuatro, empezando más abajo.
+
+:host {
+  display: block;
+}
+
+.intro {
+  padding-block: var(--section-l);
+}
+
+.intro__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6) var(--gutter);
+
+  @include mq(sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include mq(md) {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+.intro__eyebrow {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.intro__title {
+  grid-column: 1 / -1;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 11vw, var(--text-4xl));
+  font-weight: var(--weight-light);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+
+  em {
+    font-style: italic;
+  }
+
+  @include mq(md) {
+    grid-column: 1 / 8;
+    grid-row: 2;
+    font-size: clamp(var(--text-3xl), 7vw, var(--text-4xl));
+  }
+}
+
+.intro__lead {
+  max-inline-size: 30ch;
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+  text-wrap: pretty;
+
+  @include mq(md) {
+    grid-column: 2 / 7;
+    grid-row: 3;
+    margin-block-start: var(--space-5);
+  }
+}
+
+// La foto acompaña: más estrecha que el titular y con su arranque más abajo.
+.intro__photo {
+  justify-self: end;
+  inline-size: min(80%, 26rem);
+
+  @include mq(sm) {
+    inline-size: 100%;
+  }
+
+  @include mq(md) {
+    grid-column: 9 / -1;
+    grid-row: 2 / 5;
+    align-self: start;
+    margin-block-start: var(--space-9);
+  }
+}
+
+// --- Accesos a las secciones -------------------------------------------------------
+.intro__sections {
+  grid-column: 1 / -1;
+  margin-block-start: var(--section-s);
+
+  ol {
+    display: grid;
+    padding: 0;
+    list-style: none;
+    border-block-start: var(--border-width) solid var(--color-line);
+
+    @include mq(lg) {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      column-gap: var(--gutter);
+      border-block-start: 0;
+    }
+  }
+
+  a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 3ch minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    align-items: baseline;
+    min-block-size: 3.5rem;
+    padding-block: var(--space-4);
+    text-decoration: none;
+    border-block-end: var(--border-width) solid var(--color-line);
+
+    @include mq(lg) {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-2);
+      padding-block: var(--space-4) 0;
+      border-block-start: var(--border-width) solid var(--color-line);
+      border-block-end: 0;
+    }
+
+    // Raya de acento de la temática: se dibuja al pasar el ratón o con el foco.
+    &::before {
+      position: absolute;
+      inset: auto 0 calc(var(--border-width) * -1);
+      block-size: 2px;
+      content: '';
+      background-color: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform var(--duration-slow) var(--ease-expo);
+
+      @include mq(lg) {
+        inset: calc(var(--border-width) * -1) 0 auto;
+      }
+    }
+
+    &:focus-visible::before {
+      transform: scaleX(1);
+    }
+
+    &:focus-visible .intro__label {
+      color: var(--accent);
+    }
+
+    @include hover {
+      &::before {
+        transform: scaleX(1);
+      }
+
+      .intro__label {
+        color: var(--accent);
+      }
+    }
+  }
+}
+
+.intro__number {
+  color: var(--accent);
+}
+
+.intro__label {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-light);
+  line-height: var(--leading-tight);
+  transition: color var(--duration-base) var(--ease-standard);
+}
+
+.intro__teaser {
+  display: none;
+
+  @include mq(sm) {
+    display: block;
+  }
+}

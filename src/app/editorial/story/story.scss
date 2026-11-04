@@ -1,0 +1,267 @@
+@use 'abstracts' as *;
+
+// Tres composiciones; en móvil todas se apilan, pero conservan su carácter: el díptico
+// desplaza la segunda foto, el retrato no ocupa todo el ancho y la franja sigue siendo panorámica.
+
+:host {
+  display: block;
+}
+
+// La franja rompe la retícula: de borde a borde cuando su contenedor es un .page-grid.
+:host([data-layout='strip']) {
+  grid-column: full;
+}
+
+.story {
+  display: grid;
+  gap: var(--space-5) var(--gutter);
+
+  @include mq(md) {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+// --- Texto común ---------------------------------------------------------------------
+.story__text {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.story__title {
+  max-inline-size: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-xl), 7vw, var(--text-2xl));
+  font-weight: var(--weight-light);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+
+  a {
+    text-decoration: none;
+
+    @include hover {
+      text-decoration: underline;
+      text-decoration-thickness: var(--border-width);
+      text-underline-offset: 0.12em;
+    }
+  }
+}
+
+.story__dek {
+  max-inline-size: 38ch;
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-muted);
+  text-wrap: pretty;
+}
+
+.story__places {
+  color: var(--accent);
+}
+
+.story__text a[app-link] {
+  margin-block-start: var(--space-2);
+}
+
+.story__credit {
+  display: block;
+  margin-block-start: var(--space-3);
+}
+
+// --- Díptico: dos fotos juntas, mismo límite superior e inferior -------------------
+// Anchos 7:3 y proporciones 3:2 y 9:14: con el mismo hueco, las dos alturas coinciden.
+.story__pair {
+  display: grid;
+  gap: var(--space-2);
+
+  @include mq(sm) {
+    grid-template-columns: 7fr 3fr;
+  }
+
+  @include mq(md) {
+    grid-column: 1 / -1;
+  }
+}
+
+.story__pair--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.story__frame {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-bg-sunken);
+
+  app-media {
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.story__plate--wide .story__frame {
+  aspect-ratio: 3 / 2;
+}
+
+// En móvil, Lisboa debajo de Florencia, algo más estrecha y alineada a la derecha.
+.story__plate--tall {
+  justify-self: end;
+  inline-size: 72%;
+  margin-block-start: var(--space-3);
+
+  .story__frame {
+    aspect-ratio: 4 / 5;
+  }
+
+  @include mq(sm) {
+    justify-self: stretch;
+    inline-size: auto;
+    margin-block-start: 0;
+
+    .story__frame {
+      aspect-ratio: 9 / 14;
+    }
+  }
+}
+
+// Bajo las fotos, en sus mismas columnas: titular bajo Florencia; entradilla, ciudades y
+// enlace bajo Lisboa.
+.story__text--pair {
+  @include mq(md) {
+    grid-template-columns: 7fr 3fr;
+    grid-column: 1 / -1;
+    column-gap: var(--space-2);
+    align-items: start;
+    margin-block-start: var(--space-6);
+
+    > .story__meta {
+      grid-area: 1 / 1;
+    }
+
+    > .story__title {
+      grid-area: 2 / 1 / span 3;
+    }
+
+    > .story__dek {
+      grid-area: 1 / 2 / span 2;
+    }
+
+    > .story__places {
+      grid-area: 3 / 2;
+    }
+
+    > a[app-link] {
+      grid-area: 4 / 2;
+    }
+  }
+}
+
+// --- Retrato: foto vertical y texto al lado ----------------------------------------
+.story__portrait {
+  inline-size: 86%;
+
+  @include mq(sm) {
+    inline-size: 70%;
+  }
+
+  @include mq(md) {
+    grid-column: 2 / 7;
+    inline-size: auto;
+  }
+}
+
+.story__text--side {
+  @include mq(md) {
+    grid-column: 8 / 12;
+    align-self: center;
+  }
+}
+
+// --- Franja panorámica a sangre -----------------------------------------------------
+:host([data-layout='strip']) .story {
+  @include mq(md) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.story__band {
+  position: relative;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  background-color: var(--color-bg-sunken);
+
+  app-media {
+    position: absolute;
+    inset: 0;
+  }
+
+  @include mq(sm) {
+    aspect-ratio: 3 / 1;
+  }
+
+  @include mq(lg) {
+    grid-area: 1 / 1;
+    aspect-ratio: 32 / 9;
+  }
+}
+
+.story__veil {
+  display: none;
+
+  @include mq(lg) {
+    position: absolute;
+    inset: 0;
+    display: block;
+    background:
+      linear-gradient(to right, rgb(0 0 0 / 66%), rgb(0 0 0 / 30%) 45%, transparent 70%),
+      // Esquina del crédito: legible aunque la foto sea clara.
+      radial-gradient(48% 90% at 100% 100%, rgb(0 0 0 / 68%), transparent 72%);
+  }
+}
+
+.story__text--band {
+  padding-inline: var(--page-margin);
+
+  @include mq(lg) {
+    z-index: 1;
+    grid-area: 1 / 1;
+    align-self: center;
+    max-inline-size: 44rem;
+    color-scheme: dark;
+    color: var(--color-ink);
+    text-shadow: 0 1px 24px rgb(0 0 0 / 35%);
+
+    .story__title {
+      font-size: var(--text-3xl);
+    }
+
+    .story__dek,
+    .story__meta {
+      color: color-mix(in oklab, var(--color-ink) 86%, transparent);
+    }
+  }
+}
+
+.story__credit--over {
+  display: none;
+
+  @include mq(lg) {
+    position: absolute;
+    inset: auto var(--page-margin) var(--space-4) auto;
+    z-index: 1;
+    display: block;
+    margin: 0;
+    color-scheme: dark;
+    color: var(--color-ink);
+    text-shadow: 0 1px 16px rgb(0 0 0 / 45%);
+  }
+}
+
+.story__credit--below {
+  padding-inline: var(--page-margin);
+  margin: 0;
+
+  @include mq(lg) {
+    display: none;
+  }
+}

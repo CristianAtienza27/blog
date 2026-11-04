@@ -30,7 +30,8 @@
     "publishedAt": "2026-08-27",
     "readingMinutes": 2,
     "featured": false,
-    "demo": true
+    "demo": true,
+    "destinations": ["lisboa", "florencia", "praga", "oporto"]
   },
   {
     "id": "serie-horizontes",
@@ -162,5 +163,39 @@
     "featured": false,
     "demo": true,
     "project": "revista-cristian-atienza"
+  },
+  {
+    "id": "calas-de-mallorca",
+    "slug": "calas-de-mallorca",
+    "title": "Calas de Mallorca",
+    "dek": "Roca caliza, pinos y agua transparente en las calas pequeñas del sureste de la isla.",
+    "excerpt": "Guía de demostración sobre las calas del sureste de Mallorca: cómo llegar a pie, cuándo ir y qué respetar.",
+    "category": "viajes",
+    "tags": ["mediterraneo", "costa"],
+    "format": "guia",
+    "cover": "viajes-mallorca-almunia",
+    "author": "cristian-atienza",
+    "publishedAt": "2026-07-21",
+    "readingMinutes": 1,
+    "featured": false,
+    "demo": true,
+    "destinations": ["cala-s-almunia"]
+  },
+  {
+    "id": "alicante-desde-el-puerto",
+    "slug": "alicante-desde-el-puerto",
+    "title": "Alicante desde el puerto",
+    "dek": "La bahía, el puerto y la ciudad extendida a los pies del Benacantil en una sola mirada.",
+    "excerpt": "Nota de demostración en torno a una panorámica: cómo se ordena una ciudad mediterránea vista desde el agua.",
+    "category": "viajes",
+    "tags": ["mediterraneo", "ciudades"],
+    "format": "nota",
+    "cover": "viajes-alicante-panorama",
+    "author": "cristian-atienza",
+    "publishedAt": "2026-08-05",
+    "readingMinutes": 1,
+    "featured": false,
+    "demo": true,
+    "destinations": ["alicante"]
   }
 ]

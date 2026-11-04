@@ -34,8 +34,7 @@ export function filterArticles(
       (!query.format || article.format === query.format) &&
       (query.featured === undefined || article.featured === query.featured) &&
       (!query.trip || trip?.slug === query.trip) &&
-      (!query.destination ||
-        !!trip?.stops.some((stop) => stop.destination.slug === query.destination)) &&
+      (!query.destination || article.destinations.some((d) => d.slug === query.destination)) &&
       (!query.project || project?.slug === query.project)
     );
   });
@@ -48,7 +47,7 @@ function searchDocuments(catalog: Catalog): SearchDocument[] {
     const project = record?.project ? catalog.projectById.get(record.project) : undefined;
     const related = [
       trip?.title,
-      ...(trip?.stops.map((stop) => stop.destination.name) ?? []),
+      ...article.destinations.map((d) => d.name),
       project?.name,
       ...(project?.stack.map((tag) => tag.label) ?? []),
     ];

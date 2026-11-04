@@ -145,6 +145,11 @@ describe('Menu', () => {
       ],
     ]);
     expect(element.querySelectorAll('.menu__preview picture')).toHaveLength(5);
+    // Las vistas previas llenan todo el marco: sin el hueco del pie de foto.
+    const frames = [...element.querySelectorAll('app-media.menu__frame')];
+    expect(frames).toHaveLength(5);
+    expect(frames.every((frame) => frame.hasAttribute('data-flush'))).toBe(true);
+    expect(element.querySelector('.menu__preview figcaption')).toBeNull();
     const credit = element.querySelector('.menu__credit')?.textContent?.replace(/\s+/g, ' ');
     expect(credit).toContain('Foto: Autoría de prueba');
     expect(credit).toContain('CC BY-SA 4.0');

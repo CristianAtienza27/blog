@@ -56,6 +56,28 @@ describe('ArticleRepository (adaptador JSON)', () => {
     ]);
   });
 
+  it('expone los destinos de cada artículo: paradas del itinerario y destinos propios', async () => {
+    const { repository } = setup();
+    const { items } = await repository.list();
+    const places = (slug: string) =>
+      items.find((a) => a.slug === slug)?.destinations.map((d) => d.slug);
+    expect(places('calas-costa-brava')).toEqual(['tossa', 'begur']);
+    expect(places('serie-costa')).toEqual(['tossa']);
+    expect(places('construir-revista')).toEqual([]);
+    // Referencias ligeras: sin portada ni descripción del destino.
+    const begur = items.find((a) => a.slug === 'calas-costa-brava')?.destinations[1];
+    expect(begur).not.toHaveProperty('cover');
+    expect(begur).not.toHaveProperty('summary');
+  });
+
+  it('el filtro por destino incluye los destinos propios, no solo las paradas', async () => {
+    const { repository } = setup();
+    expect(slugs((await repository.list({ destination: 'tossa' })).items)).toEqual([
+      'calas-costa-brava',
+      'serie-costa',
+    ]);
+  });
+
   it('pagina con límites seguros', async () => {
     const { repository } = setup();
     const second = await repository.list({ offset: 2, limit: 2 });
@@ -180,8 +202,12 @@ describe('ArticleRepository (adaptador JSON)', () => {
       'calas-costa-brava',
       'serie-costa',
     ]);
-    // Coincide por el nombre de un destino del itinerario.
-    expect(slugs((await repository.search('tossa')).items)).toEqual(['calas-costa-brava']);
+    // Coincide por el nombre de un destino: del itinerario o propio del artículo.
+    expect(slugs((await repository.search('tossa')).items)).toEqual([
+      'calas-costa-brava',
+      'serie-costa',
+    ]);
+    expect(slugs((await repository.search('begur')).items)).toEqual(['calas-costa-brava']);
     // Coincide por la pila tecnológica del proyecto.
     expect(slugs((await repository.search('angular')).items)).toEqual(['construir-revista']);
     expect(slugs((await repository.search('costa', { category: 'fotografia' })).items)).toEqual([

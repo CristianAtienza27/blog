@@ -1,0 +1,77 @@
+<!-- El índice y su vista previa forman un bloque: salir de él (ratón o foco) la oculta. -->
+<section
+  class="index"
+  aria-labelledby="destination-index-title"
+  (pointerleave)="clear()"
+  (focusout)="onFocusOut($event)"
+>
+  <header class="index__head" appReveal="fade">
+    <h3 id="destination-index-title" class="index__heading">{{ heading() }}</h3>
+    <p class="index__summary t-meta">{{ summary() }}</p>
+  </header>
+
+  <ol class="index__list" role="list" appReveal="stagger">
+    @for (entry of entries(); track entry.id) {
+      <li>
+        @if (entry.article; as article) {
+          <a
+            class="index__row"
+            [class.is-active]="active() === entry.id"
+            [routerLink]="article.href"
+            (pointerenter)="onPointerEnter(entry, $event)"
+            (focus)="onFocus(entry)"
+          >
+            <ng-container *ngTemplateOutlet="row; context: { $implicit: entry }" />
+            <span class="visually-hidden">, </span>
+            <span class="index__article">{{ article.title }}</span>
+            <svg class="index__arrow" viewBox="0 0 24 12" aria-hidden="true">
+              <path d="M0 6h22M17 1l5 5-5 5" />
+            </svg>
+          </a>
+        } @else {
+          <div class="index__row index__row--static">
+            <ng-container *ngTemplateOutlet="row; context: { $implicit: entry }" />
+          </div>
+        }
+      </li>
+    }
+  </ol>
+
+  <!-- Vista previa (escritorio): imagen decorativa; el crédito sí es accesible. -->
+  <div class="index__preview">
+    <div class="index__frame" [class.is-idle]="!activeEntry()?.preview" aria-hidden="true">
+      @for (entry of previews(); track entry.id) {
+        @if (entry.preview; as photo) {
+          <app-media
+            class="index__photo"
+            [class.is-active]="active() === entry.id"
+            [image]="photo"
+            fill
+            flush
+            cropped
+            alt=""
+            sizes="30vw"
+            [showCredit]="false"
+          />
+        }
+      }
+    </div>
+    @if (activeEntry(); as entry) {
+      <p class="index__caption t-meta">
+        <span>{{ entry.number }} · {{ entry.name }}</span>
+        @if (entry.preview; as photo) {
+          <app-photo-credit [media]="photo" />
+        }
+      </p>
+    }
+  </div>
+</section>
+
+<!-- Separadores ocultos: los lectores de pantalla leen «02, Tossa de Mar, Girona · España». -->
+<ng-template #row let-entry>
+  <span class="index__number">{{ entry.number }}</span>
+  <span class="visually-hidden">, </span>
+  <span class="index__name">{{ entry.name }}</span>
+  <span class="visually-hidden">, </span>
+  <span class="index__area">{{ entry.area }}</span>
+</ng-template>
