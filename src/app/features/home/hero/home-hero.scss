@@ -23,18 +23,31 @@
   background-color: var(--color-bg);
 }
 
-// --- Plano 1: fotografía -------------------------------------------------------
-.hero__media {
+// --- Planos 1 y 2: foto y velo, mismo marco ---------------------------------------
+// Una franja en lo alto en móvil; el hero entero desde sm.
+// Móvil: la foto se funde con el fondo por sí misma (antes lo hacía el velo). Con dos capas,
+// el parallax y el zoom de entrada sacaban su borde por debajo del velo y, aun alineadas, un
+// borde en píxel fraccionario dejaba ver una línea clara. La máscara se mueve con la foto.
+// Mismo fundido que tenía el velo: opaca hasta el 76 % y transparente en el borde inferior.
+// Al velo no le afecta: en la franja ya es transparente mucho antes del 76 %.
+.hero__media,
+.hero__veil {
   position: absolute;
   inset: 0 0 auto;
-  z-index: -2;
   block-size: var(--hero-photo);
-  transform-origin: 50% 0;
+  mask: linear-gradient(#000 76%, #0000);
 
   @include mq(sm) {
     inset: 0;
     block-size: auto;
+    mask: none;
   }
+}
+
+// --- Plano 1: fotografía -------------------------------------------------------
+.hero__media {
+  z-index: -2;
+  transform-origin: 50% 0;
 }
 
 .hero__zoom {
@@ -47,23 +60,18 @@
 }
 
 // --- Plano 2: velo --------------------------------------------------------------
-// En móvil funde la foto con el fondo; desde sm oscurece solo donde hay texto.
+// En móvil oscurece bajo el header (el fundido inferior va en la máscara de la foto);
+// desde sm oscurece solo donde hay texto.
 .hero__veil {
-  position: absolute;
-  inset: 0 0 auto;
   z-index: -1;
-  block-size: var(--hero-photo);
-  background:
-    linear-gradient(
-      to bottom,
-      color-mix(in oklab, var(--color-bg) 55%, transparent),
-      transparent calc(var(--header-height) * 2.2)
-    ),
-    linear-gradient(to top, var(--color-bg) 0%, transparent 24%);
+
+  // De arriba abajo (dirección por defecto); #0000 es «transparent».
+  background: linear-gradient(
+    color-mix(in oklab, var(--color-bg) 55%, #0000),
+    #0000 calc(var(--header-height) * 2.2)
+  );
 
   @include mq(sm) {
-    inset: 0;
-    block-size: auto;
     background:
       linear-gradient(
         to bottom,
