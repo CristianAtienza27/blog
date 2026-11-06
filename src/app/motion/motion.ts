@@ -24,6 +24,21 @@ const DEFAULT_DURATIONS: Record<MotionDuration, number> = {
   cinematic: 1.2,
 };
 
+/** Tiempo CSS válido: número no negativo con unidad ms o s («700ms», «.7s», «1.2s»). */
+const CSS_TIME = /^(\d+(?:\.\d+)?|\.\d+)(ms|s)$/i;
+
+/**
+ * Convierte un tiempo CSS a segundos. Los tokens llegan en ms en desarrollo y en s en
+ * producción (el minificador reescribe «700ms» como «.7s»): hay que respetar la unidad.
+ * Vacío, sin unidad o no válido: la duración de reserva.
+ */
+export function cssTimeToSeconds(value: string, fallback: number): number {
+  const match = CSS_TIME.exec(value.trim());
+  if (!match) return fallback;
+  const amount = Number(match[1]);
+  return match[2].toLowerCase() === 'ms' ? amount / 1000 : amount;
+}
+
 /**
  * Motor de animación.
  * - GSAP se carga bajo demanda y solo en el navegador (nunca en el bundle inicial ni en SSR).
@@ -115,8 +130,8 @@ export class MotionService {
       if (bezier) CustomEase.create(`ca-${name}`, bezier[1]);
     }
     for (const name of Object.keys(this.durations) as MotionDuration[]) {
-      const ms = parseFloat(style.getPropertyValue(`--duration-${name}`));
-      if (!Number.isNaN(ms)) this.durations[name] = ms / 1000;
+      const value = style.getPropertyValue(`--duration-${name}`);
+      this.durations[name] = cssTimeToSeconds(value, DEFAULT_DURATIONS[name]);
     }
 
     gsap.defaults({ ease: 'ca-out', duration: this.durations.slow });
