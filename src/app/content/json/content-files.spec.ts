@@ -14,7 +14,7 @@ import { HomeData, homeResolver } from '../../features/home/home.resolver';
 import { provideContent } from '../provide-content';
 import { withJsonContent } from './with-json-content';
 import { SECTIONS } from '../../layout/navigation';
-import { validateContent } from '../records/integrity';
+import { RESERVED_IDS, validateContent } from '../records/integrity';
 import { COLLECTION_NAMES, ContentCollections } from '../records/records';
 import { jsonFileSource } from './content-source';
 
@@ -291,5 +291,30 @@ describe('Cabeceras de artículo con el contenido real', () => {
         article.slug,
       ).toEqual([]);
     }
+  });
+});
+
+describe('Cuerpo de los artículos con el contenido real', () => {
+  it('cada capítulo tiene un id de ancla único en su página', async () => {
+    for (const { article } of await articleHeaders()) {
+      const ids = article.blocks.flatMap((block) => (block.type === 'chapter' ? [block.id] : []));
+      expect(new Set(ids).size, article.slug).toBe(ids.length);
+      expect(
+        ids.filter((id) => RESERVED_IDS.includes(id)),
+        article.slug,
+      ).toEqual([]);
+    }
+  });
+
+  it('los artículos de referencia prueban anclas, enlaces internos y externos', async () => {
+    const headers = await articleHeaders();
+    const html = async (slug: string) =>
+      headers
+        .find(({ article }) => article.slug === slug)
+        ?.article.blocks.flatMap((block) => (block.type === 'text' ? [block.html] : []))
+        .join('');
+    expect(await html('itinerario-costa-brava')).toContain('href="#cadaques"');
+    expect(await html('calas-de-mallorca')).toContain('href="/viajes/itinerario-costa-brava"');
+    expect(await html('calas-de-mallorca')).toContain('href="https://es.wikipedia.org/');
   });
 });

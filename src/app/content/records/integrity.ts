@@ -1,4 +1,4 @@
-import { SECTION_IDS } from '../models';
+import { SECTION_IDS, SPECS_ID_PREFIX } from '../models';
 import { readingMinutes } from './reading-time';
 import type { ArticleBodyRecord, ContentCollections } from './records';
 import { validateArticleBody, validateCollection } from './validate';
@@ -16,6 +16,12 @@ export class ContentValidationError extends Error {
     this.name = 'ContentValidationError';
   }
 }
+
+/**
+ * Identificadores que ya usa la página de artículo: un capítulo con ese id rompería
+ * las anclas o el título accesible.
+ */
+export const RESERVED_IDS: readonly string[] = ['article-title', 'contenido', 'site-menu'];
 
 function duplicates(values: readonly string[]): string[] {
   const seen = new Set<string>();
@@ -132,6 +138,7 @@ export function checkIntegrity(
     if (body.slug !== a.slug) issues.push(`articles/${a.slug}.json: slug «${body.slug}» distinto`);
 
     const chapters: string[] = [];
+    const anchors: { href: string; at: string }[] = [];
     body.blocks.forEach((block, j) => {
       const at = `articles/${a.slug}.json.blocks[${j}]`;
       switch (block.type) {
@@ -147,11 +154,31 @@ export function checkIntegrity(
           break;
         case 'chapter':
           chapters.push(block.id);
+          if (RESERVED_IDS.includes(block.id)) issues.push(`${at}: id reservado «${block.id}»`);
+          if (block.id.startsWith(SPECS_ID_PREFIX)) {
+            issues.push(`${at}: el prefijo «${SPECS_ID_PREFIX}» es de las fichas («${block.id}»)`);
+          }
+          break;
+        case 'text':
+          for (const [, href] of block.html.matchAll(/href="([^"]*)"/g)) anchors.push({ href, at });
           break;
       }
     });
     for (const id of duplicates(chapters))
       issues.push(`articles/${a.slug}.json: capítulo repetido «${id}»`);
+    // Anclas a capítulos del propio artículo y enlaces a artículos que existan en su sección.
+    for (const { href, at } of anchors) {
+      if (href.startsWith('#') && !chapters.includes(href.slice(1))) {
+        issues.push(`${at}: ancla a un capítulo inexistente «${href}»`);
+      }
+      const target = /^\/([a-z]+)\/([a-z0-9-]+)\/?(?:#.*)?$/.exec(href);
+      if (target && (SECTION_IDS as readonly string[]).includes(target[1])) {
+        const linked = data.articles.find((other) => other.slug === target[2]);
+        if (linked?.category !== target[1]) {
+          issues.push(`${at}: enlace a un artículo inexistente «${href}»`);
+        }
+      }
+    }
 
     const minutes = readingMinutes(body.blocks);
     if (a.readingMinutes !== minutes) {

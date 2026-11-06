@@ -1,0 +1,81 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+.specs {
+  display: grid;
+  gap: var(--space-5);
+  padding-block-start: var(--space-4);
+  border-block-start: var(--border-width) solid var(--color-ink);
+}
+
+.specs__title {
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+}
+
+.specs__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--gutter);
+}
+
+// Etiqueta arriba y valor abajo: en cada fila los valores quedan alineados aunque una
+// etiqueta ocupe dos líneas.
+.specs__item {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--space-2);
+  padding-block-start: var(--space-3);
+  border-block-start: var(--border-width) solid var(--color-line);
+
+  // Valores largos («De finales de primavera a otoño»): dos columnas y cuerpo de lectura.
+  &--long {
+    grid-column: span 2;
+  }
+}
+
+.specs__label {
+  text-wrap: balance;
+}
+
+.specs__value {
+  align-self: end;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-light);
+  font-variant-numeric: lining-nums;
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+
+  .specs__item--long & {
+    font-size: var(--text-lg);
+    line-height: var(--leading-snug);
+  }
+}
+
+.specs__unit {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.specs__note {
+  max-inline-size: var(--width-measure);
+}
+
+@include mq(md) {
+  .specs__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@include mq(lg) {
+  .specs__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

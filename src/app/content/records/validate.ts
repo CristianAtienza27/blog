@@ -6,6 +6,7 @@ import {
   SECTION_IDS,
   TRAVEL_MODES,
 } from '../models';
+import { htmlIssues } from '../rich-text';
 import { ORIGINAL_FORMATS, type CollectionName } from './records';
 
 /**
@@ -134,25 +135,8 @@ const union =
 
 // --- Texto enriquecido -----------------------------------------------------------
 
-const ALLOWED_TAGS = new Set(['p', 'h3', 'em', 'strong', 'a', 'code', 'ul', 'ol', 'li', 'br']);
-const TAG = /<\/?([a-zA-Z][a-zA-Z0-9-]*)([^>]*)>/g;
-const HREF = /^href="(\/[^"]*|#[^"]*|https:\/\/[^"]+)"$/;
-
-/** Lista blanca: solo etiquetas de texto y enlaces relativos, anclas o https. */
-export function htmlIssues(html: string): string[] {
-  const issues: string[] = [];
-  for (const [, rawName, rawAttributes] of html.matchAll(TAG)) {
-    const name = rawName.toLowerCase();
-    const attributes = rawAttributes.replace(/\/\s*$/, '').trim();
-    if (!ALLOWED_TAGS.has(name)) {
-      issues.push(`etiqueta no permitida: <${name}>`);
-    } else if (attributes && !(name === 'a' && HREF.test(attributes))) {
-      issues.push(`atributos no permitidos en <${name}>: ${attributes}`);
-    }
-  }
-  if (/<(?![a-zA-Z/])/.test(html.replace(TAG, ''))) issues.push('carácter < suelto');
-  return issues;
-}
+// Lista blanca compartida con la página que lo muestra (content/rich-text.ts).
+export { htmlIssues };
 
 const richText: Rule = (c, v) => {
   text()(c, v);

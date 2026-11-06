@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import {
   ActivatedRouteSnapshot,
@@ -187,12 +188,28 @@ describe('Página de artículo', () => {
     expect(element.querySelector('app-tag')).toBeNull();
   });
 
-  it('mientras el cuerpo está en preparación: resumen y vuelta a la sección', async () => {
-    const { element, text } = await renderPage(articlePresentation(CALAS));
-    expect(text('.article__summary .t-body')).toBe(CALAS.excerpt);
-    expect(element.querySelector('.article__summary a[app-link]')?.getAttribute('href')).toBe(
-      '/viajes',
-    );
+  it('debajo de la cabecera, el cuerpo del artículo', async () => {
+    const { text } = await renderPage(articlePresentation(CALAS));
+    expect(text('article > app-article-body app-prose-block')).toBe('Texto.');
+  });
+
+  it('las anclas dejan libre la altura del header mientras se muestra el artículo', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([]),
+        provideMediaDelivery(),
+        { provide: MotionService, useValue: { load: () => Promise.resolve(null) } },
+      ],
+    });
+    const scroller = TestBed.inject(ViewportScroller);
+    const setOffset = vi.spyOn(scroller, 'setOffset');
+    const fixture = TestBed.createComponent(Host);
+    fixture.componentInstance.page.set(articlePresentation(CALAS));
+    await fixture.whenStable();
+    const offset = setOffset.mock.calls[0][0] as () => [number, number];
+    expect(offset()[1]).toBeGreaterThanOrEqual(24);
+    fixture.destroy();
+    expect(setOffset).toHaveBeenLastCalledWith([0, 0]);
   });
 
   it('sin artículo muestra la página de no encontrado', async () => {

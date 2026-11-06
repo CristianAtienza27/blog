@@ -1,0 +1,65 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+.body {
+  padding-block: var(--space-7) var(--section-m);
+
+  // Ritmo base entre bloques de texto (dentro de cada uno, el de .prose).
+  > * + * {
+    margin-block-start: var(--space-5);
+  }
+
+  // Capítulo: el número en el margen (lg) y el título en la columna de lectura.
+  > app-chapter-heading {
+    grid-column: content-start / text-end;
+
+    &:not(:first-child) {
+      margin-block-start: var(--space-9);
+    }
+  }
+
+  > app-chapter-heading + * {
+    margin-block-start: var(--space-6);
+  }
+
+  // Citas destacadas y fichas: más anchas que el texto, hasta el margen derecho.
+  > .body__wide {
+    grid-column: text-start / aside-end;
+  }
+
+  > app-quote-block[data-variant='block'] {
+    grid-column: text;
+  }
+
+  > :is(app-quote-block, app-specs-block, app-divider-block) {
+    margin-block: var(--space-8);
+  }
+
+  > :is(app-quote-block, app-specs-block, app-divider-block) + * {
+    margin-block-start: 0;
+  }
+
+  // Tras una cita, ficha o separador ya hay aire: el capítulo siguiente no suma el suyo entero.
+  > :is(app-quote-block, app-specs-block, app-divider-block) + app-chapter-heading {
+    margin-block-start: var(--space-6);
+  }
+
+  > :last-child {
+    margin-block-end: 0;
+  }
+
+  @include mq(lg) {
+    padding-block-start: var(--space-8);
+
+    > app-chapter-heading:not(:first-child) {
+      margin-block-start: var(--space-10);
+    }
+
+    > :is(app-quote-block, app-specs-block) {
+      margin-block: var(--space-9);
+    }
+  }
+}

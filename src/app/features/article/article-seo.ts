@@ -4,10 +4,11 @@ import type { SeoData } from '../../core/seo/seo';
 import type { ArticleHeaderData } from './article-presentation';
 
 /**
- * El cuerpo del artículo aún no se muestra (llega en la fase 5.2): hasta entonces la página
- * es provisional y no se indexa, sea o no contenido de demostración.
+ * La página de artículo aún no está completa: faltan las fotografías del relato, galerías,
+ * mapas y módulos de cierre (fases 5.3 a 5.7). Hasta entonces no se indexa, sea o no
+ * contenido de demostración.
  */
-export const ARTICLE_BODY_READY = false;
+export const ARTICLE_PAGE_COMPLETE = false;
 
 /** Ancho de la imagen para redes sociales: la versión más pequeña que cubre 1200 px. */
 const SOCIAL_IMAGE_WIDTH = 1200;
@@ -26,7 +27,7 @@ export function articleSeo(
   const seo: SeoData = {
     description: article.seo?.description ?? article.dek,
     type: 'article',
-    noindex: article.demo || !ARTICLE_BODY_READY,
+    noindex: article.demo || !ARTICLE_PAGE_COMPLETE,
     article: {
       section: article.category.name,
       tags: article.tags.map((tag) => tag.label),

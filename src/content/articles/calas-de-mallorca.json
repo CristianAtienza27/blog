@@ -35,7 +35,7 @@
     },
     {
       "type": "text",
-      "html": "<p>Las praderas de <strong>posidonia</strong> que tiñen de oscuro algunas zonas del fondo están protegidas en las Islas Baleares: mantienen el agua limpia y sujetan la arena de las playas. Fondear sobre ellas está prohibido.</p><p>Lo demás es sentido común: no dejar residuos, no apilar piedras y respetar las zonas de baño señalizadas.</p>"
+      "html": "<p>Las praderas de <a href=\"https://es.wikipedia.org/wiki/Posidonia_oceanica\"><strong>posidonia</strong></a> que tiñen de oscuro algunas zonas del fondo están protegidas en las Islas Baleares: mantienen el agua limpia y sujetan la arena de las playas. Fondear sobre ellas está prohibido.</p><p>Lo demás es sentido común: no dejar residuos, no apilar piedras y respetar las zonas de baño señalizadas.</p><p>Para un recorrido más largo por la costa mediterránea, el <a href=\"/viajes/itinerario-costa-brava\">itinerario de ejemplo por la Costa Brava</a> propone cuatro paradas de sur a norte.</p>"
     }
   ]
 }

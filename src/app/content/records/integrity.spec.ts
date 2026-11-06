@@ -153,3 +153,48 @@ describe('Integridad de las relaciones', () => {
     expect(validateContent(data, bodies())).toEqual(['tags: se esperaba una lista']);
   });
 });
+
+describe('Anclas y enlaces del texto', () => {
+  const withBody = (blocks: ArticleBodyRecord['blocks']) =>
+    issuesFor(
+      () => undefined,
+      FIXTURE_BODIES.map((b) => (b.slug === 'calas-costa-brava' ? { slug: b.slug, blocks } : b)),
+    ).join('\n');
+
+  it('las anclas apuntan a capítulos del propio artículo', () => {
+    const issues = withBody([
+      { type: 'chapter', id: 'tossa', title: 'Tossa' },
+      { type: 'text', html: '<p><a href="#tossa">bien</a> y <a href="#begur">mal</a></p>' },
+    ]);
+    expect(issues).toContain('ancla a un capítulo inexistente «#begur»');
+    expect(issues).not.toContain('«#tossa»');
+  });
+
+  it('los enlaces a artículos apuntan a uno que existe y en su sección', () => {
+    const issues = withBody([
+      {
+        type: 'text',
+        html:
+          '<p><a href="/motor/paso-stelvio">bien</a> <a href="/viajes/paso-stelvio">otra sección</a>' +
+          ' <a href="/viajes/no-existe">inexistente</a> <a href="/archivo">página</a></p>',
+      },
+    ]);
+    expect(issues).toContain('enlace a un artículo inexistente «/viajes/paso-stelvio»');
+    expect(issues).toContain('enlace a un artículo inexistente «/viajes/no-existe»');
+    expect(issues).not.toContain('«/motor/paso-stelvio»');
+    expect(issues).not.toContain('«/archivo»');
+  });
+
+  it('un capítulo no puede usar un id que ya usa la página', () => {
+    const issues = withBody([{ type: 'chapter', id: 'article-title', title: 'Choque' }]);
+    expect(issues).toContain('id reservado «article-title»');
+  });
+
+  it('ni el prefijo de los ids de las fichas', () => {
+    const issues = withBody([{ type: 'chapter', id: 'datos-1', title: 'Choque' }]);
+    expect(issues).toContain('el prefijo «datos-» es de las fichas («datos-1»)');
+    expect(withBody([{ type: 'chapter', id: 'datos', title: 'Sin guion' }])).not.toContain(
+      'prefijo',
+    );
+  });
+});

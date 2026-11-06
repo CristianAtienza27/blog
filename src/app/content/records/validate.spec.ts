@@ -194,6 +194,53 @@ describe('Lista blanca de HTML', () => {
     expect(htmlIssues('<a href="http://inseguro.test">a</a>')[0]).toContain('atributos');
     expect(htmlIssues('<p>3 < 4</p>')).toContain('carácter < suelto');
   });
+
+  it('un enlace que empieza por // es externo disfrazado de interno: no se admite', () => {
+    expect(htmlIssues('<a href="//dominio.test/x">a</a>')[0]).toContain('atributos');
+    expect(htmlIssues('<a href="/viajes" target="_blank">a</a>')[0]).toContain('atributos');
+    expect(htmlIssues('<a href="#Mal Ancla">a</a>')[0]).toContain('atributos');
+    expect(htmlIssues('<a href="https://dominio.test/ruta con espacios">a</a>')[0]).toContain(
+      'atributos',
+    );
+  });
+
+  it.each([
+    ['barra invertida', '/\\dominio.test/x'],
+    ['dos barras invertidas', '/\\\\dominio.test'],
+    ['barra invertida tras la ruta', '/viajes\\x'],
+    ['tabulador entre barras', '/\t/dominio.test'],
+    ['salto de línea entre barras', '/\n/dominio.test'],
+    ['https con barra invertida', 'https://dominio.test\\x'],
+  ])('ruta que el navegador sacaría del sitio (%s): no se admite', (_, href) => {
+    expect(htmlIssues(`<p><a href="${href}">a</a></p>`)[0]).toContain('atributos no permitidos');
+  });
+
+  it('solo la forma canónica de enlace: la misma que reconoce el render', () => {
+    expect(htmlIssues('<p><a href="https://angular.dev">a</a> <a href="#c">b</a></p>')).toEqual([]);
+    for (const tag of [
+      '<a href="https://angular.dev" >',
+      '<a  href="#c">',
+      '<a\thref="#c">',
+      '<A href="#c">',
+      '<a href="#c"/>',
+    ]) {
+      expect(htmlIssues(`<p>${tag}a</a></p>`), tag).not.toEqual([]);
+    }
+  });
+
+  it('solo etiquetas en minúsculas y sin espacios; <br> admite sus tres formas', () => {
+    expect(htmlIssues('<p>a<br>b<br/>c<br />d</p>')).toEqual([]);
+    expect(htmlIssues('<p >a</p>')[0]).toBe('formato no admitido: <p > (se espera <p>)');
+    expect(htmlIssues('<P>a</P>')[0]).toBe('formato no admitido: <P> (se espera <p>)');
+    expect(htmlIssues('<h3>a</h3 >')[0]).toBe('formato no admitido: </h3 > (se espera </h3>)');
+  });
+
+  it('rechaza enlaces anidados y etiquetas sin cerrar', () => {
+    expect(htmlIssues('<p><a href="/a"><a href="/b">x</a></a></p>')).toContain(
+      'enlace dentro de otro enlace',
+    );
+    expect(htmlIssues('<p>texto</p')).toContain('carácter < suelto');
+  });
 });
 
 describe('Tiempo de lectura', () => {

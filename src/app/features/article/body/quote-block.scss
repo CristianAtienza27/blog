@@ -1,0 +1,66 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+.quote {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.quote__text p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: var(--weight-light);
+  text-wrap: balance;
+  quotes: '«' '»';
+
+  &::before {
+    content: open-quote;
+  }
+
+  &::after {
+    content: close-quote;
+  }
+}
+
+.quote__cite {
+  &::before {
+    content: '— ';
+  }
+}
+
+// Destacada: grande, con filete de acento y comillas colgadas en el margen.
+:host([data-variant='pull']) {
+  .quote {
+    padding-block-start: var(--space-5);
+    border-block-start: var(--border-width) solid var(--accent-line);
+  }
+
+  .quote__text p {
+    max-inline-size: 22ch;
+    font-size: var(--text-2xl);
+    line-height: var(--leading-snug);
+    color: var(--color-ink);
+
+    // Comillas colgadas: el texto queda alineado con el de la columna.
+    &::before {
+      margin-inline-start: -0.45em;
+      color: var(--accent);
+    }
+  }
+}
+
+// En el texto: tamaño de lectura un punto mayor, sangrada y con filete lateral.
+:host([data-variant='block']) {
+  .quote {
+    padding-inline-start: var(--space-5);
+    border-inline-start: 2px solid var(--accent-line);
+  }
+
+  .quote__text p {
+    font-size: var(--text-lg);
+    line-height: var(--leading-normal);
+  }
+}

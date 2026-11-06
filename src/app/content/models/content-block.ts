@@ -61,6 +61,12 @@ export interface SpecItem {
   unit?: string;
 }
 
+/**
+ * Prefijo de los ids que la página genera para los títulos de las fichas («datos-3»).
+ * Reservado: ningún capítulo puede usarlo como id.
+ */
+export const SPECS_ID_PREFIX = 'datos-';
+
 /** Ficha de datos técnicos. */
 export interface SpecsBlock {
   type: 'specs';

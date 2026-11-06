@@ -1,0 +1,30 @@
+@let s = specs();
+<section
+  class="specs"
+  [attr.aria-labelledby]="s.title ? headingId() : null"
+  [attr.aria-label]="s.title ? null : 'Datos'"
+>
+  @if (s.title) {
+    @if (level() === 2) {
+      <h2 class="specs__title" [id]="headingId()">{{ s.title }}</h2>
+    } @else {
+      <h3 class="specs__title" [id]="headingId()">{{ s.title }}</h3>
+    }
+  }
+  <dl class="specs__list" appReveal="stagger">
+    @for (item of items(); track $index) {
+      <div class="specs__item" [class.specs__item--long]="!item.short">
+        <dt class="specs__label t-meta">{{ item.label }}</dt>
+        <dd class="specs__value">
+          {{ item.value }}
+          @if (item.unit) {
+            <span class="specs__unit">{{ item.unit }}</span>
+          }
+        </dd>
+      </div>
+    }
+  </dl>
+  @if (s.note) {
+    <p class="specs__note t-caption">{{ s.note }}</p>
+  }
+</section>
