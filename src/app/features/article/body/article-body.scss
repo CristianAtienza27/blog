@@ -4,11 +4,15 @@
 $photos: 'app-figure-block, app-figures-block, app-gallery-block, app-map-block';
 $pieces: 'app-quote-block, app-specs-block, app-divider-block, #{$photos}';
 
+// Contenedor del índice lateral (capa absoluta) y de la línea de tiempo de la barra de lectura.
 :host {
+  position: relative;
   display: block;
+  timeline-scope: --article;
 }
 
 .body {
+  view-timeline: --article block;
   padding-block: var(--space-7) var(--section-m);
 
   // Ritmo base entre bloques de texto (dentro de cada uno, el de .prose).

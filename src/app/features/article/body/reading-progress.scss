@@ -1,0 +1,50 @@
+@use 'abstracts' as *;
+
+// Línea de 2 px en el borde superior, por encima del header; la pista apenas se ve.
+:host {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: calc(var(--z-header) + 1);
+  block-size: 2px;
+  pointer-events: none;
+  background: color-mix(in oklab, var(--color-line) 35%, transparent);
+}
+
+.progress__bar {
+  display: block;
+  block-size: 100%;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  scale: 0 1;
+}
+
+// Línea de tiempo del cuerpo (ArticleBody la publica como --article): de su inicio arriba a
+// su final abajo.
+@supports (animation-timeline: view()) {
+  .progress__bar {
+    animation: reading-progress linear both;
+    animation-timeline: --article;
+    animation-range: contain 0% contain 100%;
+  }
+}
+
+// Sin animation-timeline: el valor llega por JavaScript, con un ligero suavizado.
+:host(.progress--script) .progress__bar {
+  scale: var(--progress, 0) 1;
+  transition: scale var(--duration-instant) linear;
+}
+
+// Movimiento reducido: la barra sigue informando, sin suavizado. La regla global acorta todas
+// las animaciones; esta depende del scroll, no del tiempo.
+@media (prefers-reduced-motion: reduce) {
+  .progress__bar {
+    animation-duration: auto !important;
+    transition: none !important;
+  }
+}
+
+@keyframes reading-progress {
+  to {
+    scale: 1 1;
+  }
+}

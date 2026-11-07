@@ -9,6 +9,8 @@ import {
   input,
 } from '@angular/core';
 import type { Article } from '../../../content/models';
+import { articleUrl } from '../../../editorial/article-meta';
+import { ArticleToc, tocEntries } from './article-toc';
 import { bodyItems } from './body-items';
 import { ChapterReading } from './chapter-reading';
 import { ChapterHeading } from './chapter-heading';
@@ -19,17 +21,20 @@ import { GalleryBlock } from './gallery-block';
 import { MapBlock } from './map-block';
 import { ProseBlock } from './prose-block';
 import { QuoteBlock } from './quote-block';
+import { ReadingProgress } from './reading-progress';
 import { SpecsBlock } from './specs-block';
 
 /**
  * Cuerpo del artículo sobre la retícula editorial: el texto en la columna de lectura, los
  * números de capítulo en el margen izquierdo y citas y fichas más anchas (hasta el margen
  * derecho). El ritmo vertical lo marca el tipo de bloque.
- * Arranca el seguimiento del capítulo que se lee (ChapterReading), que usan los mapas.
+ * Arranca el seguimiento del capítulo que se lee (ChapterReading), que usan los mapas y el
+ * índice, y lleva la barra de progreso de lectura.
  */
 @Component({
   selector: 'app-article-body',
   imports: [
+    ArticleToc,
     ChapterHeading,
     DividerBlock,
     FigureBlock,
@@ -38,10 +43,15 @@ import { SpecsBlock } from './specs-block';
     MapBlock,
     ProseBlock,
     QuoteBlock,
+    ReadingProgress,
     SpecsBlock,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    <!-- Índice: con dos capítulos o más (desplegable en móvil; en el margen en escritorio). -->
+    @if (toc().length > 1) {
+      <app-article-toc [entries]="toc()" [basePath]="basePath()" />
+    }
     <div class="body article-grid">
       @for (item of items(); track $index) {
         @switch (item.kind) {
@@ -85,6 +95,7 @@ import { SpecsBlock } from './specs-block';
         }
       }
     </div>
+    <app-reading-progress />
   `,
   styleUrl: './article-body.scss',
 })
@@ -92,6 +103,8 @@ export class ArticleBody {
   readonly article = input.required<Article>();
 
   protected readonly items = computed(() => bodyItems(this.article()));
+  protected readonly toc = computed(() => tocEntries(this.article().blocks));
+  protected readonly basePath = computed(() => articleUrl(this.article()));
 
   constructor() {
     // Solo en el navegador y con el cuerpo ya pintado (en SSR no hay capítulo activo).

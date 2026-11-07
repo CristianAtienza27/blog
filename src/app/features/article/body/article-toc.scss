@@ -1,0 +1,162 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+// --- Lista común: número en mono y título; el activo, en tinta plena y con una marca --------
+.toc__list {
+  display: grid;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.toc__link {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  gap: var(--space-2);
+  align-items: baseline;
+  color: var(--color-ink-muted);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    color: var(--color-ink);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &[aria-current='true'] {
+    color: var(--color-ink);
+
+    .toc__number {
+      color: var(--accent);
+    }
+
+    .toc__title {
+      font-weight: var(--weight-medium);
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.3em;
+    }
+  }
+}
+
+.toc__number {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+}
+
+.toc__title {
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  text-wrap: pretty;
+}
+
+// --- Móvil y tableta: desplegable en la columna de lectura, antes del cuerpo ----------------
+.toc-inline {
+  padding-block-start: var(--space-6);
+}
+
+.toc-inline__details {
+  grid-column: text;
+  border-block: var(--border-width) solid var(--color-line);
+}
+
+// Toda la fila es el control (cómodo con el pulgar): etiqueta, número de capítulos y signo.
+.toc-inline__summary {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  min-block-size: 3rem;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::after {
+    margin-inline-start: auto;
+    font-family: var(--font-mono);
+    content: '+';
+  }
+
+  [open] > &::after {
+    content: '−';
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.toc-inline__count {
+  color: var(--color-ink-muted);
+}
+
+.toc-inline__nav {
+  padding-block-end: var(--space-4);
+
+  .toc__link {
+    min-block-size: 2.75rem;
+    padding-block: var(--space-2);
+  }
+
+  .toc__title {
+    font-size: var(--text-base);
+  }
+}
+
+// --- Escritorio: capa con la retícula sobre el cuerpo; el índice, en el margen izquierdo -----
+.toc-rail {
+  display: none;
+}
+
+@include mq(lg) {
+  .toc-inline {
+    display: none;
+  }
+
+  .toc-rail {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: 100%;
+    pointer-events: none;
+  }
+
+  // Dos columnas del margen (la tercera es de los números de capítulo).
+  .toc-rail__nav {
+    position: sticky;
+    inset-block-start: calc(var(--header-height) + var(--space-6));
+    display: grid;
+    grid-column: c 1 / c 3;
+    gap: var(--space-4);
+    align-self: start;
+    padding-block-start: var(--space-8);
+    padding-inline-end: var(--space-5);
+    pointer-events: auto;
+    transition:
+      opacity var(--duration-base) var(--ease-out),
+      visibility var(--duration-base);
+
+    // Una foto, galería o mapa cruza su franja: se aparta (salvo si tiene el foco).
+    &.is-covered:not(:focus-within) {
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    .toc__list {
+      gap: var(--space-2);
+    }
+  }
+
+  .toc-rail__label {
+    color: var(--color-ink-muted);
+  }
+}

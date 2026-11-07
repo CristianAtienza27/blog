@@ -381,7 +381,8 @@ describe('Mapa, itinerario y lugares (componentes)', () => {
     // Un capítulo sin lugar no destaca nada.
     reading.active.set('otro');
     await fixture.whenStable();
-    expect(element.querySelector('.is-active, [aria-current]')).toBeNull();
+    // (En el mapa y la ruta: el índice del artículo sí marca ese capítulo.)
+    expect(element.querySelector('app-map-block :is(.is-active, [aria-current])')).toBeNull();
   });
 });
 
