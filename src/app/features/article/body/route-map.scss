@@ -1,0 +1,162 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+// Lámina: fondo hundido, filete fino y la retícula apenas marcada.
+// Como mucho, tres cuartos del alto de la pantalla (centrada y con su proporción).
+.map {
+  position: relative;
+  inline-size: min(100%, 75svh * var(--ratio));
+  margin-inline: auto;
+  background: var(--color-bg-sunken);
+  border: var(--border-width) solid var(--color-line);
+
+  // En escritorio, alineada con el inicio de su columna (como el pie).
+  @include mq(md) {
+    margin-inline: 0 auto;
+  }
+}
+
+.map__svg {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+.map__grid {
+  stroke: var(--color-line-strong);
+  stroke-opacity: 0.6;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.map__route {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.map__dot {
+  fill: var(--accent);
+
+  &.is-active {
+    r: 8;
+  }
+}
+
+.map__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+// Coordenadas: latitudes en el borde izquierdo, longitudes en el inferior.
+.map__coord {
+  position: absolute;
+  font-size: var(--text-2xs);
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+
+  &[data-axis='lat'] {
+    inset-block-start: var(--at);
+    inset-inline-start: var(--space-2);
+    translate: 0 -120%;
+  }
+
+  &[data-axis='lng'] {
+    inset-block-end: var(--space-2);
+    inset-inline-start: var(--at);
+    translate: 4px 0;
+  }
+}
+
+.map__north,
+.map__tag {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  font-size: var(--text-2xs);
+  color: var(--color-ink-muted);
+}
+
+.map__north {
+  inset-inline-end: var(--space-3);
+}
+
+.map__tag {
+  inset-inline-start: var(--space-3);
+}
+
+// Punto: número en un disco centrado en la posición y la etiqueta a un lado.
+.map__marker {
+  --label-gap: var(--space-2);
+
+  position: absolute;
+  translate: -50% -50%;
+}
+
+.map__badge {
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--color-ink);
+  background: var(--color-bg);
+  border: var(--border-width) solid var(--accent);
+  border-radius: 50%;
+  transition:
+    scale var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out);
+}
+
+.map__label {
+  position: absolute;
+  inset-block-start: 50%;
+  inline-size: max-content;
+  max-inline-size: 9em;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+  text-shadow:
+    0 0 3px var(--color-bg-sunken),
+    0 0 6px var(--color-bg-sunken);
+  text-wrap: balance;
+  translate: 0 -50%;
+
+  [data-side='end'] > & {
+    inset-inline-start: calc(100% + var(--label-gap));
+  }
+
+  [data-side='start'] > & {
+    inset-inline-end: calc(100% + var(--label-gap));
+    text-align: end;
+  }
+}
+
+// Activo: disco relleno, anillo y etiqueta en negrita (no depende solo del color).
+.is-active {
+  --label-gap: calc(var(--space-2) + 6px);
+
+  z-index: 1;
+
+  .map__badge {
+    font-weight: var(--weight-semibold);
+    color: var(--accent-ink);
+    background: var(--accent);
+    box-shadow:
+      0 0 0 3px var(--color-bg-sunken),
+      0 0 0 4px var(--accent);
+    scale: 1.2;
+  }
+
+  .map__label {
+    font-weight: var(--weight-semibold);
+  }
+}

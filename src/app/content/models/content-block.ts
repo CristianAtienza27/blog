@@ -1,5 +1,6 @@
 import { GeoPoint } from './common';
 import { FocalPoint, Gallery, Media } from './media';
+import { Destination, Trip } from './travel';
 
 export type ImageLayout = 'content' | 'wide' | 'full';
 
@@ -75,6 +76,8 @@ export interface MapPoint {
   location: GeoPoint;
   /** Destino de origen, si lo hay. */
   slug?: string;
+  /** El destino completo (región, país, descripción) cuando el punto sale de uno. */
+  destination?: Destination;
 }
 
 /** Mapa propio en SVG a partir de coordenadas (sin teselas externas). */
@@ -84,6 +87,8 @@ export interface MapBlock {
   /** Une los puntos en orden, como una ruta. */
   route: boolean;
   caption?: string;
+  /** Itinerario del que salen los puntos (paradas con distancias y medio de transporte). */
+  trip?: Trip;
 }
 
 export interface CodeBlock {
@@ -122,6 +127,11 @@ export interface ChapterBlock {
   number?: number;
   title: string;
   kicker?: string;
+  /**
+   * Destino del que trata el capítulo (id de destinations.json): una parada del itinerario del
+   * artículo o uno de sus destinos. Al leerlo, esa parada se destaca en el mapa y en la ruta.
+   */
+  destination?: string;
 }
 
 export interface DividerBlock {

@@ -1,0 +1,87 @@
+@use 'abstracts' as *;
+
+// Toda la retícula del artículo (subgrid). Móvil primero: el mapa a lo ancho y la ruta debajo.
+:host {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: full;
+  row-gap: var(--space-7);
+}
+
+.mapblock__figure {
+  display: grid;
+  grid-column: full;
+  gap: var(--space-3);
+  align-content: start;
+  margin: 0;
+}
+
+.mapblock__caption {
+  display: grid;
+  gap: var(--space-2);
+  padding-inline: var(--page-margin);
+}
+
+.mapblock__text {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-muted);
+}
+
+.mapblock__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  padding: 0;
+  margin: 0;
+  color: var(--color-ink-muted);
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+}
+
+.mapblock__swatch {
+  inline-size: 1.5rem;
+  border-block-start: 1.5px solid var(--accent);
+}
+
+.mapblock__stop {
+  display: grid;
+  place-items: center;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  font-size: 0.6rem;
+  color: var(--color-ink);
+  border: var(--border-width) solid var(--accent);
+  border-radius: 50%;
+}
+
+.mapblock__note {
+  max-inline-size: 40rem;
+  color: var(--color-ink-muted);
+}
+
+.mapblock__side {
+  grid-column: content;
+}
+
+// Escritorio: mapa en siete columnas y la ruta al lado, alineada con el borde superior del mapa.
+@include mq(md) {
+  .mapblock__figure {
+    grid-column: content-start / c 8;
+  }
+
+  .mapblock__caption {
+    padding-inline: 0;
+  }
+
+  .mapblock__side {
+    grid-row: 1;
+    grid-column: c 8 / content-end;
+    padding-inline-start: var(--space-7);
+  }
+}

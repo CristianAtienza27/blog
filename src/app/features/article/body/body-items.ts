@@ -7,11 +7,13 @@ import {
   type FiguresBlock,
   type Gallery,
   type ImageBlock,
+  type MapBlock,
   type QuoteBlock,
   type SpecsBlock,
 } from '../../../content/models';
 import { articleUrl } from '../../../editorial/article-meta';
 import { RETIRED_MEDIA } from '../../../editorial/retired-media';
+import type { ChapterIndex } from './place-plan';
 import { renderRichText } from './rich-text-render';
 
 /** Lo que el cuerpo sabe mostrar en esta fase; el resto de bloques llega después. */
@@ -23,7 +25,8 @@ export type BodyItem =
   | { kind: 'specs'; block: SpecsBlock; level: 2 | 3; headingId: string }
   | { kind: 'figure'; block: ImageBlock }
   | { kind: 'figures'; block: FiguresBlock }
-  | { kind: 'gallery'; gallery: Gallery; level: 2 | 3 };
+  | { kind: 'gallery'; gallery: Gallery; level: 2 | 3 }
+  | { kind: 'map'; block: MapBlock; chapters: ChapterIndex; basePath: string; level: 2 | 3 };
 
 /**
  * Galería con las fotos que se pueden mostrar (nunca las retiradas). Es la serie completa del
@@ -64,7 +67,8 @@ const DROPCAP_FORMATS: readonly ArticleFormat[] = ['reportaje', 'guia', 'ensayo-
  * - Capitular en el primer bloque de texto de los formatos narrativos.
  * - Fotografías: nunca las retiradas ni la de la portada (ya está en la cabecera). Las
  *   galerías son la serie completa: solo pierden las retiradas.
- * - Mapas y código se omiten hasta sus fases.
+ * - Mapas: con el capítulo que trata cada lugar (para enlazarlo y destacarlo al leerlo).
+ * - El código se omite hasta su fase.
  */
 export function bodyItems(article: Article): BodyItem[] {
   const basePath = articleUrl(article);
@@ -73,6 +77,12 @@ export function bodyItems(article: Article): BodyItem[] {
   let inChapter = false;
   let firstText = true;
   const items: BodyItem[] = [];
+  const chapters: Record<string, { id: string; number?: number }> = {};
+  for (const block of article.blocks) {
+    if (block.type === 'chapter' && block.destination && !chapters[block.destination]) {
+      chapters[block.destination] = { id: block.id, number: block.number };
+    }
+  }
 
   // Ids de las fichas: «datos-<posición del bloque>», nunca el de un capítulo ni el de otra
   // ficha (la validación lo impide, pero el contenido puede llegar sin validar). Solo
@@ -126,6 +136,11 @@ export function bodyItems(article: Article): BodyItem[] {
         if (item) items.push(item);
         break;
       }
+      case 'map':
+        if (block.points.length) {
+          items.push({ kind: 'map', block, chapters, basePath, level: inChapter ? 3 : 2 });
+        }
+        break;
       case 'gallery': {
         const item = visibleGallery(block.gallery, inChapter ? 3 : 2);
         if (item) items.push(item);

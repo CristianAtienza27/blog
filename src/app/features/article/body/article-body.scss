@@ -1,7 +1,7 @@
 @use 'abstracts' as *;
 
-// Bloques fotográficos y piezas que rompen el ritmo del texto (llevan aire propio).
-$photos: 'app-figure-block, app-figures-block, app-gallery-block';
+// Bloques a toda la retícula (fotografías y mapas) y piezas que rompen el ritmo del texto.
+$photos: 'app-figure-block, app-figures-block, app-gallery-block, app-map-block';
 $pieces: 'app-quote-block, app-specs-block, app-divider-block, #{$photos}';
 
 :host {
@@ -38,7 +38,7 @@ $pieces: 'app-quote-block, app-specs-block, app-divider-block, #{$photos}';
     grid-column: text;
   }
 
-  // Fotografías: ocupan toda la retícula y cada una se coloca dentro con sus líneas.
+  // Fotografías y mapas: ocupan toda la retícula y cada uno se coloca dentro con sus líneas.
   > :is(#{$photos}) {
     grid-column: full;
   }

@@ -16,7 +16,8 @@
       "id": "lisboa",
       "number": 1,
       "title": "Lisboa",
-      "kicker": "Miradores sobre el Tajo"
+      "kicker": "Miradores sobre el Tajo",
+      "destination": "lisboa"
     },
     {
       "type": "text",
@@ -33,7 +34,8 @@
       "id": "florencia",
       "number": 2,
       "title": "Florencia",
-      "kicker": "El Arno y sus puentes"
+      "kicker": "El Arno y sus puentes",
+      "destination": "florencia"
     },
     {
       "type": "text",
@@ -49,7 +51,8 @@
       "id": "praga",
       "number": 3,
       "title": "Praga",
-      "kicker": "El Moldava entre dos colinas"
+      "kicker": "El Moldava entre dos colinas",
+      "destination": "praga"
     },
     {
       "type": "text",
@@ -67,7 +70,8 @@
       "id": "oporto",
       "number": 4,
       "title": "Oporto",
-      "kicker": "La Ribeira frente a Gaia"
+      "kicker": "La Ribeira frente a Gaia",
+      "destination": "oporto"
     },
     {
       "type": "text",

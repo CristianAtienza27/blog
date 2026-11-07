@@ -436,6 +436,7 @@ const block = union('type', {
     number: optional(num({ min: 1, integer: true })),
     title: text(),
     kicker: optional(text()),
+    destination: optional(slug),
   }),
   divider: shape({ type: text(), variant: oneOf(['line', 'ornament', 'pause']) }),
 });

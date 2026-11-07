@@ -213,6 +213,15 @@ describe('Fotografías del relato', () => {
     expect(image({ layout: 'wide', align: 'end' })).toEqual([]);
   });
 
+  it('capítulo: el destino es opcional y, si está, es el id de un destino', () => {
+    const chapter = (extra: Record<string, unknown>) =>
+      bodyIssues({ slug: 'a', blocks: [{ type: 'chapter', id: 'uno', title: 'Uno', ...extra }] });
+    expect(chapter({})).toEqual([]);
+    expect(chapter({ destination: 'tossa-de-mar' })).toEqual([]);
+    expect(chapter({ destination: 'Tossa de Mar' })[0]).toContain('blocks[0].destination');
+    expect(chapter({ destination: 3 })[0]).toContain('blocks[0].destination');
+  });
+
   it('composiciones: díptico de 2, tríptico de 3 y secuencia de 2 o 3', () => {
     expect(figures('diptych', 2)).toEqual([]);
     expect(figures('triptych', 3)).toEqual([]);

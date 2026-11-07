@@ -412,3 +412,60 @@ describe('Galerías del cuerpo con el contenido real', () => {
     expect(media.flatMap((m) => variants(m)).filter((file) => !existsSync(file))).toEqual([]);
   });
 });
+
+describe('Mapas, itinerarios y capítulos con el contenido real', () => {
+  // Una sola carga del contenido por test (articleHeaders configura TestBed).
+  const mapsLoader = async () => {
+    const all = await articleHeaders();
+    return (slug: string) => {
+      const found = all.find(({ article }) => article.slug === slug);
+      return found
+        ? bodyItems(found.article).flatMap((item) => (item.kind === 'map' ? [item] : []))
+        : [];
+    };
+  };
+
+  it('Costa Brava y Stelvio: el mapa sale del itinerario y sus capítulos enlazan las paradas', async () => {
+    const mapsOf = await mapsLoader();
+    const [costa] = mapsOf('itinerario-costa-brava');
+    expect(costa.block.trip?.id).toBe('costa-brava');
+    expect(costa.block.points.map((p) => p.destination?.id)).toEqual([
+      'tossa-de-mar',
+      'calella-de-palafrugell',
+      'begur',
+      'cadaques',
+    ]);
+    expect(Object.keys(costa.chapters)).toEqual([
+      'tossa-de-mar',
+      'calella-de-palafrugell',
+      'begur',
+      'cadaques',
+    ]);
+    const [stelvio] = mapsOf('paso-del-stelvio');
+    expect(stelvio.block.trip?.stops.map((s) => s.destination.id)).toEqual([
+      'prato-allo-stelvio',
+      'paso-del-stelvio',
+      'bormio',
+    ]);
+    // El paso no tiene capítulo propio: solo las dos vertientes.
+    expect(stelvio.chapters).toEqual({
+      'prato-allo-stelvio': { id: 'vertiente-norte', number: 1 },
+      bormio: { id: 'vertiente-sur', number: 2 },
+    });
+  });
+
+  it('Ciudades y Calas: lugares sin itinerario, con coordenadas reales', async () => {
+    const mapsOf = await mapsLoader();
+    const [ciudades] = mapsOf('ciudades-luz-de-tarde');
+    expect(ciudades.block.trip).toBeUndefined();
+    expect(Object.keys(ciudades.chapters)).toEqual(['lisboa', 'florencia', 'praga', 'oporto']);
+    const [calas] = mapsOf('calas-de-mallorca');
+    expect(calas.block.points).toHaveLength(1);
+    expect(calas.chapters).toEqual({});
+    for (const map of [ciudades, calas]) {
+      expect(
+        map.block.points.every((p) => p.destination && p.location === p.destination.location),
+      ).toBe(true);
+    }
+  });
+});

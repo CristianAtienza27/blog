@@ -138,6 +138,7 @@ export function checkIntegrity(
     if (body.slug !== a.slug) issues.push(`articles/${a.slug}.json: slug «${body.slug}» distinto`);
 
     const chapters: string[] = [];
+    const chapterPlaces: string[] = [];
     const anchors: { href: string; at: string }[] = [];
     body.blocks.forEach((block, j) => {
       const at = `articles/${a.slug}.json.blocks[${j}]`;
@@ -161,6 +162,17 @@ export function checkIntegrity(
           if (block.id.startsWith(SPECS_ID_PREFIX)) {
             issues.push(`${at}: el prefijo «${SPECS_ID_PREFIX}» es de las fichas («${block.id}»)`);
           }
+          // El destino del capítulo existe y es uno de los del artículo (parada o destino propio).
+          if (block.destination !== undefined) {
+            chapterPlaces.push(block.destination);
+            ref(destinations, block.destination, `${at}.destination`, 'destino');
+            const own = [...stops, ...(a.destinations ?? [])];
+            if (destinations.has(block.destination) && !own.includes(block.destination)) {
+              issues.push(
+                `${at}.destination: «${block.destination}» no es una parada ni un destino del artículo`,
+              );
+            }
+          }
           break;
         case 'text':
           for (const [, href] of block.html.matchAll(/href="([^"]*)"/g)) anchors.push({ href, at });
@@ -169,6 +181,8 @@ export function checkIntegrity(
     });
     for (const id of duplicates(chapters))
       issues.push(`articles/${a.slug}.json: capítulo repetido «${id}»`);
+    for (const id of duplicates(chapterPlaces))
+      issues.push(`articles/${a.slug}.json: dos capítulos tratan el destino «${id}»`);
     // Anclas a capítulos del propio artículo y enlaces a artículos que existan en su sección.
     for (const { href, at } of anchors) {
       if (href.startsWith('#') && !chapters.includes(href.slice(1))) {

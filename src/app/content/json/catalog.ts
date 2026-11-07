@@ -195,7 +195,12 @@ function mapPoints(catalog: Catalog, block: ContentBlockRecord & { type: 'map' }
   const destinations = block.trip
     ? required(catalog.tripById, block.trip, where).stops.map((stop) => stop.destination)
     : (block.destinations ?? []).map((id) => required(catalog.destinationById, id, where));
-  return destinations.map((d): MapPoint => ({ label: d.name, location: d.location, slug: d.slug }));
+  return destinations.map((d): MapPoint => ({
+    label: d.name,
+    location: d.location,
+    slug: d.slug,
+    destination: d,
+  }));
 }
 
 function resolveBlock(catalog: Catalog, block: ContentBlockRecord, where: string): ContentBlock {
@@ -218,6 +223,7 @@ function resolveBlock(catalog: Catalog, block: ContentBlockRecord, where: string
         points: mapPoints(catalog, block, where),
         route: block.route,
         ...(block.caption ? { caption: block.caption } : {}),
+        ...(block.trip ? { trip: required(catalog.tripById, block.trip, where) } : {}),
       };
     default:
       return block;

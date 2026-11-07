@@ -155,6 +155,37 @@ describe('Integridad de las relaciones', () => {
     expect(issues).toEqual(['media[2].credit.author: «Otra persona» no es un autor de la revista']);
   });
 
+  it('el destino de un capítulo existe, es del artículo y no se repite', () => {
+    // calas-costa-brava sigue el itinerario costa-brava (Tossa y Begur).
+    const withChapters = (destinations: (string | undefined)[]) =>
+      FIXTURE_BODIES.map((body) =>
+        body.slug !== 'calas-costa-brava'
+          ? body
+          : {
+              ...body,
+              blocks: body.blocks.map((block) => {
+                if (block.type !== 'chapter') return block;
+                const destination = destinations[block.number === 1 ? 0 : 1];
+                return destination ? { ...block, destination } : block;
+              }),
+            },
+      );
+    const check = (destinations: (string | undefined)[]) =>
+      issuesFor(() => undefined, withChapters(destinations));
+    expect(check(['tossa', 'begur'])).toEqual([]);
+    expect(check(['tossa', undefined])).toEqual([]);
+    expect(check(['fantasma', undefined])).toEqual([
+      'articles/calas-costa-brava.json.blocks[0].destination: destino inexistente «fantasma»',
+    ]);
+    // Existe, pero no es una parada ni un destino de este artículo.
+    expect(check(['prato', undefined])).toEqual([
+      'articles/calas-costa-brava.json.blocks[0].destination: «prato» no es una parada ni un destino del artículo',
+    ]);
+    expect(check(['begur', 'begur'])).toEqual([
+      'articles/calas-costa-brava.json: dos capítulos tratan el destino «begur»',
+    ]);
+  });
+
   it('validateContent no comprueba relaciones si la forma ya es incorrecta', () => {
     const data = fixtureCollections() as unknown as Record<keyof ContentCollections, unknown>;
     data.tags = 'no es una lista';

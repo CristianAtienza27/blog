@@ -16,7 +16,8 @@
       "id": "tossa-de-mar",
       "number": 1,
       "title": "Tossa de Mar",
-      "kicker": "Murallas junto al mar"
+      "kicker": "Murallas junto al mar",
+      "destination": "tossa-de-mar"
     },
     {
       "type": "text",
@@ -33,7 +34,8 @@
       "id": "calella-de-palafrugell",
       "number": 2,
       "title": "Calella de Palafrugell",
-      "kicker": "Barcas, rocas y agua transparente"
+      "kicker": "Barcas, rocas y agua transparente",
+      "destination": "calella-de-palafrugell"
     },
     {
       "type": "text",
@@ -52,7 +54,8 @@
       "id": "begur",
       "number": 3,
       "title": "Begur",
-      "kicker": "Un castillo sobre la colina"
+      "kicker": "Un castillo sobre la colina",
+      "destination": "begur"
     },
     {
       "type": "text",
@@ -68,7 +71,8 @@
       "id": "cadaques",
       "number": 4,
       "title": "Cadaqués",
-      "kicker": "El extremo nororiental"
+      "kicker": "El extremo nororiental",
+      "destination": "cadaques"
     },
     {
       "type": "text",
