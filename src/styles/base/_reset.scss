@@ -24,9 +24,14 @@ html {
   scrollbar-gutter: stable;
 }
 
-// Scroll bloqueado mientras hay un diálogo modal abierto (menú).
+// Scroll bloqueado mientras hay un diálogo modal abierto (menú, visor de galerías).
 html:has(dialog[open]:modal) {
   overflow: hidden;
+}
+
+// El visor de galerías es oscuro: el hueco reservado al scrollbar (lo pinta el lienzo), también.
+html:has(dialog.viewer[open]) {
+  color-scheme: dark;
 }
 
 body {

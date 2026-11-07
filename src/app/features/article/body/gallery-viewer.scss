@@ -1,0 +1,187 @@
+@use 'abstracts' as *;
+
+// Visor a pantalla completa, siempre oscuro (.scheme-dark). Móvil primero: anterior y
+// siguiente bajo la foto; desde md, a los lados.
+.viewer {
+  inline-size: 100%;
+  max-inline-size: none;
+  block-size: 100dvh;
+  max-block-size: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--color-ink);
+  background: var(--color-bg);
+  border: 0;
+  overscroll-behavior: contain;
+
+  &[open] {
+    display: grid;
+    grid-template:
+      'bar bar bar' auto
+      'stage stage stage' minmax(0, 1fr)
+      'prev . next' auto
+      'caption caption caption' auto
+      / auto 1fr auto;
+    animation: viewer-in var(--duration-base) var(--ease-out);
+  }
+
+  &::backdrop {
+    background: #000;
+  }
+}
+
+.viewer__bar {
+  display: flex;
+  grid-area: bar;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--page-margin);
+}
+
+.viewer__title {
+  display: none;
+  color: var(--color-ink-muted);
+}
+
+.viewer__close {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding-inline: var(--space-3);
+  font: inherit;
+  font-size: var(--text-sm);
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+// Aspa de dos trazos finos.
+.viewer__cross {
+  position: relative;
+  inline-size: 1rem;
+  block-size: 1rem;
+
+  &::before,
+  &::after {
+    position: absolute;
+    inset: 50% 0 auto;
+    block-size: 1px;
+    content: '';
+    background: currentcolor;
+    rotate: 45deg;
+  }
+
+  &::after {
+    rotate: -45deg;
+  }
+}
+
+// La figura no crea caja: su foto y su pie se colocan en la rejilla del visor.
+.viewer__figure {
+  display: contents;
+}
+
+// Hueco libre para la foto; la foto, centrada y tan grande como permita su proporción.
+.viewer__stage {
+  display: grid;
+  grid-area: stage;
+  place-items: center;
+  container-type: size;
+  touch-action: pan-y pinch-zoom;
+}
+
+.viewer__photo {
+  inline-size: min(100cqi, 100cqb * var(--ratio));
+  aspect-ratio: var(--ratio);
+  animation: viewer-photo var(--duration-base) var(--ease-out);
+
+  app-media {
+    block-size: 100%;
+  }
+}
+
+.viewer__caption {
+  grid-area: caption;
+  justify-self: center;
+  inline-size: min(100%, 40rem);
+  padding: var(--space-3) var(--page-margin) var(--space-6);
+  text-align: center;
+
+  app-figure-caption {
+    justify-items: center;
+  }
+}
+
+.viewer__nav {
+  display: grid;
+  place-items: center;
+  align-self: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  margin: var(--space-3) var(--page-margin) 0;
+  font-size: var(--text-lg);
+  color: inherit;
+  cursor: pointer;
+  background: none;
+
+  // Contorno discreto pero visible (más de 3:1 sobre el fondo del visor).
+  border: var(--border-width) solid color-mix(in oklab, var(--color-ink) 40%, transparent);
+  border-radius: 50%;
+  transition: border-color var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    border-color: var(--color-ink);
+  }
+
+  &--prev {
+    grid-area: prev;
+  }
+
+  &--next {
+    grid-area: next;
+  }
+}
+
+.viewer :focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+@include mq(md) {
+  .viewer[open] {
+    grid-template:
+      'bar bar bar' auto
+      'prev stage next' minmax(0, 1fr)
+      '. caption .' auto
+      / auto 1fr auto;
+  }
+
+  .viewer__title {
+    display: block;
+  }
+
+  .viewer__stage {
+    padding-inline: var(--space-4);
+  }
+
+  .viewer__nav {
+    margin: 0 var(--page-margin);
+  }
+}
+
+@keyframes viewer-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes viewer-photo {
+  from {
+    opacity: 0;
+    scale: 0.985;
+  }
+}

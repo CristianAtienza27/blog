@@ -5,6 +5,7 @@ import {
   type ChapterBlock,
   type DividerBlock,
   type FiguresBlock,
+  type Gallery,
   type ImageBlock,
   type QuoteBlock,
   type SpecsBlock,
@@ -21,7 +22,22 @@ export type BodyItem =
   | { kind: 'divider'; block: DividerBlock }
   | { kind: 'specs'; block: SpecsBlock; level: 2 | 3; headingId: string }
   | { kind: 'figure'; block: ImageBlock }
-  | { kind: 'figures'; block: FiguresBlock };
+  | { kind: 'figures'; block: FiguresBlock }
+  | { kind: 'gallery'; gallery: Gallery; level: 2 | 3 };
+
+/**
+ * Galería con las fotos que se pueden mostrar (nunca las retiradas). Es la serie completa del
+ * artículo, así que puede incluir la portada. Con una sola foto se muestra individual.
+ */
+function visibleGallery(gallery: Gallery, level: 2 | 3): BodyItem | null {
+  const items = gallery.items.filter((item) => !RETIRED_MEDIA.includes(item.media.id));
+  if (items.length === 0) return null;
+  if (items.length === 1) {
+    const [only] = items;
+    return { kind: 'figure', block: { type: 'image', layout: 'wide', ...only } };
+  }
+  return { kind: 'gallery', gallery: { ...gallery, items }, level };
+}
 
 /**
  * Fotografías de una composición que se pueden mostrar. Si quedan menos de las que pide su
@@ -46,8 +62,9 @@ const DROPCAP_FORMATS: readonly ArticleFormat[] = ['reportaje', 'guia', 'ensayo-
  * - Los títulos de fichas y los subtítulos del texto son h2 hasta el primer capítulo y h3
  *   dentro de un capítulo (la jerarquía no salta niveles).
  * - Capitular en el primer bloque de texto de los formatos narrativos.
- * - Fotografías: nunca las retiradas ni la de la portada (ya está en la cabecera).
- * - Galerías, mapas y código se omiten hasta sus fases.
+ * - Fotografías: nunca las retiradas ni la de la portada (ya está en la cabecera). Las
+ *   galerías son la serie completa: solo pierden las retiradas.
+ * - Mapas y código se omiten hasta sus fases.
  */
 export function bodyItems(article: Article): BodyItem[] {
   const basePath = articleUrl(article);
@@ -106,6 +123,11 @@ export function bodyItems(article: Article): BodyItem[] {
         break;
       case 'figures': {
         const item = visibleFigures(block, hidden);
+        if (item) items.push(item);
+        break;
+      }
+      case 'gallery': {
+        const item = visibleGallery(block.gallery, inChapter ? 3 : 2);
         if (item) items.push(item);
         break;
       }

@@ -1,0 +1,179 @@
+@use 'abstracts' as *;
+
+// Toda la anchura de la retícula del artículo (subgrid). Móvil primero: carrusel nativo.
+:host,
+.gallery {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: full;
+}
+
+.gallery {
+  row-gap: var(--space-5);
+}
+
+.gallery__head,
+.gallery__position {
+  grid-column: content;
+}
+
+// Cabecera: filete como las fichas, título y número de fotografías en la misma línea.
+.gallery__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-2) var(--space-5);
+  align-items: baseline;
+  padding-block-start: var(--space-4);
+  border-block-start: var(--border-width) solid var(--color-ink);
+}
+
+.gallery__title {
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+}
+
+.gallery__count {
+  color: var(--color-ink-muted);
+}
+
+.gallery__description {
+  grid-column: 1 / -1;
+  max-inline-size: 36rem;
+  color: var(--color-ink-muted);
+  text-wrap: pretty;
+}
+
+// Carrusel: se desplaza la pista, nunca la página. Las fotos se enganchan al margen.
+.gallery__track {
+  display: flex;
+  grid-column: full;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--page-margin);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: var(--page-margin);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.gallery__group {
+  display: contents;
+}
+
+.gallery__item {
+  display: grid;
+  flex: 0 0 min(84vw, 34rem);
+  gap: var(--space-3);
+  align-content: start;
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+.gallery__photo {
+  position: relative;
+  aspect-ratio: 3 / 2;
+
+  app-media {
+    block-size: 100%;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+
+  &:hover app-media {
+    opacity: 0.88;
+  }
+}
+
+// El botón cubre la foto: la imagen sigue siendo contenido (alt) y el botón la amplía.
+.gallery__open {
+  position: absolute;
+  inset: 0;
+  cursor: zoom-in;
+  background: none;
+  border: 0;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+}
+
+.gallery__position {
+  color: var(--color-ink-muted);
+}
+
+@include mq(md) {
+  .gallery {
+    row-gap: var(--space-7);
+  }
+
+  .gallery__position {
+    display: none;
+  }
+
+  .gallery__track {
+    display: grid;
+    grid-template-columns: subgrid;
+    gap: var(--space-8) 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .gallery__group {
+    display: grid;
+  }
+
+  .gallery__item {
+    flex: none;
+  }
+
+  // En escritorio, cada foto entera: su propia proporción.
+  .gallery__photo {
+    aspect-ratio: var(--ratio);
+  }
+
+  // Pareja: a la misma altura, cada foto tan ancha como su proporción.
+  [data-kind='pair'] {
+    grid-template-columns: var(--pair-columns);
+    grid-column: wide;
+    column-gap: var(--space-3);
+  }
+
+  // Suelta: ocho columnas hasta el borde ancho y el pie, abajo, en el margen contrario.
+  [data-kind='single'] {
+    grid-template-columns: subgrid;
+    grid-column: full;
+
+    .gallery__item {
+      grid-template-columns: subgrid;
+      grid-column: full;
+      column-gap: 0;
+    }
+
+    .gallery__photo {
+      grid-row: 1;
+      grid-column: c 5 / wide-end;
+    }
+
+    .gallery__caption {
+      grid-row: 1;
+      grid-column: c 1 / c 5;
+      align-self: end;
+      padding-inline-end: var(--space-6);
+    }
+  }
+
+  [data-align='start'] {
+    .gallery__photo {
+      grid-column: wide-start / c 9;
+    }
+
+    .gallery__caption {
+      grid-column: c 9 / c 13;
+      padding-inline: var(--space-6) 0;
+    }
+  }
+}

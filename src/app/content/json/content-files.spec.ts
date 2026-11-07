@@ -386,3 +386,29 @@ describe('Fotografías del cuerpo con el contenido real', () => {
     ]);
   });
 });
+
+describe('Galerías del cuerpo con el contenido real', () => {
+  const galleriesOf = async () =>
+    (await articleHeaders()).map(({ article }) => ({
+      slug: article.slug,
+      galleries: bodyItems(article).flatMap((item) =>
+        item.kind === 'gallery' ? [item.gallery] : [],
+      ),
+    }));
+
+  it('las de referencia se muestran en sus artículos, completas', async () => {
+    const all = await galleriesOf();
+    const ids = (slug: string) =>
+      all.find((a) => a.slug === slug)?.galleries.map((g) => [g.id, g.items.length]);
+    expect(ids('itinerario-costa-brava')).toEqual([['costa-brava', 3]]);
+    expect(ids('calas-de-mallorca')).toEqual([['mediterraneo', 3]]);
+  });
+
+  it('nunca muestran una fotografía retirada y todas tienen sus variantes en disco', async () => {
+    const media = (await galleriesOf()).flatMap(({ galleries }) =>
+      galleries.flatMap((g) => g.items.map((item) => item.media)),
+    );
+    expect(media.filter((m) => RETIRED_MEDIA.includes(m.id))).toEqual([]);
+    expect(media.flatMap((m) => variants(m)).filter((file) => !existsSync(file))).toEqual([]);
+  });
+});

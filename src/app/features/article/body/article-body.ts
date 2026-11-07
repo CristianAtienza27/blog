@@ -5,6 +5,7 @@ import { ChapterHeading } from './chapter-heading';
 import { DividerBlock } from './divider-block';
 import { FigureBlock } from './figure-block';
 import { FiguresBlock } from './figures-block';
+import { GalleryBlock } from './gallery-block';
 import { ProseBlock } from './prose-block';
 import { QuoteBlock } from './quote-block';
 import { SpecsBlock } from './specs-block';
@@ -21,6 +22,7 @@ import { SpecsBlock } from './specs-block';
     DividerBlock,
     FigureBlock,
     FiguresBlock,
+    GalleryBlock,
     ProseBlock,
     QuoteBlock,
     SpecsBlock,
@@ -47,6 +49,9 @@ import { SpecsBlock } from './specs-block';
           }
           @case ('figures') {
             <app-figures-block [figures]="item.block" />
+          }
+          @case ('gallery') {
+            <app-gallery-block [gallery]="item.gallery" [level]="item.level" />
           }
           @case ('specs') {
             <app-specs-block
