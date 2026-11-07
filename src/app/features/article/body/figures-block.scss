@@ -1,0 +1,113 @@
+@use 'abstracts' as *;
+
+// Toda la anchura de la retícula del artículo (subgrid). Móvil primero: fotos apiladas,
+// la primera a sangre y las demás desplazadas hacia uno y otro borde.
+:host {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: full;
+}
+
+.figs {
+  display: grid;
+  grid-column: full;
+  row-gap: var(--space-6);
+}
+
+.figs__item {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+  margin: 0;
+}
+
+.figs__caption {
+  padding-inline: var(--page-margin);
+}
+
+.figs__item:nth-child(2) {
+  justify-self: end;
+  inline-size: 82%;
+
+  .figs__caption {
+    padding-inline-start: 0;
+  }
+}
+
+.figs__item:nth-child(3) {
+  justify-self: start;
+  inline-size: 82%;
+
+  .figs__caption {
+    padding-inline-end: 0;
+  }
+}
+
+// Secuencia en móvil: todas desplazadas, alternando el borde.
+:host([data-layout='sequence']) .figs__item {
+  inline-size: 86%;
+
+  &:nth-child(odd) {
+    justify-self: start;
+
+    .figs__caption {
+      padding-inline: var(--page-margin) 0;
+    }
+  }
+
+  &:nth-child(even) {
+    justify-self: end;
+
+    .figs__caption {
+      padding-inline: 0 var(--page-margin);
+    }
+  }
+}
+
+// Desde sm, díptico y tríptico en fila a la misma altura: columnas en proporción a cada foto.
+@include mq(sm) {
+  :host(:not([data-layout='sequence'])) {
+    .figs {
+      grid-template-columns: var(--figs-columns);
+      grid-column: wide;
+      column-gap: var(--space-2);
+    }
+
+    .figs__item {
+      justify-self: stretch;
+      inline-size: auto;
+    }
+
+    .figs__caption {
+      padding-inline: 0 var(--space-3);
+    }
+  }
+}
+
+// Desde md, la secuencia en escalera sobre la retícula: ocho columnas, alternando el lado.
+@include mq(md) {
+  :host([data-layout='sequence']) {
+    .figs {
+      grid-template-columns: subgrid;
+      grid-column: content;
+      row-gap: var(--space-7);
+    }
+
+    .figs__item {
+      inline-size: auto;
+
+      &:nth-child(odd) {
+        grid-column: c 1 / c 9;
+      }
+
+      &:nth-child(even) {
+        grid-column: c 5 / c 13;
+      }
+
+      // Misma especificidad que la regla móvil (nth-child) para poder anularla.
+      &:nth-child(n) .figs__caption {
+        padding-inline: 0;
+      }
+    }
+  }
+}

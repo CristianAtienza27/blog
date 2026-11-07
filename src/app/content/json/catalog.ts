@@ -202,6 +202,14 @@ function resolveBlock(catalog: Catalog, block: ContentBlockRecord, where: string
   switch (block.type) {
     case 'image':
       return { ...block, media: required(catalog.mediaById, block.media, where) };
+    case 'figures':
+      return {
+        ...block,
+        items: block.items.map((item) => ({
+          ...item,
+          media: required(catalog.mediaById, item.media, where),
+        })),
+      };
     case 'gallery':
       return { type: 'gallery', gallery: required(catalog.galleryById, block.gallery, where) };
     case 'map':

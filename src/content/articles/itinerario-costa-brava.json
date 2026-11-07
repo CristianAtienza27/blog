@@ -42,7 +42,9 @@
     {
       "type": "image",
       "media": "viajes-calella-banyera",
-      "layout": "wide",
+      "layout": "content",
+      "ratio": "4/5",
+      "align": "end",
       "caption": "Una cala de roca en Calella de Palafrugell, vista desde lo alto."
     },
     {

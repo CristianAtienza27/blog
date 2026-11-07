@@ -9,6 +9,8 @@ import type { Article, Media } from '../models';
 import { RETIRED_MEDIA } from '../../editorial/retired-media';
 import { FULL_BLEED_MIN, articlePresentation } from '../../features/article/article-presentation';
 import { ArticleRepository } from '../repositories/article-repository';
+import { bodyItems } from '../../features/article/body/body-items';
+import { figurePlan } from '../../features/article/body/figure-layout';
 import { HOME_COMPOSITION } from '../../features/home/home.composition';
 import { HomeData, homeResolver } from '../../features/home/home.resolver';
 import { provideContent } from '../provide-content';
@@ -316,5 +318,71 @@ describe('Cuerpo de los artículos con el contenido real', () => {
     expect(await html('itinerario-costa-brava')).toContain('href="#cadaques"');
     expect(await html('calas-de-mallorca')).toContain('href="/viajes/itinerario-costa-brava"');
     expect(await html('calas-de-mallorca')).toContain('href="https://es.wikipedia.org/');
+  });
+});
+
+/** Fotografías del cuerpo de cada artículo tal como se muestran (bodyItems). */
+async function bodyPhotos() {
+  return (await articleHeaders()).map(({ article }) => {
+    const items = bodyItems(article);
+    const singles = items.flatMap((item) => (item.kind === 'figure' ? [item.block] : []));
+    const compositions = items.flatMap((item) => (item.kind === 'figures' ? [item.block] : []));
+    const media = [
+      ...singles.map((block) => block.media),
+      ...compositions.flatMap((block) => block.items.map((item) => item.media)),
+    ];
+    return { article, singles, compositions, media };
+  });
+}
+
+describe('Fotografías del cuerpo con el contenido real', () => {
+  it('nunca muestran una fotografía retirada ni repiten la de la portada', async () => {
+    for (const { article, media } of await bodyPhotos()) {
+      const ids = media.map((m) => m.id);
+      expect(
+        ids.filter((id) => RETIRED_MEDIA.includes(id)),
+        article.slug,
+      ).toEqual([]);
+      expect(ids, article.slug).not.toContain(article.cover.id);
+    }
+  });
+
+  it('cada foto del cuerpo tiene todas sus variantes AVIF y WebP en disco', async () => {
+    const missing = (await bodyPhotos())
+      .flatMap(({ media }) => media)
+      .flatMap((m) => variants(m))
+      .filter((file) => !existsSync(file));
+    expect(missing).toEqual([]);
+  });
+
+  it('a sangre, solo fotos con resolución para toda la pantalla', async () => {
+    for (const { article, singles } of await bodyPhotos()) {
+      for (const block of singles) {
+        if (figurePlan(block).placement !== 'full') continue;
+        expect(block.media.width, `${article.slug}: ${block.media.id}`).toBeGreaterThanOrEqual(
+          FULL_BLEED_MIN.width,
+        );
+      }
+    }
+  });
+
+  it('los artículos de referencia prueban cada composición', async () => {
+    const photos = await bodyPhotos();
+    const of = (slug: string) => photos.find(({ article }) => article.slug === slug);
+    const plans = (slug: string) => of(slug)?.singles.map((block) => figurePlan(block)) ?? [];
+    expect(plans('itinerario-costa-brava')).toContainEqual(
+      expect.objectContaining({ placement: 'side', align: 'end', orientation: 'portrait' }),
+    );
+    expect(plans('ciudades-luz-de-tarde')).toContainEqual(
+      expect.objectContaining({ placement: 'side', align: 'start', orientation: 'portrait' }),
+    );
+    expect(plans('ciudades-luz-de-tarde')).toContainEqual(
+      expect.objectContaining({ placement: 'edge', align: 'end' }),
+    );
+    expect(of('paso-del-stelvio')?.compositions.map((c) => c.layout)).toEqual(['diptych']);
+    expect(of('serie-horizontes')?.compositions.map((c) => c.layout)).toEqual([
+      'triptych',
+      'sequence',
+    ]);
   });
 });

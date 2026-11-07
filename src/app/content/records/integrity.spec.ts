@@ -42,6 +42,11 @@ describe('Integridad de las relaciones', () => {
         { type: 'image', media: 'fantasma', layout: 'wide' },
         { type: 'gallery', gallery: 'fantasma' },
         { type: 'map', destinations: ['fantasma'], route: false },
+        {
+          type: 'figures',
+          layout: 'diptych',
+          items: [{ media: 'cala' }, { media: 'espectro' }],
+        },
       ],
     };
     const issues = issuesFor(
@@ -51,6 +56,9 @@ describe('Integridad de las relaciones', () => {
     expect(issues.join('\n')).toContain('imagen inexistente «fantasma»');
     expect(issues.join('\n')).toContain('galería inexistente «fantasma»');
     expect(issues.join('\n')).toContain('destino inexistente «fantasma»');
+    // Cada foto de una composición se comprueba por separado, con su posición.
+    expect(issues.join('\n')).toContain('blocks[3].items[1]: imagen inexistente «espectro»');
+    expect(issues.join('\n')).not.toContain('items[0]: imagen inexistente');
   });
 
   it('los destinos propios de un artículo existen y no repiten las paradas', () => {

@@ -1,0 +1,154 @@
+@use 'abstracts' as *;
+
+// Toda la anchura de la retícula del artículo (subgrid): la foto y el pie se colocan con sus
+// líneas (full, wide, content, text, c 1…c 13). Móvil primero: foto y pie apilados.
+:host,
+.fig {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: full;
+}
+
+.fig {
+  row-gap: var(--space-3);
+  align-items: end;
+  margin: 0;
+}
+
+.fig__photo,
+.fig__caption {
+  grid-row: 1;
+}
+
+.fig__caption {
+  grid-row: 2;
+  grid-column: content;
+}
+
+// Móvil: a sangre salvo en la columna de lectura, que conserva los márgenes.
+.fig__photo {
+  grid-column: full;
+}
+
+:host([data-placement='column']) .fig__photo {
+  grid-column: content;
+}
+
+@include mq(md) {
+  :host([data-placement='column']) {
+    .fig__photo,
+    .fig__caption {
+      grid-column: text;
+    }
+  }
+
+  // Pie al lado de la foto, en el margen contrario, alineado con su borde inferior.
+  :host([data-placement='side']) .fig__caption,
+  :host([data-placement='edge'][data-align='start']) .fig__caption {
+    grid-row: 1;
+  }
+
+  :host([data-align='start']) .fig__caption {
+    padding-inline-start: var(--gutter);
+  }
+
+  :host([data-align='end']) .fig__caption {
+    padding-inline-end: var(--gutter);
+    text-align: end;
+  }
+
+  // Horizontal hacia un margen: ocho columnas (tableta) o nueve (escritorio).
+  :host([data-placement='side'][data-orientation='landscape'][data-align='start']) {
+    .fig__photo {
+      grid-column: content-start / text-end;
+    }
+
+    .fig__caption {
+      grid-column: aside;
+    }
+  }
+
+  :host([data-placement='side'][data-orientation='landscape'][data-align='end']) {
+    .fig__photo {
+      grid-column: text-start / content-end;
+    }
+
+    .fig__caption {
+      grid-row: 2;
+      grid-column: text;
+    }
+  }
+
+  // Vertical: media retícula, con el pie en la otra media.
+  :host([data-placement='side'][data-orientation='portrait'][data-align='start']) {
+    .fig__photo {
+      grid-column: c 1 / c 7;
+    }
+
+    .fig__caption {
+      grid-column: c 7 / content-end;
+    }
+  }
+
+  :host([data-placement='side'][data-orientation='portrait'][data-align='end']) {
+    .fig__photo {
+      grid-column: c 7 / content-end;
+    }
+
+    .fig__caption {
+      grid-column: content-start / c 7;
+    }
+  }
+
+  // Hasta el borde de la pantalla por un lado.
+  :host([data-placement='edge'][data-align='start']) {
+    .fig__photo {
+      grid-column: full-start / text-end;
+    }
+
+    .fig__caption {
+      grid-column: aside;
+    }
+  }
+
+  :host([data-placement='edge'][data-align='end']) {
+    .fig__photo {
+      grid-column: text-start / full-end;
+    }
+
+    .fig__caption {
+      grid-column: text;
+      padding-inline-end: 0;
+      text-align: start;
+    }
+  }
+
+  :host([data-placement='wide']) .fig__photo {
+    grid-column: wide;
+  }
+
+  :host(:is([data-placement='wide'], [data-placement='full'])) .fig__caption {
+    grid-column: text-start / content-end;
+  }
+}
+
+// Escritorio: el margen izquierdo existe y recibe los pies de las fotos que van a la derecha.
+@include mq(lg) {
+  :host([data-placement='side'][data-orientation='landscape'][data-align='end']),
+  :host([data-placement='edge'][data-align='end']) {
+    .fig__caption {
+      grid-row: 1;
+      grid-column: rail;
+      padding-inline-end: var(--gutter);
+      text-align: end;
+    }
+  }
+
+  :host([data-placement='side'][data-orientation='portrait'][data-align='start']) .fig__caption {
+    grid-column: c 7 / c 10;
+  }
+
+  :host([data-placement='side'][data-orientation='portrait'][data-align='end']) .fig__caption {
+    grid-column: c 4 / c 7;
+  }
+}

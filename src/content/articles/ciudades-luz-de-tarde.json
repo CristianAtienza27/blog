@@ -59,7 +59,8 @@
       "type": "image",
       "media": "ciudades-praga-moldava",
       "layout": "wide",
-      "caption": "El Moldava y sus puentes en Praga."
+      "caption": "El Moldava y sus puentes en Praga.",
+      "align": "end"
     },
     {
       "type": "chapter",
@@ -76,7 +77,9 @@
       "type": "image",
       "media": "ciudades-oporto-ribeira",
       "layout": "content",
-      "caption": "Barcos rabelos y la Ribeira desde el muelle de Gaia."
+      "caption": "Barcos rabelos y la Ribeira desde el muelle de Gaia.",
+      "ratio": "4/5",
+      "align": "start"
     },
     {
       "type": "divider",

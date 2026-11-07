@@ -175,6 +175,73 @@ describe('Validación de la estructura de los registros', () => {
   });
 });
 
+describe('Fotografías del relato', () => {
+  const image = (extra: Record<string, unknown>) =>
+    bodyIssues({
+      slug: 'a',
+      blocks: [{ type: 'image', media: 'cala', layout: 'content', ...extra }],
+    });
+  const figures = (layout: string, n: number, item: Record<string, unknown> = {}) =>
+    bodyIssues({
+      slug: 'a',
+      blocks: [
+        {
+          type: 'figures',
+          layout,
+          items: Array.from({ length: n }, (_, i) => ({ media: `foto-${i}`, ...item })),
+        },
+      ],
+    });
+
+  it('imagen: recorte, alineación y punto focal son opcionales y compatibles', () => {
+    expect(image({})).toEqual([]);
+    expect(image({ ratio: '4/5', align: 'start', focal: { x: 0.3, y: 0.7 } })).toEqual([]);
+    for (const ratio of ['4/5', '1/1', '3/2', '16/9', '21/9']) expect(image({ ratio })).toEqual([]);
+  });
+
+  it('imagen: rechaza recortes, alineaciones y puntos focales no válidos', () => {
+    expect(image({ ratio: '2/1' })[0]).toContain('blocks[0].ratio');
+    expect(image({ align: 'center' })[0]).toContain('blocks[0].align');
+    expect(image({ focal: { x: 1.4, y: 0.5 } })[0]).toContain('focal.x: fuera de rango');
+    expect(image({ focal: { x: 0.5 } })[0]).toContain('focal.y: campo obligatorio');
+  });
+
+  it('imagen a sangre: no se alinea a un margen', () => {
+    expect(image({ layout: 'full', align: 'end' })).toEqual([
+      'cuerpo.blocks[0].align: una imagen a sangre (full) no se alinea a un margen',
+    ]);
+    expect(image({ layout: 'wide', align: 'end' })).toEqual([]);
+  });
+
+  it('composiciones: díptico de 2, tríptico de 3 y secuencia de 2 o 3', () => {
+    expect(figures('diptych', 2)).toEqual([]);
+    expect(figures('triptych', 3)).toEqual([]);
+    expect(figures('sequence', 2)).toEqual([]);
+    expect(figures('sequence', 3)).toEqual([]);
+    expect(figures('diptych', 3)).toEqual(['cuerpo.blocks[0].items: diptych: 2 fotografías, no 3']);
+    expect(figures('triptych', 2)).toEqual([
+      'cuerpo.blocks[0].items: triptych: 3 fotografías, no 2',
+    ]);
+    expect(figures('sequence', 4)).toEqual([
+      'cuerpo.blocks[0].items: sequence: entre 2 y 3 fotografías, no 4',
+    ]);
+  });
+
+  it('composiciones incompletas o no válidas', () => {
+    expect(figures('diptych', 1)).toContain(
+      'cuerpo.blocks[0].items: se esperaban al menos 2 elementos',
+    );
+    expect(figures('mosaico', 2)[0]).toContain('blocks[0].layout');
+    expect(figures('diptych', 2, { ratio: '5/4' })[0]).toContain('items[0].ratio');
+    expect(figures('diptych', 2, { titulo: 'x' })[0]).toContain(
+      'items[0].titulo: campo desconocido',
+    );
+    expect(
+      bodyIssues({ slug: 'a', blocks: [{ type: 'figures', layout: 'diptych' }] })[0],
+    ).toContain('blocks[0].items: campo obligatorio');
+  });
+});
+
 describe('Lista blanca de HTML', () => {
   it('admite etiquetas de texto y enlaces relativos, anclas o https', () => {
     expect(
@@ -253,6 +320,19 @@ describe('Tiempo de lectura', () => {
         { type: 'divider', variant: 'line' },
       ]),
     ).toBe(6);
+  });
+
+  it('los pies propios de una composición también se leen', () => {
+    expect(
+      countWords([
+        {
+          type: 'figures',
+          layout: 'diptych',
+          items: [{ media: 'a', caption: 'Tres palabras aquí' }, { media: 'b' }],
+        },
+        { type: 'image', media: 'c', layout: 'content', caption: 'Dos más' },
+      ]),
+    ).toBe(5);
   });
 
   it('redondea a minutos, con un mínimo de uno', () => {

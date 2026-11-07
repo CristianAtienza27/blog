@@ -6,9 +6,13 @@ import type {
   ChapterBlock,
   CodeBlock,
   DividerBlock,
+  FiguresLayout,
+  FocalPoint,
   GalleryLayout,
   GeoPoint,
+  ImageAlign,
   ImageLayout,
+  ImageRatio,
   Media,
   ProjectStatus,
   QuoteBlock,
@@ -143,6 +147,23 @@ export interface ImageBlockRecord {
   media: string;
   layout: ImageLayout;
   caption?: string;
+  ratio?: ImageRatio;
+  align?: ImageAlign;
+  focal?: FocalPoint;
+}
+
+export interface FigureItemRecord {
+  media: string;
+  ratio?: ImageRatio;
+  focal?: FocalPoint;
+  caption?: string;
+}
+
+/** Díptico (2), tríptico (3) o secuencia (2 o 3) de fotografías. */
+export interface FiguresBlockRecord {
+  type: 'figures';
+  layout: FiguresLayout;
+  items: FigureItemRecord[];
 }
 
 export interface GalleryBlockRecord {
@@ -162,6 +183,7 @@ export interface MapBlockRecord {
 export type ContentBlockRecord =
   | TextBlock
   | ImageBlockRecord
+  | FiguresBlockRecord
   | GalleryBlockRecord
   | QuoteBlock
   | MapBlockRecord

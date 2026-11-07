@@ -23,8 +23,22 @@
       "html": "<p>En una panorámica, el horizonte deja de ser un borde y pasa a ser el tema. La ciudad, el puerto y la costa se leen de izquierda a derecha, como una frase larga. Por eso este formato pide mirarse sin prisa, recorriendo la imagen igual que se recorre un paisaje desde un mirador.</p>"
     },
     {
-      "type": "gallery",
-      "gallery": "mediterraneo"
+      "type": "figures",
+      "layout": "triptych",
+      "items": [
+        {
+          "media": "viajes-mallorca-almunia",
+          "ratio": "3/2"
+        },
+        {
+          "media": "viajes-calella-banyera",
+          "ratio": "4/5"
+        },
+        {
+          "media": "viajes-cadaques-bahia",
+          "ratio": "3/2"
+        }
+      ]
     },
     {
       "type": "divider",
@@ -40,6 +54,20 @@
     {
       "type": "text",
       "html": "<p>En alta montaña el horizonte se rompe. Las cumbres de los Dolomitas, formadas por roca dolomítica clara, cambian de color con la luz del día y con la nieve. Desde la Seceda, por encima de los 2500 metros, la línea de picos ocupa todo el encuadre.</p>"
+    },
+    {
+      "type": "figures",
+      "layout": "sequence",
+      "items": [
+        {
+          "media": "motor-stelvio-bormio",
+          "ratio": "3/2"
+        },
+        {
+          "media": "motor-stelvio-curvas",
+          "ratio": "3/2"
+        }
+      ]
     },
     {
       "type": "image",

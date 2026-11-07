@@ -1,7 +1,19 @@
 import { GeoPoint } from './common';
-import { Gallery, Media } from './media';
+import { FocalPoint, Gallery, Media } from './media';
 
 export type ImageLayout = 'content' | 'wide' | 'full';
+
+/** Recortes admitidos en el cuerpo (relación de aspecto CSS). Sin recorte: la de la foto. */
+export const IMAGE_RATIOS = ['4/5', '1/1', '3/2', '16/9', '21/9'] as const;
+export type ImageRatio = (typeof IMAGE_RATIOS)[number];
+
+/** Hacia qué margen rompe la columna de lectura una fotografía. */
+export const IMAGE_ALIGNS = ['start', 'end'] as const;
+export type ImageAlign = (typeof IMAGE_ALIGNS)[number];
+
+/** Composiciones de dos o tres fotografías. */
+export const FIGURES_LAYOUTS = ['diptych', 'triptych', 'sequence'] as const;
+export type FiguresLayout = (typeof FIGURES_LAYOUTS)[number];
 export type QuoteVariant = 'pull' | 'block';
 export type DividerVariant = 'line' | 'ornament' | 'pause';
 
@@ -17,6 +29,33 @@ export interface ImageBlock {
   layout: ImageLayout;
   /** Sustituye al pie de la imagen en este artículo. */
   caption?: string;
+  /** Recorte en este artículo (por defecto, la proporción de la foto). */
+  ratio?: ImageRatio;
+  /** Rompe la columna hacia el margen izquierdo (start) o derecho (end). No con «full». */
+  align?: ImageAlign;
+  /** Sustituye al punto focal de la foto para este recorte. */
+  focal?: FocalPoint;
+}
+
+/** Una fotografía de una composición, con su propio recorte, punto focal y pie. */
+export interface FigureItem {
+  media: Media;
+  ratio?: ImageRatio;
+  focal?: FocalPoint;
+  /** Sustituye al pie de la imagen en esta composición. */
+  caption?: string;
+}
+
+/**
+ * Composición de fotografías dentro del relato.
+ * - diptych: dos, juntas y a la misma altura.
+ * - triptych: tres, juntas y a la misma altura.
+ * - sequence: dos o tres en escalera, numeradas, para leerlas en orden.
+ */
+export interface FiguresBlock {
+  type: 'figures';
+  layout: FiguresLayout;
+  items: FigureItem[];
 }
 
 export interface GalleryBlock {
@@ -93,6 +132,7 @@ export interface DividerBlock {
 export type ContentBlock =
   | TextBlock
   | ImageBlock
+  | FiguresBlock
   | GalleryBlock
   | QuoteBlock
   | MapBlock

@@ -3,6 +3,8 @@ import type { Article } from '../../../content/models';
 import { bodyItems } from './body-items';
 import { ChapterHeading } from './chapter-heading';
 import { DividerBlock } from './divider-block';
+import { FigureBlock } from './figure-block';
+import { FiguresBlock } from './figures-block';
 import { ProseBlock } from './prose-block';
 import { QuoteBlock } from './quote-block';
 import { SpecsBlock } from './specs-block';
@@ -14,7 +16,15 @@ import { SpecsBlock } from './specs-block';
  */
 @Component({
   selector: 'app-article-body',
-  imports: [ChapterHeading, DividerBlock, ProseBlock, QuoteBlock, SpecsBlock],
+  imports: [
+    ChapterHeading,
+    DividerBlock,
+    FigureBlock,
+    FiguresBlock,
+    ProseBlock,
+    QuoteBlock,
+    SpecsBlock,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="body article-grid">
@@ -31,6 +41,12 @@ import { SpecsBlock } from './specs-block';
           }
           @case ('divider') {
             <app-divider-block [variant]="item.block.variant" />
+          }
+          @case ('figure') {
+            <app-figure-block [figure]="item.block" />
+          }
+          @case ('figures') {
+            <app-figures-block [figures]="item.block" />
           }
           @case ('specs') {
             <app-specs-block

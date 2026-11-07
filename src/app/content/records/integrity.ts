@@ -145,6 +145,9 @@ export function checkIntegrity(
         case 'image':
           useMedia(block.media, at);
           break;
+        case 'figures':
+          block.items.forEach((item, k) => useMedia(item.media, `${at}.items[${k}]`));
+          break;
         case 'gallery':
           ref(galleries, block.gallery, at, 'galería');
           break;

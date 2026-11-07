@@ -1,5 +1,8 @@
 import {
   ARTICLE_FORMATS,
+  FIGURES_LAYOUTS,
+  IMAGE_ALIGNS,
+  IMAGE_RATIOS,
   MEDIA_LICENSES,
   MEDIA_SOURCES,
   PROJECT_STATUSES,
@@ -346,14 +349,55 @@ const article = shape({
   seo: optional(shape({ description: optional(text()) })),
 });
 
+const focalPoint = shape({ x: num({ min: 0, max: 1 }), y: num({ min: 0, max: 1 }) });
+
+/** Fotografías de cada composición: el díptico, dos; el tríptico, tres; la secuencia, 2 o 3. */
+const FIGURES_COUNT: Record<(typeof FIGURES_LAYOUTS)[number], [number, number]> = {
+  diptych: [2, 2],
+  triptych: [3, 3],
+  sequence: [2, 3],
+};
+
+const figureItem = shape({
+  media: slug,
+  ratio: optional(oneOf(IMAGE_RATIOS)),
+  focal: optional(focalPoint),
+  caption: optional(text()),
+});
+
 const block = union('type', {
   text: shape({ type: text(), html: richText }),
-  image: shape({
-    type: text(),
-    media: slug,
-    layout: oneOf(['content', 'wide', 'full']),
-    caption: optional(text()),
-  }),
+  image: (c, v) => {
+    shape({
+      type: text(),
+      media: slug,
+      layout: oneOf(['content', 'wide', 'full']),
+      caption: optional(text()),
+      ratio: optional(oneOf(IMAGE_RATIOS)),
+      align: optional(oneOf(IMAGE_ALIGNS)),
+      focal: optional(focalPoint),
+    })(c, v);
+    // A sangre ocupa la pantalla entera: no hay margen hacia el que romper.
+    if (isRecord(v) && v['layout'] === 'full' && v['align'] !== undefined) {
+      c.at('align').fail('una imagen a sangre (full) no se alinea a un margen');
+    }
+  },
+  figures: (c, v) => {
+    shape({
+      type: text(),
+      layout: oneOf(FIGURES_LAYOUTS),
+      items: list(figureItem, 2),
+    })(c, v);
+    if (!isRecord(v) || !Array.isArray(v['items'])) return;
+    const range = FIGURES_COUNT[v['layout'] as (typeof FIGURES_LAYOUTS)[number]];
+    if (!range) return;
+    const [min, max] = range;
+    const n = v['items'].length;
+    if (n < min || n > max) {
+      const expected = min === max ? String(min) : `entre ${min} y ${max}`;
+      c.at('items').fail(`${String(v['layout'])}: ${expected} fotografías, no ${n}`);
+    }
+  },
   gallery: shape({ type: text(), gallery: slug }),
   quote: shape({
     type: text(),

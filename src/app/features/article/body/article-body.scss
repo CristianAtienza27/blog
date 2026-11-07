@@ -34,16 +34,23 @@
     grid-column: text;
   }
 
-  > :is(app-quote-block, app-specs-block, app-divider-block) {
+  // Fotografías: ocupan toda la retícula y cada una se coloca dentro con sus líneas.
+  > :is(app-figure-block, app-figures-block) {
+    grid-column: full;
+  }
+
+  > :is(app-quote-block, app-specs-block, app-divider-block, app-figure-block, app-figures-block) {
     margin-block: var(--space-8);
   }
 
-  > :is(app-quote-block, app-specs-block, app-divider-block) + * {
+  > :is(app-quote-block, app-specs-block, app-divider-block, app-figure-block, app-figures-block)
+    + * {
     margin-block-start: 0;
   }
 
-  // Tras una cita, ficha o separador ya hay aire: el capítulo siguiente no suma el suyo entero.
-  > :is(app-quote-block, app-specs-block, app-divider-block) + app-chapter-heading {
+  // Tras una cita, ficha, foto o separador ya hay aire: el capítulo no suma el suyo entero.
+  > :is(app-quote-block, app-specs-block, app-divider-block, app-figure-block, app-figures-block)
+    + app-chapter-heading {
     margin-block-start: var(--space-6);
   }
 
@@ -58,7 +65,7 @@
       margin-block-start: var(--space-10);
     }
 
-    > :is(app-quote-block, app-specs-block) {
+    > :is(app-quote-block, app-specs-block, app-figure-block, app-figures-block) {
       margin-block: var(--space-9);
     }
   }

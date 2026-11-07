@@ -93,8 +93,16 @@
       "html": "<p>El <strong>paso de Gardena</strong>, en los Dolomitas, alcanza 2121 metros bajo las paredes del grupo del Sella. La <strong>Transfăgărășan</strong>, en Rumanía, cruza los montes Făgăraș y llega a unos 2040 metros junto al lago Bâlea; se construyó en la década de 1970 y solo abre durante unos meses al año.</p>"
     },
     {
-      "type": "gallery",
-      "gallery": "puertos-de-montana"
+      "type": "figures",
+      "layout": "diptych",
+      "items": [
+        {
+          "media": "paisaje-sella-frea"
+        },
+        {
+          "media": "motor-transfagarasan"
+        }
+      ]
     }
   ]
 }

@@ -32,6 +32,9 @@ export function countWords(blocks: readonly ContentBlockRecord[]): number {
       case 'code':
         total += words(block.code) + words(block.caption);
         break;
+      case 'figures':
+        for (const item of block.items) total += words(item.caption);
+        break;
       case 'image':
       case 'map':
         total += words(block.caption);
