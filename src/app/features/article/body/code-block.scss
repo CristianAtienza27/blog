@@ -1,0 +1,77 @@
+@use 'abstracts' as *;
+
+// En una retícula, un hijo crece hasta su línea más larga: así no ensancha la página y es el
+// código el que se desplaza.
+:host {
+  display: block;
+  min-inline-size: 0;
+}
+
+.code {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.code__frame {
+  min-inline-size: 0;
+  background-color: var(--color-bg-raised);
+  border: var(--border-width) solid var(--color-line);
+}
+
+// Rótulo: archivo a la izquierda y lenguaje a la derecha (solo el lenguaje si no hay archivo).
+.code__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-block-end: var(--border-width) solid var(--color-line);
+}
+
+.code__file {
+  min-inline-size: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.code__lang {
+  margin-inline-start: auto;
+  color: var(--accent);
+}
+
+// Sin el marco ni el fondo globales de <pre>: ya los pone .code__frame.
+.code__scroll {
+  margin: 0;
+  padding: var(--space-4);
+  overflow-x: auto;
+  font-size: var(--text-sm);
+
+  // Literal: sin ligaduras de la fuente («=>» no se convierte en una flecha).
+  font-variant-ligatures: none;
+  line-height: var(--leading-normal);
+  tab-size: 2;
+  white-space: pre;
+  background: none;
+  border: 0;
+
+  // El anillo de foco por dentro: fuera lo taparía el marco.
+  &:focus-visible {
+    outline-offset: calc(-1 * var(--focus-ring-width));
+  }
+
+  code {
+    font-size: inherit;
+  }
+
+  @include mq(md) {
+    padding: var(--space-5);
+  }
+}
+
+.code__caption {
+  text-wrap: pretty;
+}

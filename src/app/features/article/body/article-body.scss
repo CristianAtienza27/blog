@@ -2,7 +2,7 @@
 
 // Bloques a toda la retícula (fotografías y mapas) y piezas que rompen el ritmo del texto.
 $photos: 'app-figure-block, app-figures-block, app-gallery-block, app-map-block';
-$pieces: 'app-quote-block, app-specs-block, app-divider-block, #{$photos}';
+$pieces: 'app-quote-block, app-specs-block, app-code-block, app-divider-block, #{$photos}';
 
 // Contenedor del índice lateral (capa absoluta) y de la línea de tiempo de la barra de lectura.
 :host {
@@ -33,7 +33,7 @@ $pieces: 'app-quote-block, app-specs-block, app-divider-block, #{$photos}';
     margin-block-start: var(--space-6);
   }
 
-  // Citas destacadas y fichas: más anchas que el texto, hasta el margen derecho.
+  // Citas destacadas, fichas y código: más anchos que el texto, hasta el margen derecho.
   > .body__wide {
     grid-column: text-start / aside-end;
   }

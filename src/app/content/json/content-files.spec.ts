@@ -10,6 +10,7 @@ import { RETIRED_MEDIA } from '../../editorial/retired-media';
 import { FULL_BLEED_MIN, articlePresentation } from '../../features/article/article-presentation';
 import { ArticleRepository } from '../repositories/article-repository';
 import { bodyItems } from '../../features/article/body/body-items';
+import { languageLabel } from '../../features/article/body/code-block';
 import { figurePlan } from '../../features/article/body/figure-layout';
 import { articleClosing } from '../../features/article/closing/closing.resolver';
 import { HOME_COMPOSITION } from '../../features/home/home.composition';
@@ -319,6 +320,29 @@ describe('Cuerpo de los artículos con el contenido real', () => {
     expect(await html('itinerario-costa-brava')).toContain('href="#cadaques"');
     expect(await html('calas-de-mallorca')).toContain('href="/viajes/itinerario-costa-brava"');
     expect(await html('calas-de-mallorca')).toContain('href="https://es.wikipedia.org/');
+  });
+
+  it('los siete bloques de código de Tecnología se muestran íntegros y con su archivo', async () => {
+    const shown = (await articleHeaders()).flatMap(({ article }) =>
+      bodyItems(article).flatMap((item) =>
+        item.kind === 'code' ? [{ slug: article.slug, block: item.block }] : [],
+      ),
+    );
+    expect(shown.map(({ slug, block }) => `${slug} · ${block.filename}`)).toEqual([
+      'como-esta-construida-esta-revista · app.routes.server.ts',
+      'como-esta-construida-esta-revista · _root.scss',
+      'como-esta-construida-esta-revista · motion.ts',
+      'como-esta-construida-esta-revista · tools/media-worker/src/config.mjs',
+      'repositorios-desacoplados-angular · article-repository.ts',
+      'repositorios-desacoplados-angular · app.config.ts',
+      'repositorios-desacoplados-angular · content-cache.ts',
+    ]);
+    for (const { slug, block } of shown) {
+      // Lenguajes con nombre propio (no el identificador en bruto).
+      expect(languageLabel(block.language), slug).not.toBe(block.language);
+      // Sin tabuladores ni espacios finales que cambien al copiarlo o al hidratar.
+      expect(block.code, slug).not.toMatch(/\t|[ ]+$/m);
+    }
   });
 });
 

@@ -78,15 +78,17 @@ describe('Bloques del cuerpo (orden y jerarquía)', () => {
     expect(prose(article(blocks, { format: 'ficha' }))).toEqual(['<p>Uno.</p>', '<p>Dos.</p>']);
   });
 
-  it('imágenes, galerías, mapas y código quedan para sus fases', () => {
+  it('un mapa sin puntos se omite; el código se muestra en su sitio, tal cual', () => {
+    const code: ContentBlock = { type: 'code', language: 'ts', code: 'x' };
     const items = bodyItems(
       article([
         { type: 'map', points: [], route: false },
-        { type: 'code', language: 'ts', code: 'x' },
+        code,
         { type: 'divider', variant: 'line' },
       ]),
     );
-    expect(items.map((item) => item.kind)).toEqual(['divider']);
+    expect(items.map((item) => item.kind)).toEqual(['code', 'divider']);
+    expect(items[0]).toEqual({ kind: 'code', block: code });
   });
 
   it('valores cortos destacados; largos a lo ancho', () => {

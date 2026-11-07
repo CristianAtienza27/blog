@@ -14,6 +14,7 @@ import { ArticleToc, tocEntries } from './article-toc';
 import { bodyItems } from './body-items';
 import { ChapterReading } from './chapter-reading';
 import { ChapterHeading } from './chapter-heading';
+import { CodeBlock } from './code-block';
 import { DividerBlock } from './divider-block';
 import { FigureBlock } from './figure-block';
 import { FiguresBlock } from './figures-block';
@@ -26,8 +27,8 @@ import { SpecsBlock } from './specs-block';
 
 /**
  * Cuerpo del artículo sobre la retícula editorial: el texto en la columna de lectura, los
- * números de capítulo en el margen izquierdo y citas y fichas más anchas (hasta el margen
- * derecho). El ritmo vertical lo marca el tipo de bloque.
+ * números de capítulo en el margen izquierdo y citas, fichas y código más anchos (hasta el
+ * margen derecho). El ritmo vertical lo marca el tipo de bloque.
  * Arranca el seguimiento del capítulo que se lee (ChapterReading), que usan los mapas y el
  * índice, y lleva la barra de progreso de lectura.
  */
@@ -36,6 +37,7 @@ import { SpecsBlock } from './specs-block';
   imports: [
     ArticleToc,
     ChapterHeading,
+    CodeBlock,
     DividerBlock,
     FigureBlock,
     FiguresBlock,
@@ -83,6 +85,9 @@ import { SpecsBlock } from './specs-block';
           }
           @case ('gallery') {
             <app-gallery-block [gallery]="item.gallery" [level]="item.level" />
+          }
+          @case ('code') {
+            <app-code-block class="body__wide" [code]="item.block" />
           }
           @case ('specs') {
             <app-specs-block

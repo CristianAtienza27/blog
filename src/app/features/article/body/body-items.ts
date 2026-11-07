@@ -3,6 +3,7 @@ import {
   type Article,
   type ArticleFormat,
   type ChapterBlock,
+  type CodeBlock,
   type DividerBlock,
   type FiguresBlock,
   type Gallery,
@@ -16,13 +17,14 @@ import { RETIRED_MEDIA } from '../../../editorial/retired-media';
 import type { ChapterIndex } from './place-plan';
 import { renderRichText } from './rich-text-render';
 
-/** Lo que el cuerpo sabe mostrar en esta fase; el resto de bloques llega después. */
+/** Bloques del cuerpo listos para mostrar. */
 export type BodyItem =
   | { kind: 'prose'; html: string }
   | { kind: 'chapter'; block: ChapterBlock }
   | { kind: 'quote'; block: QuoteBlock }
   | { kind: 'divider'; block: DividerBlock }
   | { kind: 'specs'; block: SpecsBlock; level: 2 | 3; headingId: string }
+  | { kind: 'code'; block: CodeBlock }
   | { kind: 'figure'; block: ImageBlock }
   | { kind: 'figures'; block: FiguresBlock }
   | { kind: 'gallery'; gallery: Gallery; level: 2 | 3 }
@@ -68,7 +70,7 @@ const DROPCAP_FORMATS: readonly ArticleFormat[] = ['reportaje', 'guia', 'ensayo-
  * - Fotografías: nunca las retiradas ni la de la portada (ya está en la cabecera). Las
  *   galerías son la serie completa: solo pierden las retiradas.
  * - Mapas: con el capítulo que trata cada lugar (para enlazarlo y destacarlo al leerlo).
- * - El código se omite hasta su fase.
+ * - Código: tal cual, sin colorear.
  */
 export function bodyItems(article: Article): BodyItem[] {
   const basePath = articleUrl(article);
@@ -127,6 +129,9 @@ export function bodyItems(article: Article): BodyItem[] {
           level: inChapter ? 3 : 2,
           headingId: uniqueId(`${SPECS_ID_PREFIX}${index}`),
         });
+        break;
+      case 'code':
+        items.push({ kind: 'code', block });
         break;
       case 'image':
         if (!hidden.has(block.media.id)) items.push({ kind: 'figure', block });
