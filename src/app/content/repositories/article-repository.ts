@@ -12,6 +12,7 @@ export interface ArticleQuery {
   destination?: string;
   project?: string;
   featured?: boolean;
+  /** Orden cronológico expreso. Sin él, el orden editorial (sección y `order`). */
   sort?: 'newest' | 'oldest';
   offset?: number;
   limit?: number;
@@ -26,7 +27,7 @@ export abstract class ArticleRepository {
   abstract bySlug(slug: string): Promise<Article | null>;
   /** Búsqueda por texto, combinable con los filtros. Ordena por relevancia. */
   abstract search(term: string, query?: ArticleQuery): Promise<Page<ArticleSummary>>;
-  /** Artículos relacionados: misma sección y etiquetas compartidas. */
+  /** Artículos relacionados: misma sección, etiquetas y destinos compartidos. */
   abstract related(slug: string, limit?: number): Promise<ArticleSummary[]>;
   /** Todos los slugs (para prerenderizar las páginas de artículo). */
   abstract slugs(): Promise<string[]>;

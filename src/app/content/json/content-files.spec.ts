@@ -11,6 +11,7 @@ import { FULL_BLEED_MIN, articlePresentation } from '../../features/article/arti
 import { ArticleRepository } from '../repositories/article-repository';
 import { bodyItems } from '../../features/article/body/body-items';
 import { figurePlan } from '../../features/article/body/figure-layout';
+import { articleClosing } from '../../features/article/closing/closing.resolver';
 import { HOME_COMPOSITION } from '../../features/home/home.composition';
 import { HomeData, homeResolver } from '../../features/home/home.resolver';
 import { provideContent } from '../provide-content';
@@ -467,5 +468,71 @@ describe('Mapas, itinerarios y capítulos con el contenido real', () => {
         map.block.points.every((p) => p.destination && p.location === p.destination.location),
       ).toBe(true);
     }
+  });
+});
+
+describe('Orden editorial con el contenido real', () => {
+  /** El orden decidido para cada sección (campo `order` de articles.json). */
+  const EXPECTED: Record<string, string[]> = {
+    viajes: [
+      'itinerario-costa-brava',
+      'ciudades-luz-de-tarde',
+      'calas-de-mallorca',
+      'alicante-desde-el-puerto',
+    ],
+    fotografia: ['hora-azul-notas-de-exposicion', 'serie-horizontes'],
+    motor: ['anatomia-moto-de-turismo', 'paso-del-stelvio'],
+    experiencias: ['plantilla-de-relato', 'equipaje-ruta-varios-dias'],
+    tecnologia: ['como-esta-construida-esta-revista', 'repositorios-desacoplados-angular'],
+  };
+
+  const repository = () => {
+    TestBed.configureTestingModule({ providers: [provideContent(withJsonContent())] });
+    return TestBed.inject(ArticleRepository);
+  };
+
+  it('cada sección, en el orden definido (sin fechas)', async () => {
+    const articles = repository();
+    for (const section of SECTIONS) {
+      const page = await articles.list({ category: section.id, limit: 50 });
+      expect(
+        page.items.map((a) => a.slug),
+        section.id,
+      ).toEqual(EXPECTED[section.id]);
+      expect(page.items.map((a) => a.order)).toEqual(page.items.map((_, i) => i + 1));
+    }
+  });
+
+  it('anterior y siguiente: los inmediatos en el orden, sin salir de la sección', async () => {
+    const articles = repository();
+    for (const section of SECTIONS) {
+      const page = await articles.list({ category: section.id, limit: 50 });
+      const slugs = EXPECTED[section.id];
+      slugs.forEach((slug, i) => {
+        const closing = articleClosing(slug, page.items, []);
+        expect(closing.previous?.slug ?? null, `${slug} anterior`).toBe(slugs[i - 1] ?? null);
+        expect(closing.next?.slug ?? null, `${slug} siguiente`).toBe(slugs[i + 1] ?? null);
+      });
+    }
+    // Los ejemplos de la decisión editorial.
+    const viajes = (await articles.list({ category: 'viajes', limit: 50 })).items;
+    expect(articleClosing('itinerario-costa-brava', viajes, []).next?.slug).toBe(
+      'ciudades-luz-de-tarde',
+    );
+    expect(articleClosing('alicante-desde-el-puerto', viajes, []).previous?.slug).toBe(
+      'calas-de-mallorca',
+    );
+  });
+
+  it('empates en relacionados: decide el orden editorial (sección y orden), no la fecha', async () => {
+    const articles = repository();
+    // Stelvio: la ficha de Motor suma 3; Costa Brava, Horizontes y Equipaje empatan a 2.
+    const related = await articles.related('paso-del-stelvio', 4);
+    expect(related.map((a) => a.slug)).toEqual([
+      'anatomia-moto-de-turismo',
+      'itinerario-costa-brava',
+      'serie-horizontes',
+      'equipaje-ruta-varios-dias',
+    ]);
   });
 });

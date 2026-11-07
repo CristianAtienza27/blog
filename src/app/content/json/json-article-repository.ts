@@ -8,7 +8,7 @@ import {
   MAX_PAGE_SIZE,
 } from '../repositories/article-repository';
 import { SearchDocument, buildIndex, search } from '../search/search';
-import { Catalog, newestFirst } from './catalog';
+import { Catalog, editorialOrder, newestFirst } from './catalog';
 import { JsonContentStore } from './json-content-store';
 
 /** Recorta una lista a la página pedida, con límites seguros. */
@@ -72,8 +72,12 @@ export class JsonArticleRepository extends ArticleRepository {
   list(query: ArticleQuery = {}): Promise<Page<ArticleSummary>> {
     return this.cache.get(cacheKey('articles.list', query), async () => {
       const catalog = await this.store.catalog();
+      // El catálogo ya está en orden editorial; la fecha solo cuando se pide expresamente.
       const items = filterArticles(catalog, catalog.articles, query);
-      if (query.sort === 'oldest') items.reverse();
+      if (query.sort) {
+        items.sort(newestFirst);
+        if (query.sort === 'oldest') items.reverse();
+      }
       return paginate(items, query);
     });
   }
@@ -107,16 +111,19 @@ export class JsonArticleRepository extends ArticleRepository {
       const base = catalog.articleBySlug.get(slug);
       if (!base) return [];
       const baseTags = new Set(base.tags.map((tag) => tag.id));
+      const basePlaces = new Set(base.destinations.map((place) => place.id));
+      // A igual relevancia, el orden editorial (nunca las fechas de demostración).
       return catalog.articles
         .filter((article) => article.slug !== slug)
         .map((article) => ({
           article,
           score:
             (article.category.id === base.category.id ? 3 : 0) +
-            article.tags.filter((tag) => baseTags.has(tag.id)).length * 2,
+            article.tags.filter((tag) => baseTags.has(tag.id)).length * 2 +
+            article.destinations.filter((place) => basePlaces.has(place.id)).length * 2,
         }))
         .filter(({ score }) => score > 0)
-        .sort((a, b) => b.score - a.score || newestFirst(a.article, b.article))
+        .sort((a, b) => b.score - a.score || editorialOrder(a.article, b.article))
         .slice(0, Math.max(0, limit))
         .map(({ article }) => article);
     });

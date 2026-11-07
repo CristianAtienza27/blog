@@ -5,6 +5,7 @@ import {
   articleSeoResolver,
   articleTitleResolver,
 } from './features/article/article.resolver';
+import { articleClosingResolver } from './features/article/closing/closing.resolver';
 import { homeResolver } from './features/home/home.resolver';
 import { NavPage, NavSection, SECONDARY_PAGES, SECTIONS } from './layout/navigation';
 
@@ -43,7 +44,7 @@ function articleRoute(section: NavSection): Route {
     path: `${section.path.slice(1)}/:slug`,
     loadComponent: loadArticlePage,
     title: articleTitleResolver,
-    resolve: { page: articleResolver, seo: articleSeoResolver },
+    resolve: { page: articleResolver, seo: articleSeoResolver, closing: articleClosingResolver },
     data: { section: section.id },
   };
 }

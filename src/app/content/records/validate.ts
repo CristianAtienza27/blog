@@ -338,6 +338,7 @@ const article = shape({
   format: oneOf(ARTICLE_FORMATS),
   cover: slug,
   author: slug,
+  order: num({ min: 1, integer: true }),
   publishedAt: isoDate,
   updatedAt: optional(isoDate),
   readingMinutes: num({ min: 1, integer: true }),

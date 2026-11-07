@@ -14,6 +14,7 @@ import type {
   Tag,
   Trip,
 } from '../models';
+import { SECTION_IDS } from '../models';
 import type {
   ArticleBodyRecord,
   ArticleRecord,
@@ -96,9 +97,22 @@ function articleDestinations(
   return [...new Map([...stops, ...own].map((d) => [d.id, toRef(d)])).values()];
 }
 
-/** Compara fechas ISO y, a igualdad, títulos. */
+/** Compara fechas ISO y, a igualdad, títulos. Solo para listados cronológicos pedidos. */
 export function newestFirst(a: ArticleSummary, b: ArticleSummary): number {
   return b.publishedAt.localeCompare(a.publishedAt) || a.title.localeCompare(b.title, 'es');
+}
+
+/**
+ * Orden editorial: las secciones en su orden de la revista y, dentro de cada una, por `order`.
+ * El slug solo desempata datos inválidos (orden repetido): el resultado es siempre el mismo,
+ * en el servidor y en el navegador. No usa fechas.
+ */
+export function editorialOrder(a: ArticleSummary, b: ArticleSummary): number {
+  return (
+    SECTION_IDS.indexOf(a.category.id) - SECTION_IDS.indexOf(b.category.id) ||
+    a.order - b.order ||
+    a.slug.localeCompare(b.slug)
+  );
 }
 
 export function buildCatalog(data: ContentCollections): Catalog {
@@ -160,6 +174,7 @@ export function buildCatalog(data: ContentCollections): Catalog {
       format: a.format,
       cover: required(mediaById, a.cover, `artículo ${a.id}`),
       author: required(authorById, a.author, `artículo ${a.id}`),
+      order: a.order,
       publishedAt: a.publishedAt,
       ...(a.updatedAt ? { updatedAt: a.updatedAt } : {}),
       readingMinutes: a.readingMinutes,
@@ -167,7 +182,7 @@ export function buildCatalog(data: ContentCollections): Catalog {
       destinations: articleDestinations(a, tripById, destinationById),
       demo: a.demo,
     }))
-    .sort(newestFirst);
+    .sort(editorialOrder);
 
   return {
     categories,

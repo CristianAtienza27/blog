@@ -155,6 +155,24 @@ describe('Integridad de las relaciones', () => {
     expect(issues).toEqual(['media[2].credit.author: «Otra persona» no es un autor de la revista']);
   });
 
+  it('el orden editorial no se repite dentro de una sección (sí entre secciones)', () => {
+    // Todos los artículos de prueba tienen orden 1, cada uno en su sección: es válido.
+    expect(issuesFor(() => undefined)).toEqual([]);
+    const issues = issuesFor(
+      (data) => {
+        const [first] = data.articles;
+        data.articles.push({ ...first, id: 'otro', slug: 'otro-viaje' });
+      },
+      [
+        ...FIXTURE_BODIES,
+        { slug: 'otro-viaje', blocks: [{ type: 'text', html: '<p>Texto.</p>' }] },
+      ],
+    );
+    expect(issues).toContain(
+      'articles: orden 1 repetido en «viajes» (calas-costa-brava, otro-viaje)',
+    );
+  });
+
   it('el destino de un capítulo existe, es del artículo y no se repite', () => {
     // calas-costa-brava sigue el itinerario costa-brava (Tossa y Begur).
     const withChapters = (destinations: (string | undefined)[]) =>

@@ -108,6 +108,15 @@ export function checkIntegrity(
     });
   });
 
+  // Orden editorial: único dentro de cada sección (puede repetirse entre secciones).
+  for (const section of new Set(data.articles.map((a) => a.category))) {
+    const inSection = data.articles.filter((a) => a.category === section);
+    for (const order of duplicates(inSection.map((a) => String(a.order)))) {
+      const slugs = inSection.filter((a) => String(a.order) === order).map((a) => a.slug);
+      issues.push(`articles: orden ${order} repetido en «${section}» (${slugs.join(', ')})`);
+    }
+  }
+
   // Artículos y sus cuerpos.
   const articleSlugs = new Set(data.articles.map((a) => a.slug));
   for (const slug of bodies.keys()) {

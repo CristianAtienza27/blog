@@ -1,0 +1,118 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+// Móvil: una debajo de otra, con filete. Desde md: dos mitades con un filete vertical.
+.pager {
+  row-gap: 0;
+  border-block: var(--border-width) solid var(--color-line);
+}
+
+.pager__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) min(28vw, 7.5rem);
+  grid-column: content;
+  gap: var(--space-4);
+  align-items: center;
+  padding-block: var(--space-5);
+
+  & + & {
+    border-block-start: var(--border-width) solid var(--color-line);
+  }
+
+  &:not(:has(.pager__photo)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  // La foto, al lado exterior: a la izquierda en «Anterior», a la derecha en «Siguiente».
+  &[data-side='prev'] {
+    grid-template-columns: min(28vw, 7.5rem) minmax(0, 1fr);
+
+    &:not(:has(.pager__photo)) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  &[data-side='next'] {
+    text-align: end;
+
+    .pager__photo {
+      order: 1;
+    }
+  }
+}
+
+.pager__photo {
+  aspect-ratio: 3 / 2;
+
+  app-media {
+    block-size: 100%;
+  }
+}
+
+.pager__text {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.pager__dir {
+  color: var(--accent);
+}
+
+.pager__section {
+  color: var(--color-ink-muted);
+}
+
+.pager__link {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: inherit;
+  text-decoration: none;
+  text-wrap: balance;
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+  }
+
+  .pager__item:hover & {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      @include focus-ring;
+    }
+  }
+}
+
+@include mq(md) {
+  .pager__item {
+    grid-row: 1;
+    padding-block: var(--space-6);
+
+    & + & {
+      border-block-start: 0;
+    }
+
+    &[data-side='prev'] {
+      grid-column: content-start / c 7;
+      padding-inline-end: var(--space-6);
+    }
+
+    &[data-side='next'] {
+      grid-column: c 7 / content-end;
+      padding-inline-start: var(--space-6);
+      border-inline-start: var(--border-width) solid var(--color-line);
+    }
+  }
+}

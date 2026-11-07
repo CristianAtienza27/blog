@@ -1,0 +1,131 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+// Móvil primero: la pieza principal a lo ancho y las demás en filas con una miniatura.
+.related {
+  row-gap: var(--space-6);
+}
+
+.related__heading {
+  grid-column: content;
+  font-size: var(--text-2xl);
+  line-height: var(--leading-tight);
+}
+
+// Las piezas secundarias, en su propia columna.
+.related__more {
+  display: grid;
+  grid-column: content;
+  gap: var(--space-5);
+  align-content: start;
+}
+
+.related__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-column: content;
+  gap: var(--space-3);
+  align-items: start;
+
+  &:not(.related__item--lead) {
+    grid-template-columns: min(34vw, 10rem) minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-block-start: var(--space-5);
+    border-block-start: var(--border-width) solid var(--color-line);
+
+    // Sin foto (portada retirada): solo texto, a todo el ancho.
+    &:not(:has(.related__photo)) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}
+
+.related__photo {
+  aspect-ratio: 3 / 2;
+
+  app-media {
+    block-size: 100%;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+}
+
+.related__item:hover app-media {
+  opacity: 0.88;
+}
+
+.related__text {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.related__meta {
+  color: var(--accent);
+}
+
+.related__demo {
+  color: var(--color-ink-muted);
+}
+
+.related__title {
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  text-wrap: balance;
+
+  .related__item--lead & {
+    font-size: var(--text-xl);
+  }
+}
+
+// Toda la pieza responde al enlace del título (un único enlace por pieza).
+.related__link {
+  color: inherit;
+  text-decoration: none;
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+  }
+
+  .related__item:hover & {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      @include focus-ring;
+    }
+  }
+}
+
+.related__dek {
+  max-inline-size: 36rem;
+  color: var(--color-ink-muted);
+  text-wrap: pretty;
+}
+
+// Escritorio y tableta horizontal: la principal en siete columnas y las demás a su lado.
+@include mq(md) {
+  .related__item--lead {
+    grid-column: content-start / c 8;
+  }
+
+  .related__more {
+    grid-row: 2;
+    grid-column: c 8 / content-end;
+    padding-inline-start: var(--space-7);
+
+    .related__item:first-child {
+      padding-block-start: 0;
+      border: 0;
+    }
+  }
+}

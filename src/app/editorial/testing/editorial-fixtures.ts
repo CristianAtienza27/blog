@@ -66,6 +66,7 @@ export function summary(slug: string, overrides: Partial<ArticleSummary> = {}): 
     format: 'guia',
     cover: photo(`${slug}-portada`),
     author: { id: 'autor', name: 'Autoría de prueba', role: 'Autor' },
+    order: 1,
     publishedAt: '2026-01-01',
     readingMinutes: 2,
     featured: false,

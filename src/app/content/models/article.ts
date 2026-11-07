@@ -28,6 +28,11 @@ export interface ArticleSummary extends DemoFlag {
   format: ArticleFormat;
   cover: Media;
   author: Author;
+  /**
+   * Posición en el orden editorial de su sección (1, 2, 3…; única en la sección). Decide la
+   * navegación anterior/siguiente y los listados que no piden un orden cronológico.
+   */
+  order: number;
   /** Fecha ISO (AAAA-MM-DD). En contenido demo no es una fecha real de publicación. */
   publishedAt: string;
   updatedAt?: string;

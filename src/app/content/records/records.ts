@@ -130,6 +130,8 @@ export interface ArticleRecord {
   format: ArticleFormat;
   cover: string;
   author: string;
+  /** Orden editorial dentro de la sección (entero positivo, único en la sección). */
+  order: number;
   publishedAt: string;
   updatedAt?: string;
   readingMinutes: number;

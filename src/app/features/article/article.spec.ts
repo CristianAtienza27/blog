@@ -63,7 +63,7 @@ describe('Rutas de artículo', () => {
       const path = `${section.path.slice(1)}/:slug`;
       const route = routes.find((candidate) => candidate.path === path);
       expect(route?.data?.['section'], path).toBe(section.id);
-      expect(Object.keys(route?.resolve ?? {})).toEqual(['page', 'seo']);
+      expect(Object.keys(route?.resolve ?? {})).toEqual(['page', 'seo', 'closing']);
       const server = serverRoutes.find((candidate) => candidate.path === path);
       expect(server && 'getPrerenderParams' in server, path).toBe(true);
     }

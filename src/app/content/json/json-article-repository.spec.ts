@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ArticleRepository, MAX_PAGE_SIZE } from '../repositories/article-repository';
-import { fixtureCollections, fixtureSource, ownMedia } from '../testing/fixtures';
+import { FIXTURE_BODIES, fixtureCollections, fixtureSource, ownMedia } from '../testing/fixtures';
 import { provideFixtureContent } from '../testing/provide-fixture-content';
 
 function setup(source = fixtureSource()) {
@@ -11,9 +11,22 @@ function setup(source = fixtureSource()) {
 const slugs = (items: { slug: string }[]) => items.map((item) => item.slug);
 
 describe('ArticleRepository (adaptador JSON)', () => {
-  it('lista los artículos del más reciente al más antiguo', async () => {
+  it('sin orden expreso, lista en orden editorial (sección y `order`), no por fecha', async () => {
     const { repository } = setup();
     const page = await repository.list();
+    expect(slugs(page.items)).toEqual([
+      'calas-costa-brava',
+      'serie-costa',
+      'paso-stelvio',
+      'equipaje-ruta',
+      'construir-revista',
+    ]);
+    expect(page).toMatchObject({ total: 5, offset: 0, limit: 12 });
+  });
+
+  it('ordena del más reciente al más antiguo solo si se pide', async () => {
+    const { repository } = setup();
+    const page = await repository.list({ sort: 'newest' });
     expect(slugs(page.items)).toEqual([
       'construir-revista',
       'calas-costa-brava',
@@ -21,7 +34,31 @@ describe('ArticleRepository (adaptador JSON)', () => {
       'paso-stelvio',
       'equipaje-ruta',
     ]);
-    expect(page).toMatchObject({ total: 5, offset: 0, limit: 12 });
+  });
+
+  it('dentro de una sección, el orden editorial manda sobre la fecha', async () => {
+    const collections = fixtureCollections();
+    // Un segundo artículo de Viajes, más reciente pero con orden 2.
+    const second = structuredClone(
+      collections.articles.find((a) => a.slug === 'calas-costa-brava'),
+    );
+    if (!second) throw new Error('falta el artículo de prueba');
+    Object.assign(second, { id: 'nuevo', slug: 'nuevo', order: 2, publishedAt: '2026-12-31' });
+    collections.articles.push(second);
+    const { repository } = setup(
+      fixtureSource(collections, [
+        ...FIXTURE_BODIES,
+        { slug: 'nuevo', blocks: [{ type: 'text', html: '<p>Texto.</p>' }] },
+      ]),
+    );
+    expect(slugs((await repository.list({ category: 'viajes' })).items)).toEqual([
+      'calas-costa-brava',
+      'nuevo',
+    ]);
+    expect(slugs((await repository.list({ category: 'viajes', sort: 'newest' })).items)).toEqual([
+      'nuevo',
+      'calas-costa-brava',
+    ]);
   });
 
   it('ordena del más antiguo al más reciente si se pide', async () => {
@@ -81,7 +118,7 @@ describe('ArticleRepository (adaptador JSON)', () => {
   it('pagina con límites seguros', async () => {
     const { repository } = setup();
     const second = await repository.list({ offset: 2, limit: 2 });
-    expect(slugs(second.items)).toEqual(['serie-costa', 'paso-stelvio']);
+    expect(slugs(second.items)).toEqual(['paso-stelvio', 'equipaje-ruta']);
     expect(second).toMatchObject({ total: 5, offset: 2, limit: 2 });
     expect(await repository.list({ offset: -4, limit: 0 })).toMatchObject({ offset: 0, limit: 1 });
     expect((await repository.list({ limit: 999 })).limit).toBe(MAX_PAGE_SIZE);
@@ -227,6 +264,20 @@ describe('ArticleRepository (adaptador JSON)', () => {
     expect(slugs(await repository.related('paso-stelvio'))).toEqual(['equipaje-ruta']);
     expect(slugs(await repository.related('calas-costa-brava'))).toEqual(['serie-costa']);
     expect(await repository.related('no-existe')).toEqual([]);
+  });
+
+  it('un destino compartido también relaciona artículos (sin sección ni etiquetas en común)', async () => {
+    const collections = fixtureCollections();
+    // «Cómo se construye una revista» pasa a tratar Prato, una parada del Stelvio.
+    const revista = collections.articles.find((a) => a.slug === 'construir-revista');
+    if (revista) revista.destinations = ['prato'];
+    const { repository } = setup(fixtureSource(collections));
+    // Empate (una etiqueta compartida frente a un destino compartido): manda el orden editorial
+    // (Experiencias va antes que Tecnología), no la fecha (la revista es más reciente).
+    expect(slugs(await repository.related('paso-stelvio'))).toEqual([
+      'equipaje-ruta',
+      'construir-revista',
+    ]);
   });
 
   it('expone todos los slugs para prerenderizar', async () => {

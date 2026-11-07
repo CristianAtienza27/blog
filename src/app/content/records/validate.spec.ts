@@ -22,6 +22,21 @@ describe('Validación de la estructura de los registros', () => {
     for (const body of FIXTURE_BODIES) expect(bodyIssues(body)).toEqual([]);
   });
 
+  it('orden editorial: entero positivo y obligatorio', () => {
+    const [article] = fixtureCollections().articles;
+    const issues = (order: unknown) => collectionIssues('articles', [{ ...article, order }]);
+    expect(issues(1)).toEqual([]);
+    expect(issues(12)).toEqual([]);
+    for (const invalid of [0, -1, 1.5, '1', null]) {
+      expect(issues(invalid)[0], String(invalid)).toMatch(/^articles\[0\]\.order: /);
+    }
+    const withoutOrder: Record<string, unknown> = { ...article };
+    delete withoutOrder['order'];
+    expect(collectionIssues('articles', [withoutOrder])).toEqual([
+      'articles[0].order: campo obligatorio',
+    ]);
+  });
+
   it('indica la ruta exacta del dato incorrecto', () => {
     const [article] = fixtureCollections().articles;
     const issues = collectionIssues('articles', [{ ...article, tags: ['Costa Brava'] }]);
