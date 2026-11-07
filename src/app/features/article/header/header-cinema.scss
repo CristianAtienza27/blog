@@ -23,30 +23,26 @@
   block-size: var(--photo);
 }
 
+// Móvil: la foto se funde con el fondo por su propia máscara (no con el velo), y el zoom de
+// entrada va en el hijo, así que la máscara lo recorta: nada asoma bajo el fundido.
 .cinema__media {
   z-index: -2;
-  animation: cinema-settle 2400ms var(--ease-out) both;
+  mask: linear-gradient(#000 44%, rgb(0 0 0 / 38%) 74%, #0000);
 
   app-media {
     block-size: 100%;
+    animation: cinema-settle 2400ms var(--ease-out) both;
   }
 }
 
-// Velo: oscurece bajo el header y funde la foto con el fondo donde empieza el texto.
+// Velo: oscurece bajo el header para que se lea la navegación.
 .cinema__veil {
   z-index: -1;
-  background:
-    linear-gradient(
-      to bottom,
-      color-mix(in oklab, var(--color-bg) 60%, transparent),
-      transparent calc(var(--header-height) * 2.2)
-    ),
-    linear-gradient(
-      to top,
-      var(--color-bg) 0%,
-      color-mix(in oklab, var(--color-bg) 62%, transparent) 26%,
-      transparent 56%
-    );
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--color-bg) 60%, transparent),
+    transparent calc(var(--header-height) * 2.2)
+  );
 }
 
 .cinema__layout {
@@ -88,6 +84,10 @@
   .cinema__media,
   .cinema__veil {
     inset: 0;
+  }
+
+  .cinema__media {
+    mask: none;
   }
 
   .cinema__veil {
