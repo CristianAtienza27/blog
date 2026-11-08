@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, PLATFORM_ID, TransferState, input } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, provideRouter } from '@angular/router';
 import { existsSync } from 'node:fs';
@@ -8,10 +8,14 @@ import { MotionService } from '../../motion/motion';
 import type { Article, Media } from '../models';
 import { RETIRED_MEDIA } from '../../editorial/retired-media';
 import { FULL_BLEED_MIN, articlePresentation } from '../../features/article/article-presentation';
-import { ArticleRepository } from '../repositories/article-repository';
+import { ArticleRepository, MAX_PAGE_SIZE } from '../repositories/article-repository';
 import { bodyItems } from '../../features/article/body/body-items';
 import { languageLabel } from '../../features/article/body/code-block';
 import { figurePlan } from '../../features/article/body/figure-layout';
+import { galleryPlan } from '../../features/article/body/gallery-layout';
+import { articleSeo } from '../../features/article/article-seo';
+import { articleTeaser } from '../../features/article/closing/closing';
+import { readingMinutes } from '../records/reading-time';
 import { articleClosing } from '../../features/article/closing/closing.resolver';
 import { HOME_COMPOSITION } from '../../features/home/home.composition';
 import { HomeData, homeResolver } from '../../features/home/home.resolver';
@@ -19,7 +23,7 @@ import { provideContent } from '../provide-content';
 import { withJsonContent } from './with-json-content';
 import { SECTIONS } from '../../layout/navigation';
 import { RESERVED_IDS, validateContent } from '../records/integrity';
-import { COLLECTION_NAMES, ContentCollections } from '../records/records';
+import { ArticleBodyRecord, COLLECTION_NAMES, ContentCollections } from '../records/records';
 import { jsonFileSource } from './content-source';
 
 /** Carga el contenido real de src/content tal como lo hará la aplicación. */
@@ -38,7 +42,9 @@ describe('Contenido de src/content', () => {
   it('cumple la estructura y todas las relaciones son válidas', async () => {
     const { data, bodies } = await loadContent();
     const externalMedia = SECTIONS.map((section) => section.preview);
-    expect(validateContent(data, bodies, { externalMedia })).toEqual([]);
+    expect(validateContent(data, bodies, { externalMedia, retiredMedia: RETIRED_MEDIA })).toEqual(
+      [],
+    );
   });
 
   it('cada sección del menú tiene una fotografía de vista previa registrada', async () => {
@@ -268,11 +274,20 @@ describe('Cabeceras de artículo con el contenido real', () => {
     });
   });
 
-  it('ninguna cabecera usa una fotografía retirada', async () => {
+  it('ninguna cabecera usa una fotografía retirada; sin portada, cabecera compacta sin foto', async () => {
+    const withoutCover: string[] = [];
     for (const { article, header } of await articleHeaders()) {
       expect(RETIRED_MEDIA, article.slug).not.toContain(header.cover?.media.id);
-      if (RETIRED_MEDIA.includes(article.cover.id)) expect(header.cover).toBeNull();
+      if (article.cover) continue;
+      withoutCover.push(article.slug);
+      expect(header.cover, article.slug).toBeNull();
+      expect(header.variant, article.slug).toBe('compact');
     }
+    expect(withoutCover.sort()).toEqual([
+      'anatomia-moto-de-turismo',
+      'equipaje-ruta-varios-dias',
+      'repositorios-desacoplados-angular',
+    ]);
   });
 
   it('las fotos a sangre (cine y lámina) tienen resolución suficiente', async () => {
@@ -368,7 +383,7 @@ describe('Fotografías del cuerpo con el contenido real', () => {
         ids.filter((id) => RETIRED_MEDIA.includes(id)),
         article.slug,
       ).toEqual([]);
-      expect(ids, article.slug).not.toContain(article.cover.id);
+      if (article.cover) expect(ids, article.slug).not.toContain(article.cover.id);
     }
   });
 
@@ -421,12 +436,24 @@ describe('Galerías del cuerpo con el contenido real', () => {
       ),
     }));
 
-  it('las de referencia se muestran en sus artículos, completas', async () => {
+  it('solo Calas tiene galería: Mediterráneo, con dos fotos de la Costa Brava en pareja', async () => {
     const all = await galleriesOf();
-    const ids = (slug: string) =>
-      all.find((a) => a.slug === slug)?.galleries.map((g) => [g.id, g.items.length]);
-    expect(ids('itinerario-costa-brava')).toEqual([['costa-brava', 3]]);
-    expect(ids('calas-de-mallorca')).toEqual([['mediterraneo', 3]]);
+    expect(all.filter((a) => a.galleries.length).map((a) => a.slug)).toEqual(['calas-de-mallorca']);
+    const [mediterraneo] = all.find((a) => a.slug === 'calas-de-mallorca')?.galleries ?? [];
+    expect(mediterraneo.id).toBe('mediterraneo');
+    expect(mediterraneo.items.map((item) => item.media.id)).toEqual([
+      'viajes-calella-banyera',
+      'viajes-cadaques-bahia',
+    ]);
+    // La descripción aclara que no son de Mallorca; los pies son los de cada foto.
+    expect(mediterraneo.description).toContain('Costa Brava');
+    const plan = galleryPlan(mediterraneo);
+    expect(plan.count).toBe('2 fotografías');
+    expect(plan.groups.map((group) => [group.kind, group.items.length])).toEqual([['pair', 2]]);
+    expect(plan.items.map((item) => item.caption)).toEqual([
+      'Una cala de roca en Calella de Palafrugell.',
+      'Cadaqués desde la iglesia de Santa María.',
+    ]);
   });
 
   it('nunca muestran una fotografía retirada y todas tienen sus variantes en disco', async () => {
@@ -558,5 +585,169 @@ describe('Orden editorial con el contenido real', () => {
       'serie-horizontes',
       'equipaje-ruta-varios-dias',
     ]);
+  });
+});
+
+describe('Limpieza del contenido de demostración', () => {
+  /** Fotografías que cita cada artículo en sus registros: portada, imágenes, composiciones y galerías. */
+  async function referencedPhotos() {
+    const { data, bodies } = await loadContent();
+    const galleries = new Map(data.galleries.map((g) => [g.id, g]));
+    return data.articles.map((article) => {
+      const body = bodies.get(article.slug) as ArticleBodyRecord;
+      const photos = [
+        ...(article.cover ? [article.cover] : []),
+        ...body.blocks.flatMap((block) => {
+          if (block.type === 'image') return [block.media];
+          if (block.type === 'figures') return block.items.map((item) => item.media);
+          if (block.type === 'gallery') {
+            return galleries.get(block.gallery)?.items.map((item) => item.media) ?? [];
+          }
+          return [];
+        }),
+      ];
+      return { slug: article.slug, photos };
+    });
+  }
+
+  it('ningún artículo cita las cuatro fotografías retiradas, ni las galerías', async () => {
+    const { data } = await loadContent();
+    for (const { slug, photos } of await referencedPhotos()) {
+      expect(
+        photos.filter((id) => RETIRED_MEDIA.includes(id)),
+        slug,
+      ).toEqual([]);
+    }
+    const inGalleries = data.galleries.flatMap((g) => g.items.map((item) => item.media));
+    expect(inGalleries.filter((id) => RETIRED_MEDIA.includes(id))).toEqual([]);
+    // El catálogo las conserva como recursos retirados (créditos y variantes intactos).
+    expect(data.media.filter((m) => RETIRED_MEDIA.includes(m.id)).map((m) => m.id)).toEqual(
+      RETIRED_MEDIA,
+    );
+  });
+
+  it('ninguna fotografía se repite dentro de un artículo', async () => {
+    for (const { slug, photos } of await referencedPhotos()) {
+      expect(
+        photos.filter((id, i) => photos.indexOf(id) !== i),
+        slug,
+      ).toEqual([]);
+    }
+  });
+
+  it('todas las galerías del catálogo las muestra algún artículo', async () => {
+    const { data, bodies } = await loadContent();
+    const used = new Set(
+      [...bodies.values()].flatMap((body) =>
+        (body as ArticleBodyRecord).blocks.flatMap((block) =>
+          block.type === 'gallery' ? [block.gallery] : [],
+        ),
+      ),
+    );
+    expect(data.galleries.map((g) => g.id)).toEqual(['mediterraneo']);
+    expect(data.galleries.filter((g) => !used.has(g.id))).toEqual([]);
+    // La etiqueta temática sigue existiendo y la usa Stelvio.
+    expect(data.tags.map((t) => t.id)).toContain('puertos-de-montana');
+    expect(data.articles.find((a) => a.slug === 'paso-del-stelvio')?.tags).toContain(
+      'puertos-de-montana',
+    );
+  });
+
+  it('el estado que el servidor pasa al navegador (TransferState) no lleva fotos retiradas', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideContent(withJsonContent()), { provide: PLATFORM_ID, useValue: 'server' }],
+    });
+    const articles = TestBed.inject(ArticleRepository);
+    // Lo que piden las rutas: portada, artículo, cierre (sección y relacionados).
+    await TestBed.runInInjectionContext(() =>
+      homeResolver({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
+    );
+    for (const slug of await articles.slugs()) {
+      const article = await articles.bySlug(slug);
+      await articles.list({ category: article?.category.id, limit: MAX_PAGE_SIZE });
+      await articles.related(slug, 5);
+    }
+    const state = TestBed.inject(TransferState).toJson();
+    expect(state.length).toBeGreaterThan(1000);
+    expect(RETIRED_MEDIA.filter((id) => state.includes(id))).toEqual([]);
+  });
+
+  it('sin portada: cabecera, SEO y tarjetas sin imagen', async () => {
+    for (const { article, header } of await articleHeaders()) {
+      if (article.cover) continue;
+      const seo = articleSeo(article, header, '/media');
+      expect(seo.image, article.slug).toBeUndefined();
+      expect(seo.noindex, article.slug).toBe(true);
+      expect(articleTeaser(article).cover, article.slug).toBeNull();
+    }
+  });
+
+  it('todas las páginas de artículo siguen con noindex', async () => {
+    for (const { article, header } of await articleHeaders()) {
+      expect(articleSeo(article, header, '/media').noindex, article.slug).toBe(true);
+    }
+  });
+
+  it('tiempo de lectura: el guardado coincide con el de los cuerpos limpios', async () => {
+    const { data, bodies } = await loadContent();
+    for (const article of data.articles) {
+      const body = bodies.get(article.slug) as ArticleBodyRecord;
+      expect(article.readingMinutes, article.slug).toBe(readingMinutes(body.blocks));
+    }
+  });
+});
+
+describe('Ficha «De un vistazo» de Calas de Mallorca', () => {
+  const PLAYAS =
+    'https://www.caib.es/sites/planols/es/l/playas_de_2013_planos_provisionales-7385/?pagina=18';
+  const DECRETO = 'https://www.caib.es/eboibfront/eli/es-ib/d/2018/07/27/25/dof/spa/html';
+
+  async function calas() {
+    const found = (await articleHeaders()).find(
+      ({ article }) => article.slug === 'calas-de-mallorca',
+    );
+    if (!found) throw new Error('falta Calas de Mallorca');
+    return bodyItems(found.article);
+  }
+
+  it('va justo después del primer bloque de texto, antes del mapa, como título de nivel 2', async () => {
+    const items = await calas();
+    expect(items.slice(0, 4).map((item) => item.kind)).toEqual(['prose', 'specs', 'prose', 'map']);
+    expect(items[1]).toMatchObject({ kind: 'specs', level: 2, headingId: 'datos-1' });
+  });
+
+  it('contiene exactamente los datos autorizados', async () => {
+    const [, specs] = await calas();
+    if (specs.kind !== 'specs') throw new Error('se esperaba la ficha');
+    expect(specs.block).toEqual({
+      type: 'specs',
+      title: 'De un vistazo',
+      items: [
+        { label: 'Municipio', value: 'Santanyí, Mallorca' },
+        {
+          label: 'Normativa de fondeo',
+          value: 'Prohibido con carácter general fondear directamente sobre Posidonia oceanica',
+        },
+      ],
+      note: 'Decreto 25/2018, artículo 7: el fondeo sobre posidonia solo se admite con sistemas de bajo impacto autorizados, como boyas, y la norma prevé excepciones concretas.',
+    });
+  });
+
+  it('las fuentes oficiales son enlaces externos seguros y el texto cita la norma con precisión', async () => {
+    const items = await calas();
+    const [, , sources] = items;
+    if (sources.kind !== 'prose') throw new Error('se esperaban las fuentes');
+    const links = [...sources.html.matchAll(/<a ([^>]*)>/g)].map(([, attrs]) => attrs);
+    expect(links).toEqual([
+      `href="${PLAYAS}" rel="noopener noreferrer" target="_blank"`,
+      `href="${DECRETO}" rel="noopener noreferrer" target="_blank"`,
+    ]);
+    expect(sources.html.match(/se abre en una pestaña nueva/g)).toHaveLength(2);
+    // «Qué respetar»: prohibición general, con los sistemas autorizados y las excepciones.
+    const prose = items.flatMap((item) => (item.kind === 'prose' ? [item.html] : [])).join('');
+    expect(prose).not.toContain('Fondear sobre ellas está prohibido');
+    expect(prose).toContain(
+      'El fondeo directo sobre Posidonia oceanica está prohibido con carácter general, de acuerdo con el Decreto 25/2018, que contempla sistemas de bajo impacto autorizados y excepciones concretas.',
+    );
   });
 });

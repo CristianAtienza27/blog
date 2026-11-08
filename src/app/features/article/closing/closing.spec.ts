@@ -149,6 +149,17 @@ describe('Créditos: autor, fotografías, referencias y producción', () => {
       demo: true,
     });
     expect(articleTeaser(art('cala')).cover?.id).toBe('cala-portada');
+    expect(articleTeaser(art('sin-foto', { cover: undefined })).cover).toBeNull();
+  });
+
+  it('artículo sin portada: créditos sin «(portada)» y solo con las fotos del cuerpo', () => {
+    const plain = {
+      ...article([{ type: 'image', media: byLuis, layout: 'wide' }]),
+      cover: undefined,
+    };
+    expect(articlePhotos(plain).map(({ media, cover }) => [media.id, cover])).toEqual([
+      [byLuis.id, false],
+    ]);
   });
 });
 
@@ -237,6 +248,27 @@ describe('Cierre (componentes)', () => {
       imgs.every((i) => i.getAttribute('alt') === '' && i.getAttribute('loading') === 'lazy'),
     ).toBe(true);
     expect(section?.querySelector('.related__meta')?.textContent).toContain('Demostración');
+  });
+
+  it('tarjetas de artículos sin portada: sin imagen ni hueco, con su enlace y su título', async () => {
+    const element = await render({
+      article: article([]),
+      related: [art('uno', { cover: undefined }), art('dos'), art('tres', { cover: undefined })],
+      previous: art('antes', { cover: undefined }),
+      next: art('despues', { cover: undefined }),
+    });
+    const related = element.querySelector('app-related-articles');
+    expect(related?.querySelectorAll('img')).toHaveLength(1);
+    expect(related?.querySelectorAll('app-media')).toHaveLength(1);
+    expect(related?.querySelector('.related__item--lead .related__title')?.textContent).toContain(
+      'Artículo uno',
+    );
+    const nav = element.querySelector('app-article-navigation');
+    expect(nav?.querySelectorAll('img')).toHaveLength(0);
+    expect([...(nav?.querySelectorAll('a') ?? [])].map((a) => a.getAttribute('href'))).toEqual([
+      '/viajes/antes',
+      '/viajes/despues',
+    ]);
   });
 
   it('anterior y siguiente: enlaces reales con rel; sin el que no existe', async () => {

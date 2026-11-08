@@ -3,7 +3,7 @@
   "blocks": [
     {
       "type": "text",
-      "html": "<p><em>Ficha de demostración.</em> Este artículo prueba la composición de una ficha técnica. <strong>Los datos son ilustrativos y no corresponden a ningún modelo real</strong>, aunque las fotografías muestren motos concretas.</p><p>Una moto de turismo se define menos por su potencia que por cómo se comporta al cabo de muchas horas. La posición de conducción, la protección frente al viento, la autonomía y la capacidad de carga pesan más en un viaje largo que la velocidad punta.</p>"
+      "html": "<p><em>Ficha de demostración.</em> Este artículo prueba la composición de una ficha técnica. <strong>Los datos son ilustrativos y no corresponden a ningún modelo real</strong>.</p><p>Una moto de turismo se define menos por su potencia que por cómo se comporta al cabo de muchas horas. La posición de conducción, la protección frente al viento, la autonomía y la capacidad de carga pesan más en un viaje largo que la velocidad punta.</p>"
     },
     {
       "type": "chapter",
@@ -17,12 +17,6 @@
       "html": "<p>Un manillar ancho y alto, estriberas bajo el cuerpo y un asiento firme permiten mantener la espalda recta durante horas. La cúpula, a menudo regulable, desvía el aire hacia el casco y reduce la fatiga a velocidad constante.</p>"
     },
     {
-      "type": "image",
-      "media": "motor-moto-cuadro",
-      "layout": "content",
-      "caption": "El puesto de conducción: instrumentación, mandos y cúpula."
-    },
-    {
       "type": "chapter",
       "id": "autonomia",
       "number": 2,
@@ -32,12 +26,6 @@
     {
       "type": "text",
       "html": "<p>Un depósito grande y un consumo moderado alargan los tramos entre repostajes, algo decisivo en puertos de montaña o zonas poco pobladas. Los soportes para maletas laterales y baúl, y una suspensión que admita el peso del equipaje, completan el conjunto.</p>"
-    },
-    {
-      "type": "image",
-      "media": "motor-moto-costa",
-      "layout": "wide",
-      "caption": "Una moto de turismo deportiva junto a la costa."
     },
     {
       "type": "specs",

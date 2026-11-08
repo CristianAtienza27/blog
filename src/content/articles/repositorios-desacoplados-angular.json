@@ -61,12 +61,6 @@
       "code": "async get<T>(key: string, load: () => Promise<T>): Promise<T> {\n  const stateKey = makeStateKey<T | null>(`content:${key}`);\n  if (this.hydrating && this.state.hasKey(stateKey)) {\n    return this.state.get(stateKey, null) as T;\n  }\n  const value = await load();\n  if (this.server) this.state.set(stateKey, value ?? null);\n  return value;\n}"
     },
     {
-      "type": "image",
-      "media": "tecnologia-teclado",
-      "layout": "content",
-      "caption": "Imagen de ejemplo: teclado de un portátil."
-    },
-    {
       "type": "chapter",
       "id": "garantias",
       "number": 4,

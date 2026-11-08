@@ -7,7 +7,7 @@ import { TravelRepository } from '../../content/repositories/travel-repository';
 import { mainPlace } from '../../editorial/article-meta';
 import { buildDestinationIndex } from '../../editorial/destination-index';
 import { RETIRED_MEDIA } from '../../editorial/retired-media';
-import type { StoryData } from '../../editorial/story';
+import { hasCover, type StoryData } from '../../editorial/story';
 import { HOME_COMPOSITION } from './home.composition';
 import type { IntroData } from './intro/home-intro';
 import type { TravelData } from './travel/home-travel';
@@ -27,14 +27,17 @@ export interface HomeData {
   travel: TravelData;
 }
 
-/** Une un artículo con su lugar principal: el destino retratado en la portada, si lo trata. */
+/**
+ * Une un artículo con su lugar principal: el destino retratado en la portada, si lo trata.
+ * Sin portada no hay pieza: todas se componen alrededor de su fotografía.
+ */
 export function toStory(
   articles: readonly ArticleSummary[],
   destinations: readonly Destination[],
   slug: string,
 ): StoryData | null {
   const article = articles.find((candidate) => candidate.slug === slug);
-  if (!article) return null;
+  if (!article || !hasCover(article)) return null;
   const portrayed = destinations.find((d) => d.cover?.id === article.cover.id);
   return { article, place: mainPlace(article, portrayed?.id) };
 }

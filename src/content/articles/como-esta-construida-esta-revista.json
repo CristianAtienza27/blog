@@ -58,12 +58,6 @@
       "code": "const [{ gsap }, { ScrollTrigger }, { SplitText }, { CustomEase }] = await Promise.all([\n  import('gsap'),\n  import('gsap/ScrollTrigger'),\n  import('gsap/SplitText'),\n  import('gsap/CustomEase'),\n]);"
     },
     {
-      "type": "image",
-      "media": "tecnologia-codigo-pantalla",
-      "layout": "wide",
-      "caption": "Imagen de ejemplo: código en un editor."
-    },
-    {
       "type": "chapter",
       "id": "imagenes",
       "number": 4,

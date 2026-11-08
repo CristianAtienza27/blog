@@ -134,6 +134,35 @@ describe('Integridad de las relaciones', () => {
     );
   });
 
+  it('imágenes retiradas: se conservan sin uso, pero ningún contenido puede citarlas', () => {
+    const retiredMedia = ['moto'];
+    // Sin citar: válida aunque no se use.
+    const unused = fixtureCollections();
+    for (const a of unused.articles) if (a.cover === 'moto') delete a.cover;
+    const withoutMoto = FIXTURE_BODIES.map((b) => ({
+      ...b,
+      blocks: b.blocks.filter((block) => !(block.type === 'image' && block.media === 'moto')),
+    }));
+    expect(checkIntegrity(unused, bodies(withoutMoto), { retiredMedia })).toEqual([]);
+    // Citada en un cuerpo o como portada: error con su posición.
+    const issues = checkIntegrity(fixtureCollections(), bodies(), { retiredMedia });
+    expect(issues.length).toBeGreaterThan(0);
+    expect(issues.every((issue) => issue.endsWith('imagen retirada «moto»'))).toBe(true);
+  });
+
+  it('un artículo sin portada es válido', () => {
+    const data = fixtureCollections();
+    delete data.articles[0].cover;
+    expect(checkIntegrity(data, bodies())).toEqual([]);
+  });
+
+  it('no admite galerías que no muestre ningún artículo', () => {
+    const issues = issuesFor((data) => {
+      data.galleries.push({ ...data.galleries[0], id: 'huerfana', slug: 'huerfana' });
+    });
+    expect(issues).toEqual(['galleries: galería sin usar «huerfana»']);
+  });
+
   it('acepta imágenes usadas fuera del contenido (por ejemplo, el menú)', () => {
     const data = fixtureCollections();
     const article = data.articles.find((a) => a.slug === 'construir-revista');

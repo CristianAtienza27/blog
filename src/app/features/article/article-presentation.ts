@@ -198,9 +198,10 @@ export function articleFacts(article: Article): ArticleFact[] {
   return facts;
 }
 
-/** Portada utilizable: nunca una fotografía retirada (el artículo queda sin foto). */
+/** Portada utilizable: la del artículo, si la tiene y no es una fotografía retirada. */
 export function articleCover(article: Pick<Article, 'cover'>): Media | null {
-  return RETIRED_MEDIA.includes(article.cover.id) ? null : article.cover;
+  const cover = article.cover;
+  return cover && !RETIRED_MEDIA.includes(cover.id) ? cover : null;
 }
 
 function headerSection(id: SectionId): HeaderSection {

@@ -7,6 +7,11 @@ import { COLLECTION_NAMES } from './records';
 export interface IntegrityOptions {
   /** Imágenes usadas fuera del contenido (por ejemplo, el menú). */
   externalMedia?: readonly string[];
+  /**
+   * Imágenes retiradas: siguen en el catálogo (con sus créditos y variantes), pero ningún
+   * contenido puede usarlas y no cuentan como imágenes sin usar.
+   */
+  retiredMedia?: readonly string[];
 }
 
 /** Error con todas las incidencias encontradas, una por línea. */
@@ -30,8 +35,8 @@ function duplicates(values: readonly string[]): string[] {
 
 /**
  * Comprueba las relaciones entre colecciones: referencias existentes, identificadores
- * únicos, orden de las paradas, cuerpos de artículo, tiempo de lectura e imágenes
- * sin usar o duplicadas.
+ * únicos, orden de las paradas, cuerpos de artículo, tiempo de lectura, imágenes
+ * sin usar, duplicadas o retiradas y galerías sin usar.
  */
 export function checkIntegrity(
   data: ContentCollections,
@@ -48,6 +53,8 @@ export function checkIntegrity(
   const projects = ids(data.projects);
   const authors = ids(data.authors);
   const usedMedia = new Set(options.externalMedia ?? []);
+  const retiredMedia = new Set(options.retiredMedia ?? []);
+  const usedGalleries = new Set<string>();
 
   const ref = (set: Set<string>, id: string | undefined, where: string, kind: string) => {
     if (id !== undefined && !set.has(id)) issues.push(`${where}: ${kind} inexistente «${id}»`);
@@ -55,6 +62,7 @@ export function checkIntegrity(
   const useMedia = (id: string | undefined, where: string) => {
     if (id === undefined) return;
     ref(media, id, where, 'imagen');
+    if (retiredMedia.has(id)) issues.push(`${where}: imagen retirada «${id}»`);
     usedMedia.add(id);
   };
 
@@ -160,6 +168,7 @@ export function checkIntegrity(
           break;
         case 'gallery':
           ref(galleries, block.gallery, at, 'galería');
+          usedGalleries.add(block.gallery);
           break;
         case 'map':
           ref(trips, block.trip, at, 'itinerario');
@@ -213,7 +222,13 @@ export function checkIntegrity(
   });
 
   for (const m of data.media) {
-    if (!usedMedia.has(m.id)) issues.push(`media: imagen sin usar «${m.id}»`);
+    if (!usedMedia.has(m.id) && !retiredMedia.has(m.id)) {
+      issues.push(`media: imagen sin usar «${m.id}»`);
+    }
+  }
+  // Una galería solo existe si algún artículo la muestra.
+  for (const g of data.galleries) {
+    if (!usedGalleries.has(g.id)) issues.push(`galleries: galería sin usar «${g.id}»`);
   }
 
   return issues;

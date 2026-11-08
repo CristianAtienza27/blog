@@ -128,7 +128,8 @@ export interface ArticleRecord {
   category: Category['id'];
   tags: string[];
   format: ArticleFormat;
-  cover: string;
+  /** Fotografía de portada (id de media.json). Sin ella, el artículo se presenta sin foto. */
+  cover?: string;
   author: string;
   /** Orden editorial dentro de la sección (entero positivo, único en la sección). */
   order: number;

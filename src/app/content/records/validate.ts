@@ -336,7 +336,7 @@ const article = shape({
   category: oneOf(SECTION_IDS),
   tags: list(slug),
   format: oneOf(ARTICLE_FORMATS),
-  cover: slug,
+  cover: optional(slug),
   author: slug,
   order: num({ min: 1, integer: true }),
   publishedAt: isoDate,

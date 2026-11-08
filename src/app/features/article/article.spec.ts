@@ -9,7 +9,7 @@ import {
 } from '@angular/router';
 import { routes } from '../../app.routes';
 import { serverRoutes } from '../../app.routes.server';
-import type { Article } from '../../content/models';
+import type { Article, Media } from '../../content/models';
 import { ArticleRepository } from '../../content/repositories/article-repository';
 import { provideMediaDelivery } from '../../core/media/media-delivery';
 import type { SeoData } from '../../core/seo/seo';
@@ -18,6 +18,7 @@ import { SECTIONS } from '../../layout/navigation';
 import { MotionService } from '../../motion/motion';
 import { ArticlePage } from './article-page';
 import { ArticlePageData, articlePresentation } from './article-presentation';
+import { articleSeo } from './article-seo';
 import {
   NOT_FOUND_TITLE,
   articleResolver,
@@ -26,7 +27,7 @@ import {
 } from './article.resolver';
 
 const CALA = destination('cala-s-almunia', "Cala s'Almunia", { region: 'Mallorca' });
-const CALAS: Article = {
+const CALAS: Article & { cover: Media } = {
   ...summary('calas-de-mallorca', {
     title: 'Calas de Mallorca',
     dek: 'Roca caliza y agua transparente.',
@@ -155,6 +156,18 @@ describe('Página de artículo', () => {
     expect(text('app-photo-credit')).toBe(
       'Foto: Autoría de prueba · Wikimedia Commons · CC BY-SA 4.0 · adaptada',
     );
+  });
+
+  it('sin portada: cabecera compacta sin foto, crédito ni imagen social; el resto, igual', async () => {
+    const page = articlePresentation({ ...CALAS, format: 'ficha', cover: undefined });
+    expect(page.header).toMatchObject({ variant: 'compact', cover: null });
+    const { element, text } = await renderPage(page);
+    const header = element.querySelector('app-article-header');
+    expect(header?.querySelector('app-header-compact h1')?.textContent).toContain('Calas');
+    expect(header?.querySelectorAll('img, picture, app-media, app-photo-credit')).toHaveLength(0);
+    expect(text('app-tag')).toBe('Contenido de demostración');
+    expect(element.querySelector('app-article-body')).not.toBeNull();
+    expect(articleSeo(page.article, page.header, '/media').image).toBeUndefined();
   });
 
   it('cada variante tiene su componente', async () => {

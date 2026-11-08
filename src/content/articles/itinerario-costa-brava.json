@@ -3,7 +3,7 @@
   "blocks": [
     {
       "type": "text",
-      "html": "<p><em>Artículo de demostración.</em> Esta guía sirve para probar la composición de un itinerario: capítulos por etapa, mapa, galería y ficha de datos. Describe lugares reales, pero no relata un viaje realizado.</p><p>La Costa Brava ocupa el litoral de la provincia de Girona, desde Blanes hasta la frontera con Francia. Su nombre alude al relieve: acantilados, calas estrechas y pinares que bajan casi hasta el agua. El itinerario propuesto recorre cuatro paradas de sur a norte, de <a href=\"#tossa-de-mar\">Tossa de Mar</a> a <a href=\"#cadaques\">Cadaqués</a>, y puede hacerse en coche en varias jornadas tranquilas.</p>"
+      "html": "<p><em>Artículo de demostración.</em> Esta guía sirve para probar la composición de un itinerario: capítulos por etapa, mapa y ficha de datos. Describe lugares reales, pero no relata un viaje realizado.</p><p>La Costa Brava ocupa el litoral de la provincia de Girona, desde Blanes hasta la frontera con Francia. Su nombre alude al relieve: acantilados, calas estrechas y pinares que bajan casi hasta el agua. El itinerario propuesto recorre cuatro paradas de sur a norte, de <a href=\"#tossa-de-mar\">Tossa de Mar</a> a <a href=\"#cadaques\">Cadaqués</a>, y puede hacerse en coche en varias jornadas tranquilas.</p>"
     },
     {
       "type": "map",
@@ -77,10 +77,6 @@
     {
       "type": "text",
       "html": "<p>Cadaqués cierra el itinerario en la península del <strong>cabo de Creus</strong>, el punto más oriental de la península ibérica. La carretera de acceso atraviesa un paisaje de pizarra y matorral que anuncia el cambio de carácter de la costa.</p><p>El pueblo, de casas blancas alrededor de la iglesia de Santa María, ha atraído a pintores y escritores durante más de un siglo. En la cercana bahía de Portlligat se encuentra la casa-museo de Salvador Dalí.</p>"
-    },
-    {
-      "type": "gallery",
-      "gallery": "costa-brava"
     },
     {
       "type": "divider",

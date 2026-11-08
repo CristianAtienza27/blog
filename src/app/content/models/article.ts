@@ -26,7 +26,8 @@ export interface ArticleSummary extends DemoFlag {
   category: Category;
   tags: Tag[];
   format: ArticleFormat;
-  cover: Media;
+  /** Fotografía de portada. Opcional: sin ella, cabecera y tarjetas se componen sin foto. */
+  cover?: Media;
   author: Author;
   /**
    * Posición en el orden editorial de su sección (1, 2, 3…; única en la sección). Decide la

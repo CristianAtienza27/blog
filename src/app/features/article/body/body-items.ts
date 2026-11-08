@@ -74,7 +74,7 @@ const DROPCAP_FORMATS: readonly ArticleFormat[] = ['reportaje', 'guia', 'ensayo-
  */
 export function bodyItems(article: Article): BodyItem[] {
   const basePath = articleUrl(article);
-  const hidden = new Set([...RETIRED_MEDIA, article.cover.id]);
+  const hidden = new Set([...RETIRED_MEDIA, ...(article.cover ? [article.cover.id] : [])]);
   const dropcap = DROPCAP_FORMATS.includes(article.format) && article.category.id !== 'tecnologia';
   let inChapter = false;
   let firstText = true;

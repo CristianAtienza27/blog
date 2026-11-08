@@ -54,7 +54,11 @@ export function ref(d: Destination): DestinationRef {
   };
 }
 
-export function summary(slug: string, overrides: Partial<ArticleSummary> = {}): ArticleSummary {
+/** Resumen de prueba con portada (como las piezas de la home); overrides puede quitarla. */
+export function summary(
+  slug: string,
+  overrides: Partial<ArticleSummary> = {},
+): ArticleSummary & { cover: Media } {
   return {
     id: slug,
     slug,

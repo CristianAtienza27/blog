@@ -172,7 +172,7 @@ export function buildCatalog(data: ContentCollections): Catalog {
       category: required(categoryById, a.category, `artículo ${a.id}`),
       tags: a.tags.map((tag) => required(tagById, tag, `artículo ${a.id}`)),
       format: a.format,
-      cover: required(mediaById, a.cover, `artículo ${a.id}`),
+      ...(a.cover ? { cover: required(mediaById, a.cover, `artículo ${a.id}`) } : {}),
       author: required(authorById, a.author, `artículo ${a.id}`),
       order: a.order,
       publishedAt: a.publishedAt,

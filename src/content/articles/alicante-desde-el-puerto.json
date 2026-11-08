@@ -3,13 +3,7 @@
   "blocks": [
     {
       "type": "text",
-      "html": "<p><em>Artículo de demostración.</em> Esta nota sirve para probar la composición de una fotografía panorámica a todo el ancho. Describe una ciudad real, pero no relata un viaje realizado.</p><p>Alicante se entiende mejor desde el agua. La bahía dibuja un arco amplio y, detrás del puerto, la ciudad se extiende hacia el interior a los pies del monte <strong>Benacantil</strong>, coronado por el castillo de Santa Bárbara.</p>"
-    },
-    {
-      "type": "image",
-      "media": "viajes-alicante-panorama",
-      "layout": "full",
-      "caption": "El puerto, la bahía y la ciudad de Alicante en una sola panorámica."
+      "html": "<p><em>Artículo de demostración.</em> Esta nota sirve para probar la composición de una fotografía panorámica. Describe una ciudad real, pero no relata un viaje realizado.</p><p>Alicante se entiende mejor desde el agua. La bahía dibuja un arco amplio y, detrás del puerto, la ciudad se extiende hacia el interior a los pies del monte <strong>Benacantil</strong>, coronado por el castillo de Santa Bárbara.</p>"
     },
     {
       "type": "text",

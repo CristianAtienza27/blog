@@ -130,7 +130,7 @@ describe('ArticleRepository (adaptador JSON)', () => {
     const article = await repository.bySlug('calas-costa-brava');
     expect(article?.category.name).toBe('Viajes');
     expect(article?.author.name).toBe('Autor de prueba');
-    expect(article?.cover.focal).toEqual({ x: 0.3, y: 0.6 });
+    expect(article?.cover?.focal).toEqual({ x: 0.3, y: 0.6 });
     expect(article?.trip?.stops.map((stop) => stop.destination.name)).toEqual([
       'Tossa de Mar',
       'Begur',
