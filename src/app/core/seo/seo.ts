@@ -17,7 +17,26 @@ export interface SeoData {
   article?: ArticleMeta;
   /** Excluye la página de los buscadores (páginas provisionales, 404, desarrollo). */
   noindex?: boolean;
+  /** Datos estructurados (Schema.org). Solo se publican si la página se indexa. */
+  jsonLd?: Record<string, unknown>;
 }
+
+/**
+ * JSON para un <script type="application/ld+json">: ningún texto del contenido puede cerrar
+ * el script ni abrir otra etiqueta (<, >, & y los separadores de línea van escapados en
+ * \uXXXX, que el JSON interpreta igual).
+ */
+export function serializeJsonLd(data: Record<string, unknown>): string {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replaceAll(String.fromCharCode(0x2028), '\\u2028')
+    .replaceAll(String.fromCharCode(0x2029), '\\u2029');
+}
+
+/** Script de datos estructurados que gestiona SeoService (uno por página como mucho). */
+const JSON_LD_SELECTOR = 'script[type="application/ld+json"][data-seo]';
 
 export interface ArticleMeta {
   /** Fechas ISO: solo en contenido definitivo, nunca fechas de demostración. */
@@ -67,6 +86,24 @@ export class SeoService {
     this.setName('twitter:image:alt', image ? (data.imageAlt ?? null) : null);
 
     this.setCanonical(data.noindex ? null : url);
+    this.setJsonLd(data.noindex ? null : (data.jsonLd ?? null));
+  }
+
+  /** Un solo script JSON-LD: se crea, se actualiza o se elimina (nunca se acumulan). */
+  private setJsonLd(data: Record<string, unknown> | null): void {
+    const [current, ...extra] = Array.from(
+      this.document.head.querySelectorAll<HTMLScriptElement>(JSON_LD_SELECTOR),
+    );
+    for (const script of extra) script.remove();
+    if (!data) {
+      current?.remove();
+      return;
+    }
+    const script = current ?? this.document.createElement('script');
+    script.setAttribute('type', 'application/ld+json');
+    script.setAttribute('data-seo', '');
+    script.textContent = serializeJsonLd(data);
+    if (!current) this.document.head.appendChild(script);
   }
 
   /** URL absoluta solo si hay dominio público configurado (o si ya es absoluta). */

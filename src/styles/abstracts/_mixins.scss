@@ -56,3 +56,44 @@
   --accent-tint: color-mix(in oklab, var(--accent) 12%, var(--color-bg));
   --accent-line: color-mix(in oklab, var(--accent) 45%, var(--color-line));
 }
+
+/// Opacidad de la lámina local bajo texto pequeño sobre fotografía. Con ella, la tinta clara
+/// del esquema oscuro (#ece6db) mantiene 4,5:1 aunque bajo el texto haya un píxel blanco:
+/// el velo (#0f0e0c) necesita al menos un 62,4 % (photo-contrast.spec.ts lo comprueba).
+$photo-plate-alpha: 66%;
+
+/// Lámina local para texto pequeño sobre fotografía: velo oscuro bajo el texto, con los bordes
+/// difuminados en $bleed para que no se vea como una caja. Solo donde hace falta, no sobre
+/// toda la foto. Pide un esquema oscuro (--color-bg oscuro) en la sección.
+/// $inset y $mask permiten otra forma (p. ej. una sombra que nace de una esquina); el texto
+/// debe quedar siempre dentro de la zona opaca de la máscara.
+@mixin photo-plate($bleed: var(--space-5), $inset: null, $mask: null) {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    content: '';
+    background: color-mix(in oklab, var(--color-bg) $photo-plate-alpha, transparent);
+
+    @if $inset {
+      inset: $inset;
+    } @else {
+      inset: calc(#{$bleed} * -1);
+    }
+
+    @if $mask {
+      mask: $mask;
+    } @else {
+      mask:
+        linear-gradient(to right, #0000, #000 #{$bleed}, #000 calc(100% - #{$bleed}), #0000),
+        linear-gradient(#0000, #000 #{$bleed}, #000 calc(100% - #{$bleed}), #0000);
+    }
+
+    // Después del atajo mask, que lo restablecería: la lámina es la intersección de los dos
+    // fundidos (horizontal y vertical).
+    mask-composite: intersect;
+  }
+}

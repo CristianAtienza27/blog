@@ -7,12 +7,14 @@ import {
 } from '@angular/core';
 import { ViewportScroller } from '@angular/common';
 import { Router } from '@angular/router';
+import { RichHtml } from './rich-html';
 import { internalHref } from './rich-text-render';
 
 /**
  * Texto enriquecido de un artículo: párrafos, subtítulos, listas y enlaces.
  *
- * El HTML llega preparado (renderRichText) y se inserta con [innerHTML], que Angular sanea.
+ * El HTML llega preparado (renderRichText) y se inserta saneado por Angular (RichHtml): al
+ * hidratar se conserva el del servidor, sin volver a escribirlo.
  * Los enlaces internos navegan con el router (sin recargar la página); una ancla al capítulo
  * en el que ya se está vuelve a desplazarse hasta él.
  *
@@ -20,10 +22,11 @@ import { internalHref } from './rich-text-render';
  */
 @Component({
   selector: 'app-prose-block',
+  imports: [RichHtml],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { '(click)': 'follow($event)' },
-  template: `<div class="prose" [innerHTML]="html()"></div>`,
+  template: `<div class="prose" [appRichHtml]="html()"></div>`,
   styleUrl: './prose-block.scss',
 })
 export class ProseBlock {

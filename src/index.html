@@ -12,6 +12,108 @@
     <meta name="theme-color" content="#f2eee6" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f0e0c" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!--
+      Reservas de las fuentes web con métricas ajustadas, disponibles desde el primer pintado
+      (la hoja global llega después y sus @font-face no van en el CSS crítico). Son fuentes del
+      sistema (local()), nada se descarga. Mientras llega cada fuente web, el texto ocupa casi
+      lo mismo y al cambiar no se recoloca (CLS). Valores medidos en Chrome con las reales:
+      size-adjust = ancho de un texto de muestra con la fuente web / con la del sistema
+      (Fraunces, a tamaño de titular: su eje óptico cambia el ancho con el tamaño);
+      ascent/descent-override = ascendente y descendente de la fuente web / size-adjust.
+      Pesos y anchuras en uso (font-synthesis: none, así que no se inventan negritas): las caras
+      normales cubren hasta 550 (incluido el 520 de las etiquetas) y las negritas desde 551
+      (Instrument Sans 620 y JetBrains Mono 560); los antetítulos condensados (78 %) usan Arial
+      Narrow. Fraunces 560 sigue en Georgia normal: Georgia Bold (700) habría que reducirlo un
+      10 % para que ocupe lo mismo y el titular cambiaría de tamaño al cargar.
+      Sin la fuente local (p. ej. en Android) la regla no se aplica y sigue la pila habitual.
+    -->
+    <style>
+      @font-face {
+        font-family: 'Fraunces Fallback';
+        font-style: normal;
+        src: local('Georgia');
+        size-adjust: 101.51%;
+        ascent-override: 96.3%;
+        descent-override: 25.12%;
+        line-gap-override: 0%;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Fraunces Fallback';
+        font-style: italic;
+        src: local('Georgia Italic'), local('Georgia-Italic');
+        size-adjust: 94.14%;
+        ascent-override: 103.84%;
+        descent-override: 27.09%;
+        line-gap-override: 0%;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Instrument Sans Fallback';
+        font-style: normal;
+        font-weight: 100 550;
+        src: local('Arial'), local('ArialMT');
+        size-adjust: 100.54%;
+        ascent-override: 96.48%;
+        descent-override: 24.87%;
+        line-gap-override: 0%;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Instrument Sans Fallback';
+        font-style: normal;
+        font-weight: 551 900;
+        src: local('Arial Bold'), local('Arial-BoldMT');
+        size-adjust: 96.84%;
+        ascent-override: 100.17%;
+        descent-override: 25.82%;
+        line-gap-override: 0%;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Instrument Sans Fallback';
+        font-style: normal;
+        font-stretch: 50% 85%;
+        src: local('Arial Narrow'), local('ArialNarrow');
+        size-adjust: 83.67%;
+        ascent-override: 115.93%;
+        descent-override: 29.88%;
+        line-gap-override: 0%;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Instrument Sans Fallback';
+        font-style: italic;
+        src: local('Arial Italic'), local('Arial-ItalicMT');
+        size-adjust: 100.44%;
+        ascent-override: 96.58%;
+        descent-override: 24.89%;
+        line-gap-override: 0%;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono Fallback';
+        font-style: normal;
+        font-weight: 100 550;
+        src: local('Courier New'), local('CourierNewPSMT');
+        size-adjust: 100%;
+        ascent-override: 102.02%;
+        descent-override: 30%;
+        line-gap-override: 0%;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono Fallback';
+        font-style: normal;
+        font-weight: 551 900;
+        src: local('Courier New Bold'), local('CourierNewPS-BoldMT');
+        size-adjust: 100%;
+        ascent-override: 102.02%;
+        descent-override: 30%;
+        line-gap-override: 0%;
+        font-display: swap;
+      }
+    </style>
     <!-- Aplica el modo guardado antes del primer pintado (ver ColorSchemeService). -->
     <script>
       try {

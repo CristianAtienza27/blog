@@ -1,27 +1,29 @@
 import type { Article } from '../../content/models';
 import { mediaUrl, pickWidth } from '../../core/media/media-delivery';
 import type { SeoData } from '../../core/seo/seo';
+import { articleJsonLd } from './article-jsonld';
 import type { ArticleHeaderData } from './article-presentation';
 
 /**
- * La página de artículo aún no está completa: faltan las fotografías del relato, galerías,
- * mapas y módulos de cierre (fases 5.3 a 5.7). Hasta entonces no se indexa, sea o no
- * contenido de demostración.
+ * La página de artículo está completa (fases 5.1 a 5.9: cabecera, relato, fotografías,
+ * galerías, mapas, índice y cierre). Un artículo real se puede indexar; el contenido de
+ * demostración no se indexa nunca, con o sin este indicador.
  */
-export const ARTICLE_PAGE_COMPLETE = false;
+export const ARTICLE_PAGE_COMPLETE = true;
 
 /** Ancho de la imagen para redes sociales: la versión más pequeña que cubre 1200 px. */
 const SOCIAL_IMAGE_WIDTH = 1200;
 
 /**
- * SEO de un artículo: descripción, imagen para Open Graph (con medidas y texto alternativo)
- * y metadatos article:*. Las fechas solo se publican en contenido definitivo, y el de
- * demostración nunca se indexa.
+ * SEO de un artículo: descripción, imagen para Open Graph (con medidas y texto alternativo),
+ * metadatos article:* y, si es indexable, datos estructurados (JSON-LD). Las fechas solo se
+ * publican en contenido definitivo, y el de demostración nunca se indexa.
  */
 export function articleSeo(
   article: Article,
   header: ArticleHeaderData,
   mediaBase: string,
+  siteUrl: string | null = null,
 ): SeoData {
   const cover = header.cover?.media;
   const seo: SeoData = {
@@ -45,6 +47,10 @@ export function articleSeo(
     seo.imageAlt = cover.alt;
     seo.imageWidth = width;
     seo.imageHeight = Math.round((width * cover.height) / cover.width);
+  }
+  if (!seo.noindex) {
+    const jsonLd = articleJsonLd(article, { siteUrl, image: seo.image });
+    if (jsonLd) seo.jsonLd = jsonLd;
   }
   return seo;
 }

@@ -5,3 +5,8 @@
 @use '@fontsource-variable/instrument-sans/wdth'; // wght + anchura (75–100 %)
 @use '@fontsource-variable/instrument-sans/wdth-italic';
 @use '@fontsource-variable/jetbrains-mono/wght';
+
+// Las reservas con métricas ajustadas (Fraunces Fallback, Instrument Sans Fallback y
+// JetBrains Mono Fallback) están en un <style> de src/index.html y no aquí: esta hoja llega
+// después del primer pintado (CSS crítico diferido) y las reglas @font-face no se copian al CSS
+// crítico. Sin las reservas en el primer pintado, el texto se recolocaba al llegar la hoja.

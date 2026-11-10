@@ -18,6 +18,13 @@
 :host-context(html:has([data-header-overlay])):not(.is-scrolled) {
   color-scheme: dark;
   color: var(--color-ink);
+
+  // Sobre la foto, la sección activa en tinta clara: el acento no contrasta con un cielo
+  // claro y es un estado que se queda. La sigue marcando el filete de acento. El hover
+  // conserva el acento aprobado: es momentáneo y también lo marca el filete.
+  .header__nav a.is-active {
+    color: inherit;
+  }
 }
 
 :host(.is-scrolled) {

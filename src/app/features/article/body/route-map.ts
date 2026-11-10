@@ -62,6 +62,10 @@ import { MAP_WIDTH, mapLayout } from './map-layout';
           <span
             class="map__coord t-meta"
             [attr.data-axis]="line.axis"
+            [attr.data-anchor]="line.anchor"
+            [attr.data-row]="line.row"
+            [attr.data-wide-anchor]="line.wide.anchor"
+            [attr.data-wide-row]="line.wide.row"
             [style.--at.%]="line.at * 100"
             >{{ line.label }}</span
           >
@@ -71,6 +75,7 @@ import { MAP_WIDTH, mapLayout } from './map-layout';
             class="map__marker"
             [class.is-active]="isActive(marker.destination)"
             [attr.data-side]="marker.side"
+            [style.--room]="marker.room * 100"
             [style.left.%]="marker.x * 100"
             [style.top.%]="marker.y * 100"
           >
@@ -78,7 +83,14 @@ import { MAP_WIDTH, mapLayout } from './map-layout';
             <span class="map__label">{{ marker.label }}</span>
           </span>
         }
-        <span class="map__north t-meta">N ↑</span>
+        <span
+          class="map__north t-meta"
+          [attr.data-anchor]="m.north.anchor"
+          [attr.data-row]="m.north.row"
+          [attr.data-wide-anchor]="m.northWide.anchor"
+          [attr.data-wide-row]="m.northWide.row"
+          >N ↑</span
+        >
         @if (m.kind === 'schematic') {
           <span class="map__tag t-meta">Esquema · posiciones no geográficas</span>
         }

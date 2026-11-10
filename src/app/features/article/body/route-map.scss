@@ -1,13 +1,52 @@
 @use 'abstracts' as *;
 
+// Colocación de las coordenadas y de la flecha del norte (la decide map-labels.ts): compacta
+// en los mapas estrechos (data-anchor/data-row) y amplia desde este ancho del mapa
+// (data-wide-anchor/data-wide-row). Mismo umbral que WIDE_MAP_PX.
+$wide-map: 460px;
+
+// Otras posiciones de una coordenada, cuando la habitual chocaría: latitud en el borde
+// derecho o debajo de su línea; longitud a la izquierda de su línea o arriba.
+@mixin coord-place($prefix) {
+  &[data-axis='lat'][data-#{$prefix}anchor='end'] {
+    inset-inline: auto var(--space-2);
+  }
+
+  &[data-axis='lat'][data-#{$prefix}row='bottom'] {
+    translate: 0 20%;
+  }
+
+  &[data-axis='lng'][data-#{$prefix}anchor='end'] {
+    translate: calc(-100% - 4px) 0;
+  }
+
+  &[data-axis='lng'][data-#{$prefix}row='top'] {
+    inset-block: var(--space-2) auto;
+  }
+}
+
+// Si la esquina superior derecha está ocupada, otra esquina para la flecha: arriba a la
+// izquierda y, solo si las dos de arriba están ocupadas, abajo.
+@mixin north-place($prefix) {
+  &[data-#{$prefix}anchor='start'] {
+    inset-inline: var(--space-3) auto;
+  }
+
+  &[data-#{$prefix}row='bottom'] {
+    inset-block: auto var(--space-2);
+  }
+}
+
 :host {
   display: block;
 }
 
 // Lámina: fondo hundido, filete fino y la retícula apenas marcada.
 // Como mucho, tres cuartos del alto de la pantalla (centrada y con su proporción).
+// Contenedor de consultas: las etiquetas se miden contra el ancho real del mapa (cqi).
 .map {
   position: relative;
+  container-type: inline-size;
   inline-size: min(100%, 75svh * var(--ratio));
   margin-inline: auto;
   background: var(--color-bg-sunken);
@@ -74,6 +113,14 @@
     inset-inline-start: var(--at);
     translate: 4px 0;
   }
+
+  @container (width < #{$wide-map}) {
+    @include coord-place('');
+  }
+
+  @container (width >= #{$wide-map}) {
+    @include coord-place('wide-');
+  }
 }
 
 .map__north,
@@ -86,6 +133,14 @@
 
 .map__north {
   inset-inline-end: var(--space-3);
+
+  @container (width < #{$wide-map}) {
+    @include north-place('');
+  }
+
+  @container (width >= #{$wide-map}) {
+    @include north-place('wide-');
+  }
 }
 
 .map__tag {
@@ -116,11 +171,14 @@
     background-color var(--duration-base) var(--ease-out);
 }
 
+// Como mucho, el espacio hasta el borde del mapa (--room, en % del ancho), menos la separación,
+// medio disco y un margen: en un mapa estrecho el nombre se parte en dos líneas, nunca se sale.
 .map__label {
   position: absolute;
   inset-block-start: 50%;
   inline-size: max-content;
-  max-inline-size: 9em;
+  max-inline-size: min(9em, calc(var(--room) * 1cqi - var(--label-gap) - 0.75rem - var(--space-2)));
+  overflow-wrap: break-word;
   font-size: var(--text-sm);
   line-height: var(--leading-snug);
   color: var(--color-ink);

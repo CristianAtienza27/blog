@@ -19,8 +19,8 @@ const ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;'
 const escape = (text: string) => text.replace(/[&<>"]/g, (char) => ESCAPES[char]);
 
 /**
- * Prepara el HTML de un TextBlock para mostrarlo con [innerHTML], que lo vuelve a sanear con
- * el saneador de Angular (nunca bypassSecurityTrustHtml).
+ * Prepara el HTML de un TextBlock para mostrarlo con la directiva RichHtml (rich-html.ts), que
+ * lo vuelve a sanear con el saneador de Angular (nunca bypassSecurityTrustHtml).
  * - Fuera de la lista blanca: solo el texto, escapado (el contenido ya se valida al cargarlo;
  *   esto es una segunda barrera por si llega algo sin validar). La lista blanca solo admite las
  *   formas canónicas, así que las expresiones de abajo reconocen todo lo que pasa la validación.

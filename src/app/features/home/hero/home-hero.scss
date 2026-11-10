@@ -158,6 +158,7 @@
   gap: var(--space-1) 1.5ch;
   color: var(--color-ink);
 
+  // Sobre la foto lleva la lámina de esquina (clase global photo-plate-corner-sm).
   @include mq(sm) {
     display: grid;
     text-align: end;

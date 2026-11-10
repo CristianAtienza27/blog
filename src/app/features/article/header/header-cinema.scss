@@ -90,11 +90,14 @@
     mask: none;
   }
 
+  // Franja del header a opacidad constante (no solo en el borde superior): la navegación se
+  // lee aunque el cielo sea muy claro. Debajo, el mismo fundido que antes.
   .cinema__veil {
     background:
       linear-gradient(
         to bottom,
         color-mix(in oklab, var(--color-bg) 70%, transparent),
+        color-mix(in oklab, var(--color-bg) 70%, transparent) var(--header-height),
         transparent calc(var(--header-height) * 3)
       ),
       linear-gradient(
@@ -136,11 +139,14 @@
     align-self: end;
   }
 
+  // Sobre la foto: tinta clara y lámina local (clase global photo-plate-md). En móvil va
+  // debajo, sobre el fondo.
   .cinema__credit {
     grid-row: 3;
     grid-column: c 9 / content-end;
     place-self: end;
     max-inline-size: 26rem;
+    color: var(--color-ink);
     text-align: end;
   }
 }

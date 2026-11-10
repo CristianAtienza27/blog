@@ -5,11 +5,12 @@ import { RouterLink } from '@angular/router';
   selector: 'app-not-found',
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Va dentro del <main> de la aplicación (app.ts): una sección, no otro <main>.
   template: `
-    <main>
-      <h1>Página no encontrada</h1>
+    <section aria-labelledby="not-found-title">
+      <h1 id="not-found-title">Página no encontrada</h1>
       <p><a routerLink="/">Volver a la portada</a></p>
-    </main>
+    </section>
   `,
 })
 export class NotFound {

@@ -23,7 +23,10 @@
     <p class="cinema__dek t-lead">{{ d.dek }}</p>
     <app-article-facts class="cinema__facts" [facts]="d.facts" [demo]="d.demo" />
     @if (d.cover; as cover) {
-      <app-photo-credit class="cinema__credit photo-credit--keep" [media]="cover.media" />
+      <app-photo-credit
+        class="cinema__credit photo-credit--keep photo-plate-md"
+        [media]="cover.media"
+      />
     }
   </div>
 </header>

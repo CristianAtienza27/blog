@@ -112,9 +112,12 @@ $placeholder-tones: (
 // -----------------------------------------------------------------------------
 // Tipografía
 // -----------------------------------------------------------------------------
+// Tras cada fuente web, su reserva con métricas ajustadas (src/index.html): mientras carga,
+// el texto ocupa casi lo mismo y al cambiar de fuente no se desplaza (CLS).
 $fonts: (
   'display': (
     'Fraunces Variable',
+    'Fraunces Fallback',
     'Iowan Old Style',
     'Palatino Linotype',
     'Georgia',
@@ -122,6 +125,7 @@ $fonts: (
   ),
   'sans': (
     'Instrument Sans Variable',
+    'Instrument Sans Fallback',
     system-ui,
     -apple-system,
     'Segoe UI',
@@ -129,6 +133,7 @@ $fonts: (
   ),
   'mono': (
     'JetBrains Mono Variable',
+    'JetBrains Mono Fallback',
     ui-monospace,
     'Cascadia Code',
     'Consolas',

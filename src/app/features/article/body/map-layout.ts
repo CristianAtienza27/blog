@@ -1,5 +1,6 @@
 import type { MapPoint } from '../../../content/models';
 import { formatCoordinates } from '../../../editorial/geo';
+import { type LabelPlace, type NorthPlace, placeMapLabels } from './map-labels';
 
 /** Ancho del viewBox del SVG; el alto sale de la proporción del encuadre. */
 export const MAP_WIDTH = 1000;
@@ -26,6 +27,11 @@ export interface MapMarker {
   y: number;
   /** Lado de la etiqueta respecto al punto. */
   side: 'start' | 'end';
+  /**
+   * Espacio (fracción del ancho) entre el punto y el borde hacia el que va su etiqueta: la
+   * etiqueta no lo supera y, si no cabe en una línea, se parte en dos.
+   */
+  room: number;
   /** «41.72° N · 2.93° E» (en la esquemática, null: no se muestran coordenadas). */
   coords: string | null;
 }
@@ -35,6 +41,15 @@ export interface GridLine {
   /** Posición (0–1) en el eje correspondiente. */
   at: number;
   label: string;
+  /**
+   * Colocación de la coordenada (la decide placeMapLabels para que no choque):
+   * latitud, en el borde izquierdo (start) o derecho (end), encima (top) o debajo (bottom) de
+   * su línea; longitud, a la derecha (start) o a la izquierda (end) de su línea, en el borde
+   * inferior (bottom) o superior (top). Es la compacta (móvil); wide, la de los mapas anchos.
+   */
+  anchor: 'start' | 'end';
+  row: 'bottom' | 'top';
+  wide: LabelPlace;
 }
 
 export interface MapLayout {
@@ -47,6 +62,10 @@ export interface MapLayout {
   /** Trazo del recorrido en coordenadas del viewBox (null sin ruta). */
   path: string | null;
   grid: GridLine[];
+  /** Esquina de la flecha del norte: arriba a la derecha, salvo que algo la tape. */
+  north: NorthPlace;
+  /** La misma, en los mapas anchos. */
+  northWide: NorthPlace;
   /** Descripción para lectores de pantalla (<desc>). */
   description: string;
 }
@@ -81,6 +100,7 @@ function placeLabels(markers: MapMarker[]): void {
     const flip = room(a) >= room(b) ? a : b;
     flip.side = flip.side === 'start' ? 'end' : 'start';
   }
+  for (const m of markers) m.room = m.side === 'end' ? 1 - m.x : m.x;
 }
 
 function describe(points: readonly MapPoint[], route: boolean, kind: MapLayout['kind']): string {
@@ -109,6 +129,7 @@ function schematic(points: readonly MapPoint[], route: boolean): MapLayout {
     x: n === 1 ? 0.5 : 0.2 + (0.6 * i) / (n - 1),
     y: n === 1 ? 0.5 : 0.75 - (0.5 * i) / (n - 1),
     side: 'end',
+    room: 0,
     coords: null,
   }));
   placeLabels(markers);
@@ -121,6 +142,7 @@ function schematic(points: readonly MapPoint[], route: boolean): MapLayout {
     markers,
     path: route && n > 1 ? pathOf(markers, height) : null,
     grid: [],
+    ...placeMapLabels(markers, [], ratio),
     description: describe(points, route, 'schematic'),
   };
 }
@@ -178,6 +200,7 @@ export function mapLayout(points: readonly MapPoint[], route: boolean): MapLayou
     x: toX(p.location.lng),
     y: toY(p.location.lat),
     side: 'end',
+    room: 0,
     coords: formatCoordinates(p.location),
   }));
   placeLabels(markers);
@@ -189,13 +212,27 @@ export function mapLayout(points: readonly MapPoint[], route: boolean): MapLayou
   for (let lat = Math.ceil((north - spanY) / step) * step; lat <= north; lat += step) {
     const at = toY(lat);
     if (at > 0.04 && at < 0.96)
-      grid.push({ axis: 'lat', at, label: formatCoord(lat, 'lat', digits) });
+      grid.push({
+        axis: 'lat',
+        at,
+        label: formatCoord(lat, 'lat', digits),
+        anchor: 'start',
+        row: 'top',
+        wide: { anchor: 'start', row: 'top' },
+      });
   }
   const east = west + spanX / k;
   for (let lng = Math.ceil(west / step) * step; lng <= east; lng += step) {
     const at = toX(lng);
     if (at > 0.04 && at < 0.96)
-      grid.push({ axis: 'lng', at, label: formatCoord(lng, 'lng', digits) });
+      grid.push({
+        axis: 'lng',
+        at,
+        label: formatCoord(lng, 'lng', digits),
+        anchor: 'start',
+        row: 'bottom',
+        wide: { anchor: 'start', row: 'bottom' },
+      });
   }
 
   return {
@@ -205,6 +242,7 @@ export function mapLayout(points: readonly MapPoint[], route: boolean): MapLayou
     markers,
     path: route && points.length > 1 ? pathOf(markers, height) : null,
     grid,
+    ...placeMapLabels(markers, grid, ratio),
     description: describe(points, route, 'geographic'),
   };
 }

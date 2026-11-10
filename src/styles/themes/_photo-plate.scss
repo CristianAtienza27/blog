@@ -1,0 +1,31 @@
+// =============================================================================
+// Láminas locales para texto pequeño sobre fotografía (mixin photo-plate).
+// Son clases globales y no estilos de cada componente: así no cuentan en el presupuesto de
+// estilos por componente (6 kB) y hay una sola definición para todas las fotos.
+// Uso: añadir la clase al elemento con el texto; solo actúa desde su breakpoint, donde el
+// texto va sobre la foto (en móvil suele ir debajo, sobre el fondo).
+// =============================================================================
+@use '../abstracts' as *;
+
+// Lámina con los cuatro bordes difuminados (crédito de la cabecera cinema, desde md).
+.photo-plate-md {
+  @include mq(md) {
+    @include photo-plate;
+  }
+}
+
+// Sombra que nace del rincón superior derecho de la foto y solo se difumina hacia el centro
+// (claqueta del hero de la portada, desde sm): llega a los bordes de la foto, así que no se
+// percibe como una caja. El texto queda dentro de la zona opaca.
+.photo-plate-corner-sm {
+  @include mq(sm) {
+    @include photo-plate(
+      $inset: calc((var(--header-height) + var(--space-5)) * -1) calc(var(--page-margin) * -1)
+        calc(var(--space-8) * -1) calc(var(--space-8) * -3),
+      $mask: (
+        linear-gradient(to right, #0000, #000 calc(var(--space-8) * 3)),
+        linear-gradient(to top, #0000, #000 var(--space-8)),
+      )
+    );
+  }
+}
