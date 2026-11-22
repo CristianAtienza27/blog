@@ -27,3 +27,13 @@ Definido en `src/app/app.routes.server.ts`:
 
 - **Prerender**: páginas estáticas, generadas como HTML en el build.
 - **Server**: contenido dinámico (futuro backend Spring Boot), renderizado en cada petición.
+
+## Backend del CMS (local)
+
+En construcción (fase 6). La web pública no depende de él: sigue leyendo `src/content`.
+
+- `api/`: Spring Boot 4.1.2 con Java 21 y PostgreSQL 18. Ver [`api/README.md`](api/README.md).
+- `infra/local/`: PostgreSQL y la API en Docker Compose, solo en `127.0.0.1`. Ver
+  [`infra/local/README.md`](infra/local/README.md).
+
+Requisitos adicionales: JDK 21 y Docker Desktop.

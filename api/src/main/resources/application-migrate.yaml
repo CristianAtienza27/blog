@@ -1,0 +1,15 @@
+# Perfil del contenedor de migraciones (fase 6.2.1). Se conecta como cms_migrator (NOINHERIT,
+# sin privilegios propios) y Flyway asume el rol propietario en cada una de sus conexiones, así
+# que todo lo que crean las migraciones pertenece a cms_owner. Sin servidor web; al terminar,
+# la aplicación sale con código 0 (o 1 si una migración falla).
+spring:
+  main:
+    web-application-type: none
+  flyway:
+    enabled: true
+    init-sqls: SET ROLE cms_owner
+    # Borrar el esquema nunca está permitido fuera de los tests.
+    clean-disabled: true
+
+cms:
+  tool: migrate

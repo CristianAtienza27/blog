@@ -1,0 +1,8 @@
+# Solo el código y la configuración de Maven entran en el contexto de build.
+target/
+*.iml
+.idea/
+.vscode/
+README.md
+Dockerfile
+.dockerignore

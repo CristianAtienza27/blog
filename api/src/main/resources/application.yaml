@@ -1,0 +1,141 @@
+# Configuración del backend del CMS. Aquí no hay secretos: la conexión llega por variables de
+# entorno y la contraseña, preferiblemente, de un secreto de Docker montado como archivo
+# (/run/secrets/cms.db.password, leído con configtree).
+spring:
+  application:
+    name: cms-api
+  config:
+    import: optional:configtree:/run/secrets/
+  datasource:
+    url: ${CMS_DB_URL}
+    # Usuario de conexión propio de cada proceso (cms_api, cms_tool…), nunca el superusuario
+    # ni el propietario del esquema.
+    username: ${CMS_DB_USER}
+    password: ${CMS_DB_PASSWORD:${cms.db.password}}
+    hikari:
+      # Un solo editor: pocas conexiones (cada una consume memoria en PostgreSQL).
+      maximum-pool-size: 5
+      # Tiempos máximos (6.2.7.2, medidos en la 6.2.7.1): sin conexión libre en 5 s, la petición
+      # falla con 503 «unavailable» (antes, 30 s, y hasta 60 s colgada con PostgreSQL detenido).
+      # La espera legítima más larga medida fue de 340 ms (40 usuarios con sesión).
+      connection-timeout: 5000
+      # Comprobación de una conexión inactiva antes de entregarla (isValid).
+      validation-timeout: 2000
+      data-source-properties:
+        # Driver de PostgreSQL, en segundos: establecer la conexión TCP y esperar una respuesta.
+        # socketTimeout por encima de la espera legítima más larga, el lock_timeout de 10 s del
+        # bloqueo por usuario (H7); una consulta en curso cuando PostgreSQL deja de responder
+        # falla como mucho en 30 s.
+        connectTimeout: 5
+        socketTimeout: 30
+  flyway:
+    # La API y las herramientas NUNCA migran: lo hace el contenedor de migraciones (perfil
+    # «migrate», application-migrate.yaml) con cms_migrator. Al arrancar solo se comprueba que el
+    # esquema está en la versión esperada (SchemaVersionCheck).
+    enabled: false
+    locations: classpath:db/migration
+  threads:
+    virtual:
+      enabled: true
+  # Sin usuario por defecto de Spring Boot: los usuarios solo existen en app_user (fase 6.2.2).
+  autoconfigure:
+    exclude: org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
+  session:
+    # Caducidad por inactividad; la absoluta (12 h) es cms.security.session.absolute-timeout.
+    timeout: 30m
+    jdbc:
+      # El esquema de sesiones lo crea V7: la API no tiene permisos de DDL.
+      initialize-schema: never
+
+cms:
+  # Publicación con instantáneas (fase 6.3.4, api/docs/publicacion.md). Sin las tres rutas, la
+  # publicación no está configurada (503) y no se reconcilia; las define el Compose (6.3.5):
+  #   snapshots-dir: /instantaneas          (la API escribe)
+  #   state-dir: /estado                     (la API solo lee activa.json)
+  #   web-internal-url: http://IP:4100       (puerto interno de la web, red interna)
+  # Valores por defecto: lock-wait 15s, lock-poll 200ms, lock-heartbeat 10s, lock-idle-timeout 60s,
+  # web-connect-timeout 2s, web-request-timeout 30s, reconcile-retry 30s, keep 20, list-limit 50.
+  security:
+    session:
+      absolute-timeout: 12h
+    argon2:
+      # 0 = una verificación simultánea por CPU disponible; si no hay hueco en max-wait, 429.
+      max-concurrent: 0
+      max-wait: 1s
+    # Clave HMAC de la API (secreto de archivo /run/secrets/cms.security.hmac-key, 32 bytes o más):
+    # sin valor por defecto, la API no arranca sin ella.
+    # hmac-key:
+    webauthn:
+      # RP ID y orígenes permitidos (exactos). En local, el servidor de desarrollo del CMS (6.4);
+      # en producción, admin.<dominio> por variables de entorno (6.9).
+      rp-id: localhost
+      rp-name: CMS Cristian Atienza
+      allowed-origins: http://localhost:4200
+      # Vida de un challenge (un solo uso) y ventana de la verificación reciente (step-up).
+      challenge-ttl: 5m
+      step-up-window: 5m
+      # Fallos de passkey, código o step-up por sesión antes de cerrarla (D7).
+      max-failures-per-session: 5
+    # Limitación de intentos (6.2.4, api/docs/seguridad.md). La cuenta nunca se bloquea globalmente.
+    limits:
+      pair-failures: 5
+      trusted-pair-failures: 10
+      device-failures: 10
+      device-day-failures: 20
+      ip-failures: 20
+      attack-threshold: 50
+      window: 15m
+      block: 15m
+      block-max: 1h
+      ip-block: 15m
+      attack-window: 1h
+      attack-duration: 1h
+      attack-interval: 15m
+    # Dispositivos de confianza (6.2.4): tolerancia tras la retirada de un token (no es una garantía
+    # absoluta sobre la entrega de respuestas HTTP) y caducidad absoluta de una familia.
+    device:
+      grace: 2m
+      lifetime: 90d
+
+server:
+  port: 8080
+  shutdown: graceful
+  # IP del cliente (6.2.4): la del socket. X-Forwarded-For solo cuenta detrás de un proxy de
+  # confianza configurado (native + server.tomcat.remoteip.internal-proxies, fase 6.9). Tampoco
+  # X-Forwarded-Proto: HSTS solo con una petición HTTPS real (6.2.5).
+  forward-headers-strategy: none
+  # Errores (6.2.5): ProblemDetail propio (ApiErrors, ApiErrorController), nunca trazas ni mensajes.
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: never
+    include-message: never
+    include-exception: false
+    include-binding-errors: never
+
+logging:
+  pattern:
+    # Identificador de correlación de cada petición (ApiResponseFilter) en cada línea del registro.
+    correlation: '[%X{correlationId:-}] '
+
+management:
+  endpoints:
+    web:
+      # Solo el estado de salud: ningún otro endpoint de gestión está expuesto.
+      exposure:
+        include: health
+  endpoint:
+    health:
+      # Muestra el estado de cada componente (incluida la base de datos), sin detalles internos.
+      show-components: always
+      show-details: never
+      # Sondas (6.2.7.2): liveness solo dice si la JVM está viva (nunca depende de PostgreSQL: su
+      # caída no debe hacer que Docker o Kubernetes den la API por muerta); readiness, si puede
+      # atender peticiones (incluye la base de datos). /actuator/health sigue igual.
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db
