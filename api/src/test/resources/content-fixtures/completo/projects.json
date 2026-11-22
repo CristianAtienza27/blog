@@ -1,0 +1,14 @@
+[
+  {
+    "id": "proyecto",
+    "slug": "proyecto",
+    "name": "Proyecto sin pila",
+    "summary": "Lista vacía en stack",
+    "status": "pausado",
+    "year": 2025,
+    "stack": [],
+    "repositoryUrl": "https://github.com/ejemplo/proyecto",
+    "cover": "f-propia",
+    "demo": false
+  }
+]

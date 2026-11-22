@@ -1,0 +1,7 @@
+[
+  { "id": "viajes", "slug": "viajes", "name": "Viajes", "description": "Rutas y lugares" },
+  { "id": "fotografia", "slug": "fotografia", "name": "Fotografía", "description": "Series" },
+  { "id": "motor", "slug": "motor", "name": "Motor", "description": "Máquinas" },
+  { "id": "experiencias", "slug": "experiencias", "name": "Experiencias", "description": "Vida" },
+  { "id": "tecnologia", "slug": "tecnologia", "name": "Tecnología", "description": "Código" }
+]

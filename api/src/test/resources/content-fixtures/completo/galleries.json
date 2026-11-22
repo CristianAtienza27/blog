@@ -1,0 +1,11 @@
+[
+  {
+    "id": "serie",
+    "slug": "serie",
+    "title": "Serie completa",
+    "description": "Galería con pies",
+    "layout": "horizontal",
+    "items": [{ "media": "f-externa", "caption": "Pie de la galería" }, { "media": "f-propia" }],
+    "demo": true
+  }
+]

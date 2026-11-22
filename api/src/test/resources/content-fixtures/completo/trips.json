@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ruta",
+    "slug": "ruta",
+    "title": "Ruta completa",
+    "summary": "Dos paradas",
+    "stops": [
+      {
+        "order": 1,
+        "destination": "alto",
+        "note": "Salida temprana",
+        "distanceKm": 12.5,
+        "mode": "a-pie"
+      },
+      { "order": 2, "destination": "oeste" }
+    ],
+    "cover": "f-externa",
+    "demo": true
+  }
+]

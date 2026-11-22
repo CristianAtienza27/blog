@@ -1,0 +1,33 @@
+[
+  {
+    "id": "alto",
+    "slug": "alto",
+    "name": "Paso alto",
+    "country": "IT",
+    "region": "Lombardía",
+    "location": { "lat": 46.528472, "lng": 10.453611 },
+    "elevation": 2757,
+    "summary": "Puerto de montaña",
+    "cover": "f-externa",
+    "demo": true
+  },
+  {
+    "id": "oeste",
+    "slug": "oeste",
+    "name": "Costa oeste",
+    "country": "PT",
+    "location": { "lat": 38.7223, "lng": -9.1393 },
+    "summary": "Longitud negativa",
+    "demo": false
+  },
+  {
+    "id": "sur",
+    "slug": "sur",
+    "name": "Sur",
+    "country": "ES",
+    "region": "Islas Baleares",
+    "location": { "lat": 39.3, "lng": 3 },
+    "summary": "Mínimo",
+    "demo": true
+  }
+]

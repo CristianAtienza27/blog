@@ -1,0 +1,53 @@
+{
+  "slug": "completo",
+  "blocks": [
+    { "type": "text", "html": "<p>Texto con <a href=\"#alto\">ancla</a> y <em>énfasis</em>.</p>" },
+    {
+      "type": "chapter",
+      "id": "alto",
+      "number": 1,
+      "title": "El paso",
+      "kicker": "Primera parada",
+      "destination": "alto"
+    },
+    {
+      "type": "image",
+      "media": "f-propia",
+      "layout": "wide",
+      "caption": "Pie propio",
+      "ratio": "4/5",
+      "align": "start",
+      "focal": { "x": 0.25, "y": 0.75 }
+    },
+    {
+      "type": "figures",
+      "layout": "triptych",
+      "items": [
+        { "media": "f-propia", "ratio": "3/2", "focal": { "x": 0.1, "y": 0.9 }, "caption": "Uno" },
+        { "media": "f-externa" },
+        { "media": "f-propia" }
+      ]
+    },
+    { "type": "gallery", "gallery": "serie" },
+    { "type": "quote", "text": "Una cita", "cite": "Alguien", "variant": "block" },
+    { "type": "map", "trip": "ruta", "route": true, "caption": "La ruta" },
+    { "type": "map", "destinations": ["alto", "oeste", "sur"], "route": false },
+    {
+      "type": "code",
+      "language": "typescript",
+      "code": "const a = 1;\nconsole.log(a);",
+      "filename": "a.ts",
+      "caption": "Código"
+    },
+    {
+      "type": "specs",
+      "title": "Ficha",
+      "items": [
+        { "label": "Motor", "value": "1.2", "unit": "l" },
+        { "label": "Peso", "value": "200" }
+      ],
+      "note": "Datos de ejemplo"
+    },
+    { "type": "divider", "variant": "pause" }
+  ]
+}

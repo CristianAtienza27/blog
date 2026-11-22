@@ -1,0 +1,127 @@
+[
+  {
+    "id": "f-propia",
+    "path": "fotografia/f-propia.0a1b2c3d",
+    "width": 2400,
+    "height": 1800,
+    "widths": [640, 1024, 1600, 2400],
+    "alt": "Pueblo blanco sobre la sierra al amanecer",
+    "title": "Zahara",
+    "caption": "Zahara de la Sierra",
+    "description": "Descripción larga, con «comillas» y una tilde: ñandú.",
+    "takenAt": "2026-05-01",
+    "location": {
+      "name": "Zahara de la Sierra",
+      "region": "Cádiz",
+      "country": "ES",
+      "point": { "lat": 36.84, "lng": -5.39 }
+    },
+    "camera": {
+      "make": "Apple",
+      "model": "iPhone 17 Pro Max",
+      "lens": "6.765mm f/1.78",
+      "focalLength": 6.765,
+      "aperture": 1.78,
+      "exposure": "1/4673",
+      "iso": 80
+    },
+    "focal": { "x": 0.33, "y": 0.67 },
+    "placeholder": "data:image/webp;base64,UklGRg==",
+    "credit": { "author": "Autora Completa", "source": "propia", "license": "derechos-reservados" },
+    "original": {
+      "file": "f-propia.heic",
+      "format": "heic",
+      "width": 4284,
+      "height": 5712,
+      "bytes": 4270928,
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "raw": {
+        "file": "f-propia.dng",
+        "bytes": 75000000,
+        "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+      }
+    },
+    "demo": false
+  },
+  {
+    "id": "f-externa",
+    "path": "viajes/f-externa.4e5f6a7b",
+    "width": 1600,
+    "height": 1067,
+    "widths": [640, 1024, 1600],
+    "alt": "Bahía con barcas",
+    "location": { "name": "Cadaqués" },
+    "camera": {},
+    "focal": { "x": 0.5, "y": 0.4 },
+    "placeholder": "data:image/webp;base64,UklGRg==",
+    "credit": {
+      "author": "Autor Externo",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:F-externa.jpg",
+      "license": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    "original": {
+      "file": "f-externa.jpg",
+      "format": "jpeg",
+      "width": 3000,
+      "height": 2000,
+      "bytes": 2520872,
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f-externa.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "f-retirada",
+    "path": "motor/f-retirada.8c9d0e1f",
+    "width": 1600,
+    "height": 900,
+    "widths": [640, 1600],
+    "alt": "Moto retirada",
+    "focal": { "x": 0.5, "y": 0.5 },
+    "placeholder": "data:image/webp;base64,UklGRg==",
+    "credit": {
+      "author": "Otro Autor",
+      "source": "unsplash",
+      "sourceUrl": "https://unsplash.com/photos/f-retirada",
+      "license": "Unsplash"
+    },
+    "original": {
+      "file": "f-retirada.jpg",
+      "format": "jpeg",
+      "width": 1600,
+      "height": 900,
+      "bytes": 300000,
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "url": "https://images.unsplash.com/f-retirada.jpg"
+    },
+    "demo": true
+  },
+  {
+    "id": "f-menu",
+    "path": "viajes/f-menu.12345678",
+    "width": 1024,
+    "height": 768,
+    "widths": [640, 1024],
+    "alt": "Vista previa del menú",
+    "focal": { "x": 0.5, "y": 0.5 },
+    "placeholder": "data:image/webp;base64,UklGRg==",
+    "credit": {
+      "author": "Fotógrafa del menú",
+      "source": "pexels",
+      "sourceUrl": "https://www.pexels.com/photo/f-menu/",
+      "license": "Pexels"
+    },
+    "original": {
+      "file": "f-menu.jpg",
+      "format": "jpeg",
+      "width": 2048,
+      "height": 1536,
+      "bytes": 800000,
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "url": "https://images.pexels.com/f-menu.jpg"
+    },
+    "demo": true
+  }
+]

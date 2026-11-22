@@ -1,0 +1,42 @@
+[
+  {
+    "id": "completo",
+    "slug": "completo",
+    "title": "Artículo completo",
+    "dek": "Todos los campos",
+    "excerpt": "Extracto",
+    "category": "viajes",
+    "tags": ["costa", "mar"],
+    "format": "reportaje",
+    "cover": "f-propia",
+    "author": "autora",
+    "order": 1,
+    "publishedAt": "2026-09-18",
+    "updatedAt": "2026-10-02",
+    "readingMinutes": 3,
+    "featured": true,
+    "demo": false,
+    "trip": "ruta",
+    "destinations": [],
+    "project": "proyecto",
+    "seo": {}
+  },
+  {
+    "id": "minimo",
+    "slug": "minimo",
+    "title": "Artículo mínimo",
+    "dek": "Solo lo obligatorio",
+    "excerpt": "Extracto",
+    "category": "tecnologia",
+    "tags": [],
+    "format": "nota",
+    "author": "autora",
+    "order": 1,
+    "publishedAt": "2026-08-01",
+    "readingMinutes": 1,
+    "featured": false,
+    "demo": true,
+    "destinations": ["sur"],
+    "seo": { "description": "Descripción SEO" }
+  }
+]
