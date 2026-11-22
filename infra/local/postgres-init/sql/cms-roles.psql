@@ -1,0 +1,78 @@
+-- Roles y propiedad de la base de datos del CMS (fase 6.2.1).
+--
+-- Lo ejecuta 10-cms-roles.sh una sola vez, como superusuario, cuando la imagen oficial de
+-- PostgreSQL inicializa un volumen vacío. Después, nada vuelve a usar el superusuario: las
+-- migraciones se conectan como cms_migrator y la API y las herramientas, con su propio login.
+--
+-- Las contraseñas se leen aquí mismo de los archivos de secretos (sustitución de psql), así que
+-- no aparecen en la línea de comandos ni en el entorno de ningún proceso.
+--
+--   Rol de grupo (NOLOGIN)   Login             Uso
+--   cms_owner                cms_migrator      propietario y migraciones (SET ROLE, NOINHERIT)
+--   cms_app                  cms_api           API
+--   cms_importer             cms_tool          importación y exportación
+--   cms_security_admin       cms_security_tool administración de seguridad (CLI)
+--   cms_audit_maintainer     cms_maintenance   retención de la auditoría
+--   cms_revision_writer, cms_import_writer, cms_audit_retention: dueños de funciones
+--   SECURITY DEFINER; sin login ni miembros salvo cms_owner (para poder transferírselas).
+
+\set ON_ERROR_STOP on
+\set secrets `echo "${CMS_SECRETS_DIR:-/run/secrets}"`
+\set migrator_password `cat :secrets/cms_migrator_password`
+\set api_password `cat :secrets/cms_api_password`
+\set tool_password `cat :secrets/cms_tool_password`
+\set security_tool_password `cat :secrets/cms_security_tool_password`
+\set maintenance_password `cat :secrets/cms_maintenance_password`
+
+-- Contraseñas largas y distintas entre sí: si falta un archivo o es corto, se detiene aquí.
+SELECT count(DISTINCT p) = 5 AND bool_and(length(p) >= 24) AS passwords_ok
+  FROM (VALUES (:'migrator_password'), (:'api_password'), (:'tool_password'),
+               (:'security_tool_password'), (:'maintenance_password')) AS v(p) \gset
+\if :passwords_ok
+\else
+  DO $$ BEGIN RAISE EXCEPTION 'secretos del CMS ausentes, repetidos o de menos de 24 caracteres'; END $$;
+\endif
+
+-- Roles de grupo, sin login. Mismos atributos que crean V3 y V4 si no existen. Los dueños de
+-- funciones (cms_*_writer, cms_audit_retention) los crea cms-function-owners.psql, más abajo.
+SELECT format('CREATE ROLE %I NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS', r)
+  FROM unnest(ARRAY['cms_owner', 'cms_app', 'cms_importer', 'cms_security_admin', 'cms_audit_maintainer']) AS r
+ WHERE NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = r) \gexec
+
+-- Logins. cms_migrator es NOINHERIT: sin SET ROLE cms_owner no tiene ningún privilegio.
+SELECT format('CREATE ROLE %I LOGIN %s NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS PASSWORD %L',
+              r, CASE WHEN r = 'cms_migrator' THEN 'NOINHERIT' ELSE 'INHERIT' END, p)
+  FROM (VALUES ('cms_migrator', :'migrator_password'), ('cms_api', :'api_password'),
+               ('cms_tool', :'tool_password'), ('cms_security_tool', :'security_tool_password'),
+               ('cms_maintenance', :'maintenance_password')) AS v(r, p)
+ WHERE NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = r) \gexec
+
+-- Pertenencias: cada login, a un solo rol de grupo.
+GRANT cms_owner TO cms_migrator WITH INHERIT FALSE, SET TRUE;
+GRANT cms_app TO cms_api;
+GRANT cms_importer TO cms_tool;
+GRANT cms_security_admin TO cms_security_tool;
+GRANT cms_audit_maintainer TO cms_maintenance;
+-- El propietario debe poder transferir funciones SECURITY DEFINER a sus dueños (V3, V4, V8) y
+-- gestionar después sus permisos:
+--   - SET: ALTER FUNCTION ... OWNER TO exige poder hacer SET ROLE al nuevo dueño.
+--   - INHERIT: tras transferir cada función, V3 y V4 hacen REVOKE ALL ... FROM PUBLIC y GRANT
+--     EXECUTE sobre ella. Sin INHERIT, cms_owner no tiene privilegios sobre la función ya
+--     transferida y PostgreSQL IGNORA esos REVOKE con un simple aviso: la migración termina, pero
+--     PUBLIC conserva el EXECUTE (comprobado; lo detectan EffectivePrivilegeTests e
+--     ImportOperationTests). V1-V4 no se pueden modificar, así que INHERIT es necesario.
+-- Consecuencia documentada (api/docs/modelo-de-datos.md): cms_owner hereda el EXECUTE de esas
+-- funciones; solo cms_migrator puede asumir cms_owner.
+-- Los roles dueños y esa pertenencia están en un script aparte e idempotente, que también se
+-- ejecuta a mano en los volúmenes ya inicializados (fase 6.2.3).
+\ir cms-function-owners.psql
+
+-- La base de datos y el esquema public pasan a cms_owner; PUBLIC no puede conectarse ni crear.
+ALTER DATABASE :"DBNAME" OWNER TO cms_owner;
+REVOKE ALL ON DATABASE :"DBNAME" FROM PUBLIC;
+GRANT CONNECT ON DATABASE :"DBNAME" TO cms_migrator, cms_api, cms_tool, cms_security_tool, cms_maintenance;
+ALTER SCHEMA public OWNER TO cms_owner;
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+-- Sin superusuario, ALTER FUNCTION ... OWNER TO exige que el nuevo dueño tenga CREATE en el
+-- esquema (comprobado). V3 y V4 transfieren funciones a estos dos roles; V5 lo revoca después.
+GRANT CREATE ON SCHEMA public TO cms_revision_writer, cms_import_writer;

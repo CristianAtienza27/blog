@@ -1,0 +1,39 @@
+-- Roles dueños de funciones SECURITY DEFINER (fases 6.2.1, 6.2.3 y 6.4.5). IDEMPOTENTE.
+--
+-- Lo incluye cms-roles.psql al inicializar un volumen nuevo. En un volumen ya inicializado (los
+-- scripts de /docker-entrypoint-initdb.d no vuelven a ejecutarse), un administrador lo ejecuta una
+-- vez, como operación administrativa excepcional, antes de migrar (ver infra/local/README.md):
+--
+--   docker compose exec postgres sh -c 'psql -v ON_ERROR_STOP=1 -X -U "$POSTGRES_USER" \
+--     -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/sql/cms-function-owners.psql'
+--
+-- Seguro en un volumen ya migrado: no lee secretos, no crea logins y no toca los permisos de la
+-- base de datos ni del esquema (a diferencia de cms-roles.psql, que concede CREATE en el esquema
+-- antes de migrar y que V5 retira después).
+--
+--   cms_revision_writer   V3: creación y restauración de revisiones
+--   cms_import_writer     V4: importación de artículos publicados
+--   cms_audit_retention   V9 (6.2.4): purga de la auditoría
+--   cms_enrollment_writer V8 (6.2.3): fin controlado del registro de la primera passkey
+--   cms_article_publisher V11 (6.4.5): publicar y despublicar un artículo desde el CMS
+
+\set ON_ERROR_STOP on
+
+-- Sin login, sin privilegios especiales y sin heredar de nadie.
+SELECT format('CREATE ROLE %I NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS', r)
+  FROM unnest(ARRAY['cms_revision_writer', 'cms_import_writer', 'cms_audit_retention',
+                    'cms_enrollment_writer', 'cms_article_publisher']) AS r
+ WHERE NOT EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = r) \gexec
+-- Si ya existían, se reafirman los atributos (corrige cualquier desviación).
+SELECT format('ALTER ROLE %I NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS', r)
+  FROM unnest(ARRAY['cms_revision_writer', 'cms_import_writer', 'cms_audit_retention',
+                    'cms_enrollment_writer', 'cms_article_publisher']) AS r \gexec
+
+-- Solo cms_owner es miembro, para poder transferirles funciones y gestionar sus permisos:
+--   - SET: ALTER FUNCTION ... OWNER TO exige poder hacer SET ROLE al nuevo dueño.
+--   - INHERIT: tras transferir una función, el REVOKE ... FROM PUBLIC y el GRANT EXECUTE de la
+--     migración solo surten efecto si cms_owner hereda los privilegios del nuevo dueño (sin
+--     INHERIT, PostgreSQL los ignora con un aviso; ver cms-roles.psql).
+-- Repetir el GRANT es inocuo: PostgreSQL solo actualiza las opciones de la pertenencia.
+GRANT cms_revision_writer, cms_import_writer, cms_audit_retention, cms_enrollment_writer, cms_article_publisher
+   TO cms_owner WITH INHERIT TRUE, SET TRUE;
