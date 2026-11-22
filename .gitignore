@@ -42,6 +42,15 @@ __screenshots__/
 # Fotografías originales, manifiesto privado (GPS) y pruebas del procesador
 /media-src/
 
+# Backend del CMS: compilación de Maven y configuración local con secretos
+/api/target/
+/infra/local/.env
+# Contraseñas locales de la base de datos (fase 6.2.1): solo se versiona el README
+/infra/local/secrets/*
+!/infra/local/secrets/README.md
+/infra/bench/secrets/*
+!/infra/bench/secrets/README.md
+
 # Environment and secrets
 .env
 .env.*
