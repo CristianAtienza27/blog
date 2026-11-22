@@ -1,0 +1,367 @@
+# Entorno local del CMS: PostgreSQL 18, migraciones, API (Spring Boot) y web pública en modo
+# instantáneas (Node, fase 6.3.5). Los puertos solo escuchan en 127.0.0.1: nada es accesible desde
+# la red. Uso: docker compose --env-file infra/local/.env -f infra/local/compose.yaml up --build -d
+#
+# Conexiones (fase 6.2.1): cada proceso usa su propio login de base de datos, con la contraseña
+# en un secreto de Docker (infra/local/secrets/, ignorado por Git). El superusuario solo existe
+# para inicializar el volumen; nada se conecta con él después.
+#
+# Ejecución conjunta (fase 6.3.5, diseño en infra/docs/ejecucion.md):
+#   redes      datos (internal): PostgreSQL y quien lo usa; la web no está.
+#              publicacion (internal, subred fija): la API llama al puerto interno de la web, que
+#              solo escucha en la IP fija de la web en esta red (nunca se publica).
+#              borde: API y web, para publicar sus puertos en 127.0.0.1 (en producción, 6.9, la
+#              red de Caddy). postgres-local: solo PostgreSQL, para su puerto en 127.0.0.1.
+#   volúmenes  instantaneas (la API escribe, la web solo lee) y estado (la web escribe, la API solo
+#              lee). El servicio «volumenes» prepara sus directorios raíz.
+#   arranque   volumenes y postgres -> migrate -> api; volumenes -> web. La API y la web no
+#              dependen la una de la otra: la web sirve sin la API y la API reconcilia con
+#              reintentos si la web no responde.
+name: cristian-atienza-cms
+
+# Registros con rotación (6.3.5, D9): como mucho unos 30 MB por servicio.
+x-registro: &registro
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+# Endurecimiento de la API y la web (6.3.5, D3): sin capacidades de Linux, sin escalada de
+# privilegios y con el sistema de archivos de la imagen en solo lectura. Cada servicio solo puede
+# escribir en sus volúmenes autorizados y en su /tmp en memoria (tmpfs, sin ejecución).
+x-endurecido: &endurecido
+  cap_drop: [ALL]
+  security_opt: ['no-new-privileges:true']
+  read_only: true
+
+services:
+  postgres:
+    # Reinicio automático tras un fallo (6.2.7.4, K1), no tras «docker compose stop».
+    restart: unless-stopped
+    image: postgres:18.6-trixie@sha256:e3d24f6906d0760bf4da0dae872415391ededefad23fd471c47dc53b0ddf3c42
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cms}
+      # Superusuario: solo para la inicialización del volumen (script de roles).
+      POSTGRES_USER: ${POSTGRES_SUPERUSER:-cms_superuser}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_superuser_password
+    ports:
+      - '127.0.0.1:${CMS_DB_PORT:-5432}:5432'
+    networks:
+      - datos
+      - postgres-local
+    volumes:
+      # Volumen de la fase 6.2 (roles separados). El volumen anterior
+      # (cristian-atienza-cms_postgres-data) no se usa ni se declara aquí, para que ningún comando
+      # de Compose pueda borrarlo: se conserva como respaldo.
+      - postgres-data-v62:/var/lib/postgresql
+      # Roles y propiedad de la base de datos: se ejecuta solo al inicializar un volumen vacío.
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+    secrets:
+      - postgres_superuser_password
+      - cms_migrator_password
+      - cms_api_password
+      - cms_tool_password
+      - cms_security_tool_password
+      - cms_maintenance_password
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    # Parada ordenada (checkpoint) antes del SIGKILL.
+    stop_grace_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+    logging: *registro
+
+  # Migraciones: se ejecuta, aplica lo pendiente como cms_owner y termina. La API solo arranca
+  # si ha terminado bien, y nunca migra por sí misma.
+  migrate:
+    image: cristian-atienza/cms-api:local
+    command: ['--spring.profiles.active=migrate']
+    environment:
+      CMS_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-cms}
+      CMS_DB_USER: cms_migrator
+    secrets:
+      - source: cms_migrator_password
+        target: cms.db.password
+    networks:
+      - datos
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+    logging: *registro
+
+  # Directorios raíz de los volúmenes compartidos (6.3.5, D4): root solo aquí, sin red, solo con
+  # CHOWN, idempotente y no recursivo (volumenes/preparar.sh). Termina enseguida.
+  volumenes:
+    image: cristian-atienza/web:local
+    user: '0:0'
+    entrypoint: ['sh', '/preparar.sh']
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN]
+    security_opt: ['no-new-privileges:true']
+    volumes:
+      - ./volumenes/preparar.sh:/preparar.sh:ro
+      - instantaneas:/volumenes/instantaneas
+      - estado:/volumenes/estado
+    restart: 'no'
+    logging: *registro
+
+  api:
+    build: ../../api
+    # Reinicio automático tras un fallo u OOMKill (6.2.7.4, K1); las sesiones siguen en PostgreSQL.
+    restart: unless-stopped
+    image: cristian-atienza/cms-api:local
+    <<: *endurecido
+    # Tomcat y la JVM (hsperfdata) escriben en /tmp.
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    environment:
+      CMS_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-cms}
+      CMS_DB_USER: cms_api
+      # Publicación (6.3.4, api/docs/publicacion.md): instantáneas, estado de la web (solo lectura)
+      # y puerto interno de la web en la red publicacion.
+      CMS_PUBLICATION_SNAPSHOTSDIR: /instantaneas
+      CMS_PUBLICATION_STATEDIR: /estado
+      CMS_PUBLICATION_WEBINTERNALURL: http://${CMS_WEB_INTERNAL_IP:-10.203.63.10}:4100
+    secrets:
+      - source: cms_api_password
+        target: cms.db.password
+      # Clave HMAC de la API (6.2.3): códigos de recuperación y huella de la sesión.
+      - source: cms_api_hmac_key
+        target: cms.security.hmac-key
+    volumes:
+      - instantaneas:/instantaneas
+      - estado:/estado:ro
+    ports:
+      - '127.0.0.1:${CMS_API_PORT:-8080}:8080'
+    networks:
+      - datos
+      - publicacion
+      - borde
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      volumenes:
+        condition: service_completed_successfully
+    # Salud del contenedor = liveness (6.2.7.2): solo dice si la JVM está viva, sin consultar
+    # PostgreSQL, para que una caída de la base de datos no marque la API como «unhealthy» (Docker
+    # solo tiene un estado de salud). Si PostgreSQL no responde, la API sigue viva y contesta 503
+    # «unavailable» en unos 5 s; readiness (/actuator/health/readiness, con la base de datos) es la
+    # sonda para quien reparte el tráfico (Caddy, 6.9).
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:8080/actuator/health/liveness']
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 20s
+    # Parada ordenada (server.shutdown: graceful, publicación en curso y bloqueo asesor).
+    stop_grace_period: 30s
+    # Valores de la 6.2.7 (D6): 768 MiB y 3 CPU. Los parámetros de la JVM (GC, metaspace) son de
+    # la 6.9.
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: 768M
+    logging: *registro
+
+  # Web pública en modo instantáneas (6.3.5): imagen de infra/web/Dockerfile, usuario node.
+  web:
+    build:
+      context: ../..
+      dockerfile: infra/web/Dockerfile
+    image: cristian-atienza/web:local
+    restart: unless-stopped
+    # Init mínimo (tini) como PID 1: Node recibe SIGTERM y termina sin esperar al SIGKILL. Las
+    # escrituras del estado ya son atómicas (archivo temporal y renombrado).
+    init: true
+    <<: *endurecido
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    environment:
+      PORT: '4000'
+      CONTENT_SNAPSHOTS_DIR: /instantaneas
+      CONTENT_STATE_DIR: /estado
+      # Puerto interno: solo en la IP fija de la red publicacion (nunca 0.0.0.0 ni publicado).
+      WEB_INTERNAL_BIND: ${CMS_WEB_INTERNAL_IP:-10.203.63.10}:4100
+      # Opcionales; vacías = sin URL pública ni CDN de media (como en local hasta ahora).
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-}
+      MEDIA_BASE_URL: ${MEDIA_BASE_URL:-}
+    volumes:
+      - instantaneas:/instantaneas:ro
+      - estado:/estado
+    ports:
+      - '127.0.0.1:${CMS_WEB_PORT:-4000}:4000'
+    networks:
+      borde: {}
+      publicacion:
+        ipv4_address: ${CMS_WEB_INTERNAL_IP:-10.203.63.10}
+    depends_on:
+      volumenes:
+        condition: service_completed_successfully
+    # Liveness (/_salud/vida). /_salud/listo no sirve para esto: 503 sin versión activa es un
+    # estado legítimo; es la sonda de Caddy (6.9). La imagen no tiene curl.
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:4000/_salud/vida').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    stop_grace_period: 10s
+    # Límite inicial (6.3.5): medido con carga ligera en infra/bench/informe-6.3.5.md.
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 512M
+    logging: *registro
+
+  # Herramienta de importación, exportación y comparación del contenido (fase 6.1.3).
+  # Misma imagen que la API, sin servidor web ni puertos. Solo arranca a petición:
+  #   docker compose --env-file infra/local/.env -f infra/local/compose.yaml run --rm content-tool --cms.tool=import
+  # El contenido y los dos archivos TypeScript se montan en solo lectura.
+  content-tool:
+    image: cristian-atienza/cms-api:local
+    profiles: ['tools']
+    entrypoint:
+      - java
+      - org.springframework.boot.loader.launch.JarLauncher
+      - --spring.main.web-application-type=none
+      - --cms.content-dir=/content
+      - --cms.retired-file=/code/retired-media.ts
+      - --cms.navigation-file=/code/navigation.ts
+      - --cms.export-dir=/export
+    environment:
+      CMS_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-cms}
+      CMS_DB_USER: cms_tool
+    secrets:
+      - source: cms_tool_password
+        target: cms.db.password
+    volumes:
+      - ../../src/content:/content:ro
+      - ../../src/app/editorial/retired-media.ts:/code/retired-media.ts:ro
+      - ../../src/app/layout/navigation.ts:/code/navigation.ts:ro
+      # Siempre fuera del repositorio (por defecto, la carpeta hermana blog-export).
+      - ${CMS_EXPORT_DIR:-../../../blog-export}:/export
+    networks:
+      - datos
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Herramientas de publicación (fase 6.3.4): publicar, activar y purgar-instantaneas, con el login
+  # de la API (cms_api), sus volúmenes y la red interna de la web. Solo arranca a petición:
+  #   docker compose --env-file infra/local/.env -f infra/local/compose.yaml run --rm publication-tool --cms.tool=publicar
+  publication-tool:
+    image: cristian-atienza/cms-api:local
+    profiles: ['tools']
+    <<: *endurecido
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    entrypoint:
+      - java
+      - org.springframework.boot.loader.launch.JarLauncher
+      - --spring.main.web-application-type=none
+    environment:
+      CMS_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-cms}
+      CMS_DB_USER: cms_api
+      CMS_PUBLICATION_SNAPSHOTSDIR: /instantaneas
+      CMS_PUBLICATION_STATEDIR: /estado
+      CMS_PUBLICATION_WEBINTERNALURL: http://${CMS_WEB_INTERNAL_IP:-10.203.63.10}:4100
+    secrets:
+      - source: cms_api_password
+        target: cms.db.password
+      - source: cms_api_hmac_key
+        target: cms.security.hmac-key
+    volumes:
+      - instantaneas:/instantaneas
+      - estado:/estado:ro
+    networks:
+      - datos
+      - publicacion
+    depends_on:
+      postgres:
+        condition: service_healthy
+      volumenes:
+        condition: service_completed_successfully
+
+  # Herramienta de seguridad (fase 6.2.6): primer administrador y recuperación de emergencia. Misma
+  # imagen que la API, sin servidor web ni puertos, como cms_security_tool (nunca el superusuario) y
+  # SIN la clave HMAC de la API. Solo arranca a petición (procedimiento en infra/local/README.md):
+  #   docker compose --env-file infra/local/.env -f infra/local/compose.yaml run --rm   #     -e CMS_OPERATOR="$(whoami)@$(hostname)" security-tool --cms.tool=crear-admin   #     --cms.usuario=<correo> --cms.contrasena-desde=/run/cms-input/cms_admin_password
+  # La contraseña llega en un archivo de un solo uso (secrets/cms_admin_password), que el operador
+  # crea antes y borra después; nunca en un argumento ni en una variable de entorno. Se monta fuera
+  # de /run/secrets/ para que Spring no la cargue como propiedad (configtree solo lee esa carpeta).
+  security-tool:
+    image: cristian-atienza/cms-api:local
+    profiles: ['tools']
+    entrypoint:
+      - java
+      - org.springframework.boot.loader.launch.JarLauncher
+      - --spring.main.web-application-type=none
+    environment:
+      CMS_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-cms}
+      CMS_DB_USER: cms_security_tool
+    secrets:
+      - source: cms_security_tool_password
+        target: cms.db.password
+      - source: cms_admin_password
+        target: /run/cms-input/cms_admin_password
+    networks:
+      - datos
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  # Sin salida a Internet ni acceso desde el equipo.
+  datos:
+    internal: true
+  publicacion:
+    internal: true
+    ipam:
+      config:
+        - subnet: ${CMS_PUBLICACION_SUBNET:-10.203.63.0/28}
+  # Solo para publicar puertos en 127.0.0.1 (una red «internal» no puede publicarlos).
+  borde: {}
+  postgres-local: {}
+
+# Contraseñas en archivos de infra/local/secrets/ (ignorados por Git; ver infra/local/README.md).
+secrets:
+  postgres_superuser_password:
+    file: ./secrets/postgres_superuser_password
+  cms_migrator_password:
+    file: ./secrets/cms_migrator_password
+  cms_api_password:
+    file: ./secrets/cms_api_password
+  cms_tool_password:
+    file: ./secrets/cms_tool_password
+  cms_security_tool_password:
+    file: ./secrets/cms_security_tool_password
+  cms_maintenance_password:
+    file: ./secrets/cms_maintenance_password
+  cms_api_hmac_key:
+    file: ./secrets/cms_api_hmac_key
+  # De un solo uso (6.2.6): solo existe mientras se ejecuta security-tool; no es un secreto permanente.
+  cms_admin_password:
+    file: ./secrets/cms_admin_password
+
+volumes:
+  postgres-data-v62:
+  # Publicación (6.3.5). Nunca se borran con Compose («down» sin -v).
+  instantaneas:
+  estado:

@@ -1,0 +1,10 @@
+# Contexto del build de infra/web/Dockerfile (la raíz del repositorio): lista de permitidos.
+# Nada más entra en la imagen: ni node_modules, ni dist, ni la API, ni infra, ni secretos, ni .git.
+*
+!package.json
+!package-lock.json
+!angular.json
+!tsconfig.json
+!tsconfig.app.json
+!public/
+!src/
