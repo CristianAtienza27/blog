@@ -1,0 +1,255 @@
+# Entorno de medición de la fase 6.1.4. Proyecto Compose separado («cms-bench»): sus volúmenes
+# se llaman cms-bench_* y nunca usa el volumen real (cristian-atienza-cms_postgres-data).
+# No publica ningún puerto en el equipo: la carga se genera dentro de su red.
+#
+# Uso (desde la raíz del proyecto), siempre a través de infra/bench/scripts/bench.mjs:
+#   docker compose -f infra/bench/compose.yaml ...
+#
+# Credenciales (fase 6.2.2): como en infra/local, cada proceso usa su propio login con permisos
+# mínimos y su contraseña en un secreto (infra/bench/secrets/, ignorado por Git). El superusuario
+# solo inicializa el volumen (script de roles de infra/local/postgres-init).
+#   migrate       cms_migrator (+ SET ROLE cms_owner)
+#   api, pgbench  cms_api (pgbench solo lee, como la API)
+#   content-tool  cms_tool
+#   security-tool cms_security_tool (6.2.7: usuarios de prueba con crear-admin)
+#
+# Envolventes simuladas (variables de entorno):
+#   SUT_CPUS   CPU de los servicios medidos (cpuset): 0-1 = VPS-1, 0-3 = VPS-2
+#   LOAD_CPUS  CPU de los generadores de carga, separadas de las anteriores
+#   *_MEM      límite de memoria de cada servicio. memswap_limit = mem_limit: sin swap, como un
+#              VPS sin swap (por defecto Docker permitiría otro tanto de swap)
+name: cms-bench
+
+x-sut: &sut
+  cpuset: ${SUT_CPUS:-0-1}
+  restart: ${BENCH_RESTART:-no}
+
+services:
+  postgres:
+    <<: *sut
+    image: postgres:18.6-trixie@sha256:e3d24f6906d0760bf4da0dae872415391ededefad23fd471c47dc53b0ddf3c42
+    environment:
+      POSTGRES_DB: cms
+      # Superusuario: solo para inicializar el volumen.
+      POSTGRES_USER: cms_bench_superuser
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_superuser_password
+    mem_limit: ${PG_MEM:-448m}
+    memswap_limit: ${PG_MEM:-448m}
+    volumes:
+      - pgdata:/var/lib/postgresql
+      # El mismo script de roles que infra/local.
+      - ../local/postgres-init:/docker-entrypoint-initdb.d:ro
+    secrets:
+      - postgres_superuser_password
+      - cms_migrator_password
+      - cms_api_password
+      - cms_tool_password
+      - cms_security_tool_password
+      - cms_maintenance_password
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  # Migraciones: se ejecuta y termina; la API solo arranca si ha terminado bien.
+  migrate:
+    <<: *sut
+    image: cristian-atienza/cms-api:local
+    restart: 'no'
+    command: ['--spring.profiles.active=migrate']
+    environment:
+      CMS_DB_URL: jdbc:postgresql://postgres:5432/cms
+      CMS_DB_USER: cms_migrator
+      # Las mismas opciones de la JVM que la API (6.2.7.3: también las herramientas las heredan).
+      JAVA_TOOL_OPTIONS: ${API_JAVA_OPTS:--XX:MaxRAMPercentage=45 -XX:+ExitOnOutOfMemoryError}
+    secrets:
+      - source: cms_migrator_password
+        target: cms.db.password
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    <<: *sut
+    image: cristian-atienza/cms-api:local
+    environment:
+      CMS_DB_URL: jdbc:postgresql://postgres:5432/cms
+      CMS_DB_USER: cms_api
+      # Desde la 6.2.2 Spring Security solo permite /actuator/health sin sesión: aunque se exponga
+      # metrics, responde 401. Los escenarios de la 6.1.4 que lo usaban necesitarían un permiso
+      # explícito solo para este entorno.
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: ${API_EXPOSE:-health}
+      # Mismo valor que el Dockerfile salvo que la prueba lo cambie (JVM y límites).
+      JAVA_TOOL_OPTIONS: ${API_JAVA_OPTS:--XX:MaxRAMPercentage=45 -XX:+ExitOnOutOfMemoryError}
+      # Límite por IP de la API (6.2.4). Por defecto, el valor real (20). Solo los escenarios de
+      # passkeys de la 6.2.7 lo elevan (decisión D6): todas las peticiones de k6 llegan desde la
+      # misma IP y las opciones WebAuthn cuentan en ese ámbito.
+      CMS_SECURITY_LIMITS_IP_FAILURES: ${API_IP_FAILURES:-20}
+    secrets:
+      - source: cms_api_password
+        target: cms.db.password
+      # Clave HMAC de la API (6.2.3): códigos de recuperación y huella de la sesión.
+      - source: cms_api_hmac_key
+        target: cms.security.hmac-key
+    mem_limit: ${API_MEM:-640m}
+    memswap_limit: ${API_MEM:-640m}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  ssr:
+    <<: *sut
+    # Imagen de MEDICIÓN del SSR: solo empaqueta la salida del build (dist/) para medirla en
+    # Linux con límites. No es la imagen de producción de la web (fase de despliegue) ni la
+    # modifica. Node 26.13.0: misma imagen base y digest que el media-worker.
+    build:
+      context: ${SSR_DIST:-../../dist/cristian-atienza}
+      dockerfile_inline: |
+        FROM node:26.13.0-trixie-slim@sha256:e4db4c914bf8ad241bd24804fc25d272d89bad97e68cdc8a1414862790a02c39
+        WORKDIR /app
+        COPY --chown=node:node . ./
+        USER node
+        ENV NODE_ENV=production PORT=4000
+        EXPOSE 4000
+        CMD ["node", "server/server.mjs"]
+    image: cms-bench/ssr:${SSR_TAG:-actual}
+    environment:
+      NODE_OPTIONS: ${SSR_NODE_OPTIONS:-}
+      # angular.json solo permite «localhost» (protección SSRF de Angular). Aquí la carga llega
+      # con el nombre interno «ssr»; en producción habrá que permitir el dominio real.
+      NG_ALLOWED_HOSTS: ssr
+    mem_limit: ${SSR_MEM:-384m}
+    memswap_limit: ${SSR_MEM:-384m}
+
+  # --- Herramientas (perfil tools): solo arrancan a petición -------------------------------------
+
+  k6:
+    image: grafana/k6:2.3.0@sha256:2dd4756ec6e14e62778916e1eb850108e4b499304c02df56760fa0bdb0fba0b8
+    profiles: ['tools']
+    cpuset: ${LOAD_CPUS:-8-9}
+    volumes:
+      - ./k6:/scripts:ro
+      - ${BENCH_OUT:?Define BENCH_OUT}:/out
+      # Credencial de prueba de este entorno (6.2.7, D5): fuera del repositorio, en solo lectura.
+      - ${BENCH_CRED:-../../../blog-bench/credenciales}:/cred:ro
+
+  pgbench:
+    image: postgres:18.6-trixie@sha256:e3d24f6906d0760bf4da0dae872415391ededefad23fd471c47dc53b0ddf3c42
+    profiles: ['tools']
+    cpuset: ${LOAD_CPUS:-8-9}
+    # La contraseña se lee del secreto dentro del contenedor (no va en argumentos ni en logs).
+    entrypoint:
+      [
+        'sh',
+        '-c',
+        'PGPASSWORD="$$(cat /run/secrets/cms_api_password)" exec pgbench "$$@"',
+        'pgbench',
+      ]
+    environment:
+      PGHOST: postgres
+      PGUSER: cms_api
+      PGDATABASE: cms
+    secrets:
+      - cms_api_password
+    volumes:
+      - ${BENCH_OUT:?Define BENCH_OUT}:/out
+
+  content-tool:
+    image: cristian-atienza/cms-api:local
+    profiles: ['tools']
+    cpuset: ${SUT_CPUS:-0-1}
+    mem_limit: ${API_MEM:-640m}
+    memswap_limit: ${API_MEM:-640m}
+    entrypoint:
+      - java
+      - org.springframework.boot.loader.launch.JarLauncher
+      - --spring.main.web-application-type=none
+      - --cms.retired-file=/code/retired-media.ts
+      - --cms.navigation-file=/code/navigation.ts
+      - --cms.export-dir=/export
+    environment:
+      CMS_DB_URL: jdbc:postgresql://postgres:5432/cms
+      CMS_DB_USER: cms_tool
+      JAVA_TOOL_OPTIONS: ${API_JAVA_OPTS:--XX:MaxRAMPercentage=45 -XX:+ExitOnOutOfMemoryError}
+    secrets:
+      - source: cms_tool_password
+        target: cms.db.password
+    volumes:
+      # Contenido de origen en solo lectura (el real o el sintético de crecimiento).
+      - ${BENCH_CONTENT:-../../src/content}:/content:ro
+      - ../../src/app/editorial/retired-media.ts:/code/retired-media.ts:ro
+      - ../../src/app/layout/navigation.ts:/code/navigation.ts:ro
+      - ${BENCH_EXPORT:-../../../blog-bench/exportacion}:/export
+
+  # Usuarios de prueba para las mediciones de autenticación (6.2.7): la herramienta de seguridad de
+  # la 6.2.6, como cms_security_tool, sin la clave HMAC de la API. La contraseña de prueba llega del
+  # archivo de credenciales de este entorno (fuera del repositorio), fuera de /run/secrets/.
+  security-tool:
+    image: cristian-atienza/cms-api:local
+    profiles: ['tools']
+    cpuset: ${SUT_CPUS:-0-1}
+    mem_limit: ${API_MEM:-640m}
+    memswap_limit: ${API_MEM:-640m}
+    entrypoint:
+      - java
+      - org.springframework.boot.loader.launch.JarLauncher
+      - --spring.main.web-application-type=none
+    environment:
+      CMS_DB_URL: jdbc:postgresql://postgres:5432/cms
+      CMS_DB_USER: cms_security_tool
+      CMS_OPERATOR: cms-bench
+      JAVA_TOOL_OPTIONS: ${API_JAVA_OPTS:--XX:MaxRAMPercentage=45 -XX:+ExitOnOutOfMemoryError}
+    secrets:
+      - source: cms_security_tool_password
+        target: cms.db.password
+      - source: cms_bench_admin_password
+        target: /run/cms-input/cms_admin_password
+
+  # Procesamiento de imágenes. SOLO monta la carpeta de copias de prueba (fuera del repositorio)
+  # y el script de medición. Nunca media-src/, public/media/ ni src/content/.
+  media:
+    image: cristian-atienza/media-worker:poc
+    profiles: ['tools']
+    cpuset: ${SUT_CPUS:-0-1}
+    mem_limit: ${MEDIA_MEM:-1024m}
+    memswap_limit: ${MEDIA_MEM:-1024m}
+    environment:
+      MEDIA_PUBLIC: /tmp/bench-out
+      MEDIA_DATA: /tmp/bench-data
+      MEDIA_CONTENT: /tmp/bench-content
+      TMPDIR: /tmp/bench-tmp
+      VIPS_CONCURRENCY: ${VIPS_CONCURRENCY:-}
+    entrypoint: ['node', 'src/bench.mjs']
+    volumes:
+      - ${BENCH_IMAGES:?Define BENCH_IMAGES}:/bench-in:ro
+      - ./media/bench.mjs:/app/src/bench.mjs:ro
+
+# Contraseñas de este entorno (independientes de las de infra/local; ver secrets/README.md).
+secrets:
+  postgres_superuser_password:
+    file: ./secrets/postgres_superuser_password
+  cms_migrator_password:
+    file: ./secrets/cms_migrator_password
+  cms_api_password:
+    file: ./secrets/cms_api_password
+  cms_tool_password:
+    file: ./secrets/cms_tool_password
+  cms_security_tool_password:
+    file: ./secrets/cms_security_tool_password
+  cms_maintenance_password:
+    file: ./secrets/cms_maintenance_password
+  cms_api_hmac_key:
+    file: ./secrets/cms_api_hmac_key
+  # Contraseña de los usuarios de prueba (6.2.7): la genera bench.mjs admin, fuera del repositorio.
+  cms_bench_admin_password:
+    file: ${BENCH_CRED:-../../../blog-bench/credenciales}/cms_admin_password
+
+volumes:
+  pgdata:
+    # Un volumen de pruebas por escenario (BENCH_DB): fallo y crecimiento empiezan en una base de
+    # datos vacía sin borrar ningún volumen. Siempre con el prefijo cms-bench_. Desde la 6.2.2 el
+    # volumen por defecto es v62 (roles separados); los anteriores se conservan sin usarse.
+    name: cms-bench_${BENCH_DB:-v62}
