@@ -1,0 +1,220 @@
+{
+  "descripcion": "Corpus compartido Java/TypeScript del tiempo de lectura (fase 6.4.1): countWords y readingMinutes de src/app/content/records/reading-time.ts frente a ReadingTime. «esperado» es [palabras, minutos].",
+  "casos": [
+    {
+      "nombre": "texto con etiquetas",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>Una <em>frase</em> con<br>cinco</p>"
+        }
+      ],
+      "esperado": [4, 1]
+    },
+    {
+      "nombre": "signos sueltos no cuentan",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>Hola — , . ; ¡ ! ¿ ? adiós</p>"
+        }
+      ],
+      "esperado": [2, 1]
+    },
+    {
+      "nombre": "números cuentan",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>1.200 km en 3 días</p>"
+        }
+      ],
+      "esperado": [5, 1]
+    },
+    {
+      "nombre": "espacios Unicode separan",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>uno\u00a0dos\u3000tres\u2028cuatro\ufeffcinco</p>"
+        }
+      ],
+      "esperado": [5, 1]
+    },
+    {
+      "nombre": "U+0085 no separa en JS",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>uno\u0085dos</p>"
+        }
+      ],
+      "esperado": [1, 1]
+    },
+    {
+      "nombre": "emoji no es palabra",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>😀 🚗 hola</p>"
+        }
+      ],
+      "esperado": [1, 1]
+    },
+    {
+      "nombre": "escrituras no latinas",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>Ἀθῆναι Москва 東京 القاهرة</p>"
+        }
+      ],
+      "esperado": [4, 1]
+    },
+    {
+      "nombre": "etiqueta pegada a palabras",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>una<strong>dos</strong>tres</p>"
+        }
+      ],
+      "esperado": [3, 1]
+    },
+    {
+      "nombre": "cita con autor",
+      "bloques": [
+        {
+          "type": "quote",
+          "text": "La vida es viaje",
+          "cite": "Anónimo",
+          "variant": "pull"
+        }
+      ],
+      "esperado": [5, 1]
+    },
+    {
+      "nombre": "capítulo con antetítulo",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "a",
+          "title": "Primera parte",
+          "kicker": "Uno"
+        }
+      ],
+      "esperado": [3, 1]
+    },
+    {
+      "nombre": "ficha completa",
+      "bloques": [
+        {
+          "type": "specs",
+          "title": "Datos técnicos",
+          "items": [
+            {
+              "label": "Peso",
+              "value": "200 kg",
+              "unit": "kg"
+            }
+          ],
+          "note": "Aproximado"
+        }
+      ],
+      "esperado": [6, 1]
+    },
+    {
+      "nombre": "código y pie",
+      "bloques": [
+        {
+          "type": "code",
+          "language": "ts",
+          "code": "const x = 1;",
+          "caption": "Un ejemplo"
+        }
+      ],
+      "esperado": [5, 1]
+    },
+    {
+      "nombre": "pies de foto",
+      "bloques": [
+        {
+          "type": "figures",
+          "layout": "diptych",
+          "items": [
+            {
+              "media": "a",
+              "caption": "Primera foto"
+            },
+            {
+              "media": "b"
+            }
+          ]
+        }
+      ],
+      "esperado": [2, 1]
+    },
+    {
+      "nombre": "imagen y mapa con pie",
+      "bloques": [
+        {
+          "type": "image",
+          "media": "a",
+          "layout": "content",
+          "caption": "Pie uno"
+        },
+        {
+          "type": "map",
+          "destinations": ["a"],
+          "route": false,
+          "caption": "Mapa"
+        }
+      ],
+      "esperado": [3, 1]
+    },
+    {
+      "nombre": "galería y divisor no cuentan",
+      "bloques": [
+        {
+          "type": "gallery",
+          "gallery": "g"
+        },
+        {
+          "type": "divider",
+          "variant": "line"
+        }
+      ],
+      "esperado": [0, 1]
+    },
+    {
+      "nombre": "100 palabras: medio minuto redondea a 1",
+      "palabras": 100,
+      "esperado": [100, 1]
+    },
+    {
+      "nombre": "300 palabras: 1,5 redondea a 2",
+      "palabras": 300,
+      "esperado": [300, 2]
+    },
+    {
+      "nombre": "500 palabras: 2,5 redondea a 3",
+      "palabras": 500,
+      "esperado": [500, 3]
+    },
+    {
+      "nombre": "499 palabras",
+      "palabras": 499,
+      "esperado": [499, 2]
+    },
+    {
+      "nombre": "sin palabras: mínimo 1",
+      "bloques": [
+        {
+          "type": "divider",
+          "variant": "pause"
+        }
+      ],
+      "esperado": [0, 1]
+    }
+  ]
+}

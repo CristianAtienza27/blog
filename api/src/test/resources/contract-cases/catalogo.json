@@ -1,0 +1,503 @@
+{
+  "descripcion": "Corpus compartido Java/TypeScript del catálogo (fases 6.4.6 y 6.4.7): cada caso parte de un registro real (coleccion y base) y le quita y le pone campos. Las incidencias de ese registro se normalizan: «registro» por <coleccion>[i]. «esperado» es el resultado de los dos validadores; «esperadoTs», el de TypeScript cuando difiere (divergencia documentada).",
+  "casos": [
+    {
+      "nombre": "etiqueta: texto vacío",
+      "coleccion": "tags",
+      "base": "costa",
+      "poner": {
+        "label": ""
+      },
+      "esperado": ["registro.label: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "etiqueta: texto largo (sin límite en el contrato)",
+      "coleccion": "tags",
+      "base": "costa",
+      "poner": {
+        "label": "Una etiqueta con un texto muy largo que supera con creces los cien caracteres, porque el contrato no limita su longitud en absoluto"
+      },
+      "esperado": []
+    },
+    {
+      "nombre": "etiqueta: slug no válido",
+      "coleccion": "tags",
+      "base": "costa",
+      "poner": {
+        "slug": "Costa Brava"
+      },
+      "esperado": ["registro.slug: slug no válido: «Costa Brava»"]
+    },
+    {
+      "nombre": "etiqueta: campo desconocido",
+      "coleccion": "tags",
+      "base": "costa",
+      "poner": {
+        "color": "azul"
+      },
+      "esperado": ["registro.color: campo desconocido"]
+    },
+    {
+      "nombre": "autor: falta el nombre",
+      "coleccion": "authors",
+      "base": "cristian-atienza",
+      "quitar": ["name"],
+      "esperado": ["registro.name: campo obligatorio"]
+    },
+    {
+      "nombre": "autor: rol numérico",
+      "coleccion": "authors",
+      "base": "cristian-atienza",
+      "poner": {
+        "role": 3
+      },
+      "esperado": ["registro.role: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "autor: biografía vacía",
+      "coleccion": "authors",
+      "base": "cristian-atienza",
+      "poner": {
+        "bio": ""
+      },
+      "esperado": ["registro.bio: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "autor: avatar con slug no válido",
+      "coleccion": "authors",
+      "base": "cristian-atienza",
+      "poner": {
+        "avatar": "Foto"
+      },
+      "esperado": ["registro.avatar: slug no válido: «Foto»"]
+    },
+    {
+      "nombre": "autor: avatar inexistente",
+      "coleccion": "authors",
+      "base": "cristian-atienza",
+      "poner": {
+        "avatar": "no-existe"
+      },
+      "esperado": ["registro.avatar: imagen inexistente «no-existe»"]
+    },
+    {
+      "nombre": "autor: avatar retirado",
+      "coleccion": "authors",
+      "base": "cristian-atienza",
+      "poner": {
+        "avatar": "motor-moto-trail"
+      },
+      "esperado": ["registro.avatar: imagen retirada «motor-moto-trail»"]
+    },
+    {
+      "nombre": "autor: campo desconocido",
+      "coleccion": "authors",
+      "base": "cristian-atienza",
+      "poner": {
+        "email": "a@b.c"
+      },
+      "esperado": ["registro.email: campo desconocido"]
+    },
+    {
+      "nombre": "autor: clave constructor",
+      "coleccion": "authors",
+      "base": "cristian-atienza",
+      "poner": {
+        "constructor": 1
+      },
+      "divergencia": "TS: «key in fields» mira el prototipo de Object y no la marca como desconocida; Java la rechaza.",
+      "esperado": ["registro.constructor: campo desconocido"],
+      "esperadoTs": []
+    },
+    {
+      "nombre": "lugar: país en minúsculas",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "country": "es"
+      },
+      "esperado": ["registro.country: código de país no válido: «es»"]
+    },
+    {
+      "nombre": "lugar: país de tres letras",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "country": "ESP"
+      },
+      "esperado": ["registro.country: código de país no válido: «ESP»"]
+    },
+    {
+      "nombre": "lugar: latitud fuera de rango",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "location": {
+          "lat": 91,
+          "lng": 0
+        }
+      },
+      "esperado": ["registro.location.lat: fuera de rango [-90, 90]: 91"]
+    },
+    {
+      "nombre": "lugar: longitud fuera de rango",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "location": {
+          "lat": 0,
+          "lng": -180.5
+        }
+      },
+      "esperado": ["registro.location.lng: fuera de rango [-180, 180]: -180.5"]
+    },
+    {
+      "nombre": "lugar: ubicación sin longitud",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "location": {
+          "lat": 38.3
+        }
+      },
+      "esperado": ["registro.location.lng: campo obligatorio"]
+    },
+    {
+      "nombre": "lugar: ubicación como texto",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "location": "38.3,-0.48"
+      },
+      "esperado": ["registro.location: se esperaba un objeto"]
+    },
+    {
+      "nombre": "lugar: altitud decimal",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "elevation": 1.5
+      },
+      "esperado": ["registro.elevation: se esperaba un entero: 1.5"]
+    },
+    {
+      "nombre": "lugar: altitud fuera de rango",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "elevation": 9001
+      },
+      "esperado": ["registro.elevation: fuera de rango [-500, 9000]: 9001"]
+    },
+    {
+      "nombre": "lugar: altitud como texto",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "elevation": "100"
+      },
+      "esperado": ["registro.elevation: se esperaba un número"]
+    },
+    {
+      "nombre": "lugar: región vacía",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "region": " "
+      },
+      "esperado": ["registro.region: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "lugar: falta el resumen",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "quitar": ["summary"],
+      "esperado": ["registro.summary: campo obligatorio"]
+    },
+    {
+      "nombre": "lugar: demo null",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "demo": null
+      },
+      "esperado": ["registro.demo: se esperaba true o false"]
+    },
+    {
+      "nombre": "lugar: portada inexistente",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "cover": "no-existe"
+      },
+      "esperado": ["registro.cover: imagen inexistente «no-existe»"]
+    },
+    {
+      "nombre": "lugar: portada retirada",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "cover": "tecnologia-teclado"
+      },
+      "esperado": ["registro.cover: imagen retirada «tecnologia-teclado»"]
+    },
+    {
+      "nombre": "lugar: coordenadas con siete decimales (el contrato las admite)",
+      "coleccion": "destinations",
+      "base": "alicante",
+      "poner": {
+        "location": {
+          "lat": 38.3452101,
+          "lng": -0.4810001
+        }
+      },
+      "esperado": []
+    },
+    {
+      "nombre": "itinerario: una sola parada",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "poner": {
+        "stops": [
+          {
+            "order": 1,
+            "destination": "begur"
+          }
+        ]
+      },
+      "esperado": ["registro.stops: se esperaban al menos 2 elementos"]
+    },
+    {
+      "nombre": "itinerario: paradas desordenadas",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "poner": {
+        "stops": [
+          {
+            "order": 2,
+            "destination": "begur"
+          },
+          {
+            "order": 1,
+            "destination": "cadaques"
+          }
+        ]
+      },
+      "esperado": [
+        "registro.stops[0]: orden 2, se esperaba 1",
+        "registro.stops[1]: orden 1, se esperaba 2"
+      ]
+    },
+    {
+      "nombre": "itinerario: parada con un destino inexistente",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "poner": {
+        "stops": [
+          {
+            "order": 1,
+            "destination": "begur"
+          },
+          {
+            "order": 2,
+            "destination": "atlantida"
+          }
+        ]
+      },
+      "esperado": ["registro.stops[1]: destino inexistente «atlantida»"]
+    },
+    {
+      "nombre": "itinerario: modo de viaje no permitido",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "poner": {
+        "stops": [
+          {
+            "order": 1,
+            "destination": "begur",
+            "mode": "avion"
+          },
+          {
+            "order": 2,
+            "destination": "cadaques"
+          }
+        ]
+      },
+      "esperado": [
+        "registro.stops[0].mode: valor no permitido: «avion» (admitidos: coche, moto, tren, barco, a-pie)"
+      ]
+    },
+    {
+      "nombre": "itinerario: distancia negativa y orden decimal",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "poner": {
+        "stops": [
+          {
+            "order": 1,
+            "destination": "begur",
+            "distanceKm": -1
+          },
+          {
+            "order": 2.5,
+            "destination": "cadaques"
+          }
+        ]
+      },
+      "esperado": [
+        "registro.stops[0].distanceKm: fuera de rango [0, Infinity]: -1",
+        "registro.stops[1].order: se esperaba un entero: 2.5"
+      ]
+    },
+    {
+      "nombre": "itinerario: distancia como texto y nota vacía",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "poner": {
+        "stops": [
+          {
+            "order": 1,
+            "destination": "begur",
+            "distanceKm": "10",
+            "note": ""
+          },
+          {
+            "order": 2,
+            "destination": "cadaques"
+          }
+        ]
+      },
+      "esperado": [
+        "registro.stops[0].note: se esperaba un texto no vacío",
+        "registro.stops[0].distanceKm: se esperaba un número"
+      ]
+    },
+    {
+      "nombre": "itinerario: parada con campo desconocido",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "poner": {
+        "stops": [
+          {
+            "order": 1,
+            "destination": "begur",
+            "km": 3
+          },
+          {
+            "order": 2,
+            "destination": "cadaques"
+          }
+        ]
+      },
+      "esperado": ["registro.stops[0].km: campo desconocido"]
+    },
+    {
+      "nombre": "itinerario: falta el título",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "quitar": ["title"],
+      "esperado": ["registro.title: campo obligatorio"]
+    },
+    {
+      "nombre": "itinerario: paradas que no son una lista",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "poner": {
+        "stops": {}
+      },
+      "esperado": ["registro.stops: se esperaba una lista"]
+    },
+    {
+      "nombre": "itinerario: portada retirada",
+      "coleccion": "trips",
+      "base": "costa-brava",
+      "poner": {
+        "cover": "motor-moto-costa"
+      },
+      "esperado": ["registro.cover: imagen retirada «motor-moto-costa»"]
+    },
+    {
+      "nombre": "proyecto: estado no permitido",
+      "coleccion": "projects",
+      "base": "revista-cristian-atienza",
+      "poner": {
+        "status": "terminado"
+      },
+      "esperado": [
+        "registro.status: valor no permitido: «terminado» (admitidos: activo, pausado, archivado)"
+      ]
+    },
+    {
+      "nombre": "proyecto: año fuera de rango",
+      "coleccion": "projects",
+      "base": "revista-cristian-atienza",
+      "poner": {
+        "year": 1989
+      },
+      "esperado": ["registro.year: fuera de rango [1990, 2100]: 1989"]
+    },
+    {
+      "nombre": "proyecto: año decimal",
+      "coleccion": "projects",
+      "base": "revista-cristian-atienza",
+      "poner": {
+        "year": 2026.5
+      },
+      "esperado": ["registro.year: se esperaba un entero: 2026.5"]
+    },
+    {
+      "nombre": "proyecto: etiqueta de la pila inexistente",
+      "coleccion": "projects",
+      "base": "revista-cristian-atienza",
+      "poner": {
+        "stack": ["angular", "no-existe"]
+      },
+      "esperado": ["registro.stack[1]: etiqueta inexistente «no-existe»"]
+    },
+    {
+      "nombre": "proyecto: etiqueta de la pila con slug no válido",
+      "coleccion": "projects",
+      "base": "revista-cristian-atienza",
+      "poner": {
+        "stack": ["Angular"]
+      },
+      "esperado": ["registro.stack[0]: slug no válido: «Angular»"]
+    },
+    {
+      "nombre": "proyecto: pila que no es una lista",
+      "coleccion": "projects",
+      "base": "revista-cristian-atienza",
+      "poner": {
+        "stack": "angular"
+      },
+      "esperado": ["registro.stack: se esperaba una lista"]
+    },
+    {
+      "nombre": "proyecto: pila vacía (admitida)",
+      "coleccion": "projects",
+      "base": "revista-cristian-atienza",
+      "poner": {
+        "stack": []
+      },
+      "esperado": []
+    },
+    {
+      "nombre": "proyecto: repositorio http",
+      "coleccion": "projects",
+      "base": "revista-cristian-atienza",
+      "poner": {
+        "repositoryUrl": "http://example.com"
+      },
+      "esperado": ["registro.repositoryUrl: URL https no válido: «http://example.com»"]
+    },
+    {
+      "nombre": "proyecto: portada inexistente",
+      "coleccion": "projects",
+      "base": "revista-cristian-atienza",
+      "poner": {
+        "cover": "no-existe"
+      },
+      "esperado": ["registro.cover: imagen inexistente «no-existe»"]
+    }
+  ]
+}

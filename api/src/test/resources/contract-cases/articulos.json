@@ -1,0 +1,1344 @@
+{
+  "descripcion": "Corpus compartido Java/TypeScript (fase 6.4.1). Cada caso parte de un artículo real (base), le quita y le pone campos y, si se indica, sustituye sus bloques o su cuerpo. readingMinutes se recalcula salvo que el caso lo fije. Las incidencias del artículo se normalizan: «articulo» por articles[i] y «cuerpo» por articles/<slug>.json. «esperado» es el resultado de los dos validadores; «esperadoTs», el de TypeScript cuando difiere (divergencia documentada).",
+  "casos": [
+    {
+      "nombre": "falta el título",
+      "base": "alicante-desde-el-puerto",
+      "quitar": ["title"],
+      "esperado": ["articulo.title: campo obligatorio"]
+    },
+    {
+      "nombre": "título vacío",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "title": ""
+      },
+      "esperado": ["articulo.title: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "título solo con espacios Unicode",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "title": "\u00a0\u3000\ufeff\u2028"
+      },
+      "esperado": ["articulo.title: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "título con U+0085 (no es espacio en JS)",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "title": "\u0085"
+      },
+      "esperado": []
+    },
+    {
+      "nombre": "título numérico",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "title": 5
+      },
+      "esperado": ["articulo.title: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "título null",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "title": null
+      },
+      "esperado": ["articulo.title: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "slug con mayúsculas",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "slug": "Alicante"
+      },
+      "esperado": [
+        "articulo.slug: slug no válido: «Alicante»",
+        "cuerpo.slug: slug no válido: «Alicante»"
+      ]
+    },
+    {
+      "nombre": "slug con guion doble",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "slug": "alicante--puerto"
+      },
+      "esperado": [
+        "articulo.slug: slug no válido: «alicante--puerto»",
+        "cuerpo.slug: slug no válido: «alicante--puerto»"
+      ]
+    },
+    {
+      "nombre": "slug con salto de línea final",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "slug": "alicante\n"
+      },
+      "esperado": [
+        "articulo.slug: slug no válido: «alicante\n»",
+        "cuerpo.slug: slug no válido: «alicante\n»"
+      ]
+    },
+    {
+      "nombre": "slug con tilde",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "slug": "alicánte"
+      },
+      "esperado": [
+        "articulo.slug: slug no válido: «alicánte»",
+        "cuerpo.slug: slug no válido: «alicánte»"
+      ]
+    },
+    {
+      "nombre": "slug largo: el mensaje se recorta a 60",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "slug": "AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFGGGGGGGGGG"
+      },
+      "esperado": [
+        "articulo.slug: slug no válido: «AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFF»",
+        "cuerpo.slug: slug no válido: «AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFF»"
+      ]
+    },
+    {
+      "nombre": "sección no permitida",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "category": "deportes"
+      },
+      "esperado": [
+        "articulo.category: valor no permitido: «deportes» (admitidos: viajes, fotografia, motor, experiencias, tecnologia)"
+      ]
+    },
+    {
+      "nombre": "sección numérica",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "category": 5
+      },
+      "esperado": [
+        "articulo.category: valor no permitido: «5» (admitidos: viajes, fotografia, motor, experiencias, tecnologia)"
+      ]
+    },
+    {
+      "nombre": "sección como lista",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "category": ["viajes", ["motor", null], 1.5]
+      },
+      "esperado": [
+        "articulo.category: valor no permitido: «viajes,motor,,1.5» (admitidos: viajes, fotografia, motor, experiencias, tecnologia)"
+      ]
+    },
+    {
+      "nombre": "sección como objeto",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "category": {
+          "id": "viajes"
+        }
+      },
+      "esperado": [
+        "articulo.category: valor no permitido: «[object Object]» (admitidos: viajes, fotografia, motor, experiencias, tecnologia)"
+      ]
+    },
+    {
+      "nombre": "sección null",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "category": null
+      },
+      "esperado": [
+        "articulo.category: valor no permitido: «null» (admitidos: viajes, fotografia, motor, experiencias, tecnologia)"
+      ]
+    },
+    {
+      "nombre": "etiquetas no son una lista",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "tags": "costa"
+      },
+      "esperado": ["articulo.tags: se esperaba una lista"]
+    },
+    {
+      "nombre": "etiqueta con slug no válido",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "tags": ["Costa", 7]
+      },
+      "esperado": [
+        "articulo.tags[0]: slug no válido: «Costa»",
+        "articulo.tags[1]: se esperaba un texto no vacío"
+      ]
+    },
+    {
+      "nombre": "etiqueta inexistente",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "tags": ["costa", "no-existe"]
+      },
+      "esperado": ["articulo.tags[1]: etiqueta inexistente «no-existe»"]
+    },
+    {
+      "nombre": "formato no permitido",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "format": "cronica"
+      },
+      "esperado": [
+        "articulo.format: valor no permitido: «cronica» (admitidos: reportaje, guia, ensayo-fotografico, ficha, nota)"
+      ]
+    },
+    {
+      "nombre": "portada inexistente",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "cover": "no-existe"
+      },
+      "esperado": ["articulo.cover: imagen inexistente «no-existe»"]
+    },
+    {
+      "nombre": "portada retirada",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "cover": "motor-moto-trail"
+      },
+      "esperado": ["articulo.cover: imagen retirada «motor-moto-trail»"]
+    },
+    {
+      "nombre": "autor inexistente",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "author": "otra-persona"
+      },
+      "esperado": ["articulo.author: autor inexistente «otra-persona»"]
+    },
+    {
+      "nombre": "orden cero",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "order": 0
+      },
+      "esperado": ["articulo.order: fuera de rango [1, Infinity]: 0"]
+    },
+    {
+      "nombre": "orden decimal",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "order": 1.5
+      },
+      "esperado": ["articulo.order: se esperaba un entero: 1.5"]
+    },
+    {
+      "nombre": "orden 1.0 es entero",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "order": 1.0
+      },
+      "esperado": []
+    },
+    {
+      "nombre": "orden como texto",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "order": "1"
+      },
+      "esperado": ["articulo.order: se esperaba un número"]
+    },
+    {
+      "nombre": "orden diminuto (formato exponencial)",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "order": 1.5e-7
+      },
+      "esperado": [
+        "articulo.order: se esperaba un entero: 1.5e-7",
+        "articulo.order: fuera de rango [1, Infinity]: 1.5e-7"
+      ]
+    },
+    {
+      "nombre": "orden que desborda a infinito",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "order": 1e400
+      },
+      "esperado": ["articulo.order: se esperaba un número"]
+    },
+    {
+      "nombre": "orden -0",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "order": -0
+      },
+      "esperado": ["articulo.order: fuera de rango [1, Infinity]: 0"]
+    },
+    {
+      "nombre": "orden entero enorme",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "order": 12345678901234567890
+      },
+      "esperado": []
+    },
+    {
+      "nombre": "fecha inexistente",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "publishedAt": "2024-02-30"
+      },
+      "esperado": ["articulo.publishedAt: fecha inexistente: «2024-02-30»"]
+    },
+    {
+      "nombre": "mes 13",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "publishedAt": "2024-13-01"
+      },
+      "esperado": ["articulo.publishedAt: fecha inexistente: «2024-13-01»"]
+    },
+    {
+      "nombre": "fecha con formato corto",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "publishedAt": "2024-1-01"
+      },
+      "esperado": ["articulo.publishedAt: fecha no válido: «2024-1-01»"]
+    },
+    {
+      "nombre": "fecha con salto de línea final",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "publishedAt": "2024-01-01\n"
+      },
+      "esperado": ["articulo.publishedAt: fecha no válido: «2024-01-01\n»"]
+    },
+    {
+      "nombre": "29 de febrero en año bisiesto",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "publishedAt": "2024-02-29"
+      },
+      "esperado": []
+    },
+    {
+      "nombre": "actualizado antes de publicarse",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "publishedAt": "2025-05-01",
+        "updatedAt": "2025-04-30"
+      },
+      "esperado": ["articulo.updatedAt: anterior a la publicación"]
+    },
+    {
+      "nombre": "minutos de lectura distintos de los calculados",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "readingMinutes": 99
+      },
+      "esperado": ["articulo.readingMinutes: 99, calculado 1"]
+    },
+    {
+      "nombre": "minutos de lectura cero",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "readingMinutes": 0
+      },
+      "esperado": ["articulo.readingMinutes: fuera de rango [1, Infinity]: 0"]
+    },
+    {
+      "nombre": "destacado como texto",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "featured": "true"
+      },
+      "esperado": ["articulo.featured: se esperaba true o false"]
+    },
+    {
+      "nombre": "demo null",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "demo": null
+      },
+      "esperado": ["articulo.demo: se esperaba true o false"]
+    },
+    {
+      "nombre": "itinerario inexistente",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "trip": "no-existe"
+      },
+      "esperado": ["articulo.trip: itinerario inexistente «no-existe»"]
+    },
+    {
+      "nombre": "destinos repetidos",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "destinations": ["alicante", "alicante"]
+      },
+      "esperado": ["articulo.destinations: destino repetido «alicante»"]
+    },
+    {
+      "nombre": "destino que repite una parada del itinerario",
+      "base": "itinerario-costa-brava",
+      "poner": {
+        "destinations": ["begur"]
+      },
+      "esperado": ["articulo.destinations: destino repetido «begur»"]
+    },
+    {
+      "nombre": "destino inexistente",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "destinations": ["atlantida"]
+      },
+      "esperado": ["articulo.destinations[0]: destino inexistente «atlantida»"]
+    },
+    {
+      "nombre": "proyecto inexistente",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "project": "otro-proyecto"
+      },
+      "esperado": ["articulo.project: proyecto inexistente «otro-proyecto»"]
+    },
+    {
+      "nombre": "seo vacío",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "seo": {}
+      },
+      "esperado": []
+    },
+    {
+      "nombre": "seo con descripción vacía",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "seo": {
+          "description": ""
+        }
+      },
+      "esperado": ["articulo.seo.description: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "seo con clave desconocida",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "seo": {
+          "title": "x"
+        }
+      },
+      "esperado": ["articulo.seo.title: campo desconocido"]
+    },
+    {
+      "nombre": "campo desconocido",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "titulo": "x"
+      },
+      "esperado": ["articulo.titulo: campo desconocido"]
+    },
+    {
+      "nombre": "orden de los campos desconocidos (índices primero)",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "2": 1,
+        "10": 1,
+        "z": 1,
+        "a": 1
+      },
+      "esperado": [
+        "articulo.2: campo desconocido",
+        "articulo.10: campo desconocido",
+        "articulo.z: campo desconocido",
+        "articulo.a: campo desconocido"
+      ]
+    },
+    {
+      "nombre": "clave __proto__",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "__proto__": {}
+      },
+      "divergencia": "TS: «key in fields» mira el prototipo de Object y no la marca como desconocida; Java la rechaza.",
+      "esperado": ["articulo.__proto__: campo desconocido"],
+      "esperadoTs": []
+    },
+    {
+      "nombre": "clave constructor",
+      "base": "alicante-desde-el-puerto",
+      "poner": {
+        "constructor": 1
+      },
+      "divergencia": "TS: «key in fields» mira el prototipo de Object y no la marca como desconocida; Java la rechaza.",
+      "esperado": ["articulo.constructor: campo desconocido"],
+      "esperadoTs": []
+    },
+    {
+      "nombre": "sin bloques",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [],
+      "esperado": ["cuerpo.blocks: se esperaban al menos 1 elementos"]
+    },
+    {
+      "nombre": "bloque que no es un objeto",
+      "base": "alicante-desde-el-puerto",
+      "bloques": ["texto"],
+      "esperado": ["cuerpo.blocks[0]: se esperaba un objeto"]
+    },
+    {
+      "nombre": "tipo de bloque desconocido",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "video"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].type: tipo desconocido: «video»"]
+    },
+    {
+      "nombre": "bloque sin tipo",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "html": "<p>Hola</p>"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].type: tipo desconocido: «undefined»"]
+    },
+    {
+      "nombre": "tipo de bloque numérico",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": 5
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].type: tipo desconocido: «5»"]
+    },
+    {
+      "nombre": "tipo de bloque constructor",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "constructor"
+        }
+      ],
+      "divergencia": "TS: variants[«constructor»] es Object (del prototipo) y el bloque pasa sin comprobarse; Java lo rechaza. PostgreSQL también lo rechaza (article_blocks_valid).",
+      "esperado": ["cuerpo.blocks[0].type: tipo desconocido: «constructor»"],
+      "esperadoTs": []
+    },
+    {
+      "nombre": "texto con HTML vacío",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": ""
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].html: se esperaba un texto no vacío"]
+    },
+    {
+      "nombre": "texto con atributo de evento",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p onclick=\"alert(1)\">Hola</p>"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].html: atributos no permitidos en <p>: onclick=\"alert(1)\""]
+    },
+    {
+      "nombre": "texto con enlace javascript",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p><a href=\"javascript:alert(1)\">x</a></p>"
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0].html: atributos no permitidos en <a>: href=\"javascript:alert(1)\""
+      ]
+    },
+    {
+      "nombre": "texto con campo desconocido",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>Hola</p>",
+          "class": "x"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].class: campo desconocido"]
+    },
+    {
+      "nombre": "texto con clave constructor",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p>Hola</p>",
+          "constructor": "x"
+        }
+      ],
+      "divergencia": "TS: «key in fields» mira el prototipo de Object y no la marca como desconocida; Java la rechaza.",
+      "esperado": ["cuerpo.blocks[0].constructor: campo desconocido"],
+      "esperadoTs": []
+    },
+    {
+      "nombre": "imagen con disposición no permitida",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "image",
+          "media": "viajes-alicante-panorama",
+          "layout": "huge"
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0].layout: valor no permitido: «huge» (admitidos: content, wide, full)"
+      ]
+    },
+    {
+      "nombre": "imagen a sangre alineada",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "image",
+          "media": "viajes-alicante-panorama",
+          "layout": "full",
+          "align": "start"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].align: una imagen a sangre (full) no se alinea a un margen"]
+    },
+    {
+      "nombre": "imagen a sangre con align null",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "image",
+          "media": "viajes-alicante-panorama",
+          "layout": "full",
+          "align": null
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0].align: valor no permitido: «null» (admitidos: start, end)",
+        "cuerpo.blocks[0].align: una imagen a sangre (full) no se alinea a un margen"
+      ]
+    },
+    {
+      "nombre": "imagen con proporción no permitida",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "image",
+          "media": "viajes-alicante-panorama",
+          "layout": "content",
+          "ratio": "2/1"
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0].ratio: valor no permitido: «2/1» (admitidos: 4/5, 1/1, 3/2, 16/9, 21/9)"
+      ]
+    },
+    {
+      "nombre": "imagen con punto focal fuera de rango",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "image",
+          "media": "viajes-alicante-panorama",
+          "layout": "content",
+          "focal": {
+            "x": 1.5,
+            "y": -0.1
+          }
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0].focal.x: fuera de rango [0, 1]: 1.5",
+        "cuerpo.blocks[0].focal.y: fuera de rango [0, 1]: -0.1"
+      ]
+    },
+    {
+      "nombre": "imagen inexistente",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "image",
+          "media": "no-existe",
+          "layout": "content"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: imagen inexistente «no-existe»"]
+    },
+    {
+      "nombre": "imagen retirada",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "image",
+          "media": "motor-moto-trail",
+          "layout": "content"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: imagen retirada «motor-moto-trail»"]
+    },
+    {
+      "nombre": "díptico con tres fotos",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "figures",
+          "layout": "diptych",
+          "items": [
+            {
+              "media": "viajes-alicante-panorama"
+            },
+            {
+              "media": "viajes-calella-banyera"
+            },
+            {
+              "media": "viajes-tossa-vila-vella"
+            }
+          ]
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].items: diptych: 2 fotografías, no 3"]
+    },
+    {
+      "nombre": "tríptico con dos fotos",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "figures",
+          "layout": "triptych",
+          "items": [
+            {
+              "media": "viajes-alicante-panorama"
+            },
+            {
+              "media": "viajes-calella-banyera"
+            }
+          ]
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].items: triptych: 3 fotografías, no 2"]
+    },
+    {
+      "nombre": "secuencia con cuatro fotos",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "figures",
+          "layout": "sequence",
+          "items": [
+            {
+              "media": "viajes-alicante-panorama"
+            },
+            {
+              "media": "viajes-calella-banyera"
+            },
+            {
+              "media": "viajes-tossa-vila-vella"
+            },
+            {
+              "media": "viajes-cadaques-bahia"
+            }
+          ]
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].items: sequence: entre 2 y 3 fotografías, no 4"]
+    },
+    {
+      "nombre": "secuencia con una foto",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "figures",
+          "layout": "sequence",
+          "items": [
+            {
+              "media": "viajes-alicante-panorama"
+            }
+          ]
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0].items: se esperaban al menos 2 elementos",
+        "cuerpo.blocks[0].items: sequence: entre 2 y 3 fotografías, no 1"
+      ]
+    },
+    {
+      "nombre": "composición con disposición en lista (JS la convierte con String)",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "figures",
+          "layout": ["diptych"],
+          "items": [
+            {
+              "media": "viajes-alicante-panorama"
+            },
+            {
+              "media": "viajes-calella-banyera"
+            },
+            {
+              "media": "viajes-tossa-vila-vella"
+            }
+          ]
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0].layout: valor no permitido: «diptych» (admitidos: diptych, triptych, sequence)",
+        "cuerpo.blocks[0].items: diptych: 2 fotografías, no 3"
+      ]
+    },
+    {
+      "nombre": "composición con disposición constructor",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "figures",
+          "layout": "constructor",
+          "items": [
+            {
+              "media": "viajes-alicante-panorama"
+            },
+            {
+              "media": "viajes-calella-banyera"
+            }
+          ]
+        }
+      ],
+      "divergencia": "TS: FIGURES_COUNT[«constructor»] es la función Object y la desestructuración lanza una excepción (la puerta fallaría con un error, no con incidencias); Java da la incidencia del valor no permitido.",
+      "esperado": [
+        "cuerpo.blocks[0].layout: valor no permitido: «constructor» (admitidos: diptych, triptych, sequence)"
+      ],
+      "esperadoTs": ["excepción TypeError"]
+    },
+    {
+      "nombre": "foto de composición inexistente",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "figures",
+          "layout": "diptych",
+          "items": [
+            {
+              "media": "viajes-alicante-panorama"
+            },
+            {
+              "media": "no-existe"
+            }
+          ]
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].items[1]: imagen inexistente «no-existe»"]
+    },
+    {
+      "nombre": "galería inexistente",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "gallery",
+          "gallery": "no-existe"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: galería inexistente «no-existe»"]
+    },
+    {
+      "nombre": "cita con variante no permitida",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "quote",
+          "text": "Una cita",
+          "variant": "big"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].variant: valor no permitido: «big» (admitidos: pull, block)"]
+    },
+    {
+      "nombre": "mapa con itinerario y destinos",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "map",
+          "trip": "costa-brava",
+          "destinations": ["alicante"],
+          "route": true
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0]: el mapa necesita un itinerario (trip) o una lista de destinos, no ambos"
+      ]
+    },
+    {
+      "nombre": "mapa sin itinerario ni destinos",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "map",
+          "route": true
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0]: el mapa necesita un itinerario (trip) o una lista de destinos, no ambos"
+      ]
+    },
+    {
+      "nombre": "mapa con lista de destinos vacía",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "map",
+          "destinations": [],
+          "route": false
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].destinations: se esperaban al menos 1 elementos"]
+    },
+    {
+      "nombre": "mapa con itinerario inexistente",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "map",
+          "trip": "no-existe",
+          "route": true
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: itinerario inexistente «no-existe»"]
+    },
+    {
+      "nombre": "mapa con destino inexistente",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "map",
+          "destinations": ["alicante", "atlantida"],
+          "route": false
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: destino inexistente «atlantida»"]
+    },
+    {
+      "nombre": "código con lenguaje en mayúsculas",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "code",
+          "language": "Java",
+          "code": "int x = 1;"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].language: lenguaje no válido: «Java»"]
+    },
+    {
+      "nombre": "ficha sin elementos",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "specs",
+          "items": []
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].items: se esperaban al menos 1 elementos"]
+    },
+    {
+      "nombre": "capítulo con id reservado",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "contenido",
+          "title": "Uno"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: id reservado «contenido»"]
+    },
+    {
+      "nombre": "capítulo con el prefijo de las fichas",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "datos-motor",
+          "title": "Uno"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: el prefijo «datos-» es de las fichas («datos-motor»)"]
+    },
+    {
+      "nombre": "capítulos repetidos",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "uno",
+          "title": "Uno"
+        },
+        {
+          "type": "chapter",
+          "id": "uno",
+          "title": "Otra vez"
+        }
+      ],
+      "esperado": ["cuerpo: capítulo repetido «uno»"]
+    },
+    {
+      "nombre": "capítulo con un destino ajeno al artículo",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "uno",
+          "title": "Uno",
+          "destination": "lisboa"
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0].destination: «lisboa» no es una parada ni un destino del artículo"
+      ]
+    },
+    {
+      "nombre": "capítulo con un destino inexistente",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "uno",
+          "title": "Uno",
+          "destination": "atlantida"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].destination: destino inexistente «atlantida»"]
+    },
+    {
+      "nombre": "dos capítulos con el mismo destino",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "uno",
+          "title": "Uno",
+          "destination": "alicante"
+        },
+        {
+          "type": "chapter",
+          "id": "dos",
+          "title": "Dos",
+          "destination": "alicante"
+        }
+      ],
+      "esperado": ["cuerpo: dos capítulos tratan el destino «alicante»"]
+    },
+    {
+      "nombre": "capítulo con número cero",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "uno",
+          "number": 0,
+          "title": "Uno"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0].number: fuera de rango [1, Infinity]: 0"]
+    },
+    {
+      "nombre": "ancla a un capítulo inexistente",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p><a href=\"#no-existe\">ver</a></p>"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: ancla a un capítulo inexistente «#no-existe»"]
+    },
+    {
+      "nombre": "ancla a un capítulo del artículo",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "puerto",
+          "title": "El puerto"
+        },
+        {
+          "type": "text",
+          "html": "<p><a href=\"#puerto\">ver</a></p>"
+        }
+      ],
+      "esperado": []
+    },
+    {
+      "nombre": "enlace a un artículo inexistente",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p><a href=\"/viajes/no-existe\">ver</a></p>"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: enlace a un artículo inexistente «/viajes/no-existe»"]
+    },
+    {
+      "nombre": "enlace a un artículo de otra sección",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p><a href=\"/motor/calas-de-mallorca\">ver</a></p>"
+        }
+      ],
+      "esperado": ["cuerpo.blocks[0]: enlace a un artículo inexistente «/motor/calas-de-mallorca»"]
+    },
+    {
+      "nombre": "enlace válido con ancla",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p><a href=\"/viajes/calas-de-mallorca/#cuando-ir\">ver</a></p>"
+        }
+      ],
+      "esperado": []
+    },
+    {
+      "nombre": "enlace al propio artículo",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p><a href=\"/viajes/alicante-desde-el-puerto\">ver</a></p>"
+        }
+      ],
+      "esperado": []
+    },
+    {
+      "nombre": "enlace a una página que no es un artículo",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p><a href=\"/sobre-mi\">ver</a></p>"
+        }
+      ],
+      "esperado": []
+    },
+    {
+      "nombre": "enlace con U+0085 tras el ancla",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<p><a href=\"/viajes/no-existe#a\u0085b\">ver</a></p>"
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0]: enlace a un artículo inexistente «/viajes/no-existe#a\u0085b»"
+      ]
+    },
+    {
+      "nombre": "divisor con variante no permitida",
+      "base": "alicante-desde-el-puerto",
+      "bloques": [
+        {
+          "type": "divider",
+          "variant": "zigzag"
+        }
+      ],
+      "esperado": [
+        "cuerpo.blocks[0].variant: valor no permitido: «zigzag» (admitidos: line, ornament, pause)"
+      ]
+    },
+    {
+      "nombre": "cuerpo con otro slug",
+      "base": "alicante-desde-el-puerto",
+      "cuerpo": {
+        "slug": "otro-slug",
+        "blocks": [
+          {
+            "type": "text",
+            "html": "<p>Hola</p>"
+          }
+        ]
+      },
+      "esperado": ["cuerpo: slug «otro-slug» distinto"]
+    },
+    {
+      "nombre": "cuerpo sin bloques",
+      "base": "alicante-desde-el-puerto",
+      "cuerpo": {
+        "slug": "alicante-desde-el-puerto"
+      },
+      "esperado": ["cuerpo.blocks: campo obligatorio"]
+    },
+    {
+      "nombre": "cuerpo que no es un objeto",
+      "base": "alicante-desde-el-puerto",
+      "cuerpo": [],
+      "esperado": ["cuerpo: se esperaba un objeto"]
+    },
+    {
+      "nombre": "varios errores de forma en artículo y cuerpo",
+      "base": "calas-de-mallorca",
+      "quitar": ["dek"],
+      "poner": {
+        "format": "otro",
+        "tags": []
+      },
+      "bloques": [
+        {
+          "type": "text",
+          "html": "<b>x</b>"
+        },
+        {
+          "type": "quote",
+          "text": " ",
+          "variant": "pull",
+          "cite": ""
+        }
+      ],
+      "esperado": [
+        "articulo.dek: campo obligatorio",
+        "articulo.format: valor no permitido: «otro» (admitidos: reportaje, guia, ensayo-fotografico, ficha, nota)",
+        "cuerpo.blocks[0].html: etiqueta no permitida: <b>",
+        "cuerpo.blocks[0].html: etiqueta no permitida: <b>",
+        "cuerpo.blocks[1].text: se esperaba un texto no vacío",
+        "cuerpo.blocks[1].cite: se esperaba un texto no vacío"
+      ]
+    },
+    {
+      "nombre": "varias incidencias de integridad",
+      "base": "calas-de-mallorca",
+      "poner": {
+        "tags": ["no-existe"],
+        "cover": "tecnologia-teclado"
+      },
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "uno",
+          "title": "Uno",
+          "destination": "lisboa"
+        },
+        {
+          "type": "image",
+          "media": "motor-moto-cuadro",
+          "layout": "wide"
+        },
+        {
+          "type": "text",
+          "html": "<p><a href=\"#dos\">a</a> <a href=\"/viajes/nada\">b</a></p>"
+        }
+      ],
+      "esperado": [
+        "articulo.tags[0]: etiqueta inexistente «no-existe»",
+        "articulo.cover: imagen retirada «tecnologia-teclado»",
+        "cuerpo.blocks[0].destination: «lisboa» no es una parada ni un destino del artículo",
+        "cuerpo.blocks[1]: imagen retirada «motor-moto-cuadro»",
+        "cuerpo.blocks[2]: ancla a un capítulo inexistente «#dos»",
+        "cuerpo.blocks[2]: enlace a un artículo inexistente «/viajes/nada»"
+      ]
+    },
+    {
+      "nombre": "bloques válidos de todos los tipos",
+      "base": "itinerario-costa-brava",
+      "bloques": [
+        {
+          "type": "chapter",
+          "id": "inicio",
+          "number": 1,
+          "title": "Inicio",
+          "kicker": "Primera parada",
+          "destination": "begur"
+        },
+        {
+          "type": "text",
+          "html": "<p>Texto con <em>énfasis</em>, <strong>fuerza</strong>, <code>código</code> y <a href=\"#inicio\">un ancla</a>.</p><ul><li>uno</li></ul><br/><br />"
+        },
+        {
+          "type": "image",
+          "media": "viajes-cadaques-bahia",
+          "layout": "wide",
+          "caption": "Pie",
+          "ratio": "3/2",
+          "align": "end",
+          "focal": {
+            "x": 0.5,
+            "y": 0
+          }
+        },
+        {
+          "type": "figures",
+          "layout": "sequence",
+          "items": [
+            {
+              "media": "viajes-calella-banyera",
+              "ratio": "4/5",
+              "focal": {
+                "x": 1,
+                "y": 1
+              },
+              "caption": "a"
+            },
+            {
+              "media": "viajes-tossa-vila-vella"
+            }
+          ]
+        },
+        {
+          "type": "gallery",
+          "gallery": "mediterraneo"
+        },
+        {
+          "type": "quote",
+          "text": "Cita",
+          "cite": "Autor",
+          "variant": "block"
+        },
+        {
+          "type": "map",
+          "trip": "costa-brava",
+          "route": true,
+          "caption": "Ruta"
+        },
+        {
+          "type": "code",
+          "language": "c++",
+          "code": "int main() {}",
+          "filename": "a.cpp",
+          "caption": "Ejemplo"
+        },
+        {
+          "type": "specs",
+          "title": "Datos",
+          "items": [
+            {
+              "label": "Distancia",
+              "value": "120",
+              "unit": "km"
+            }
+          ],
+          "note": "Aprox."
+        },
+        {
+          "type": "divider",
+          "variant": "ornament"
+        }
+      ],
+      "esperado": []
+    }
+  ]
+}

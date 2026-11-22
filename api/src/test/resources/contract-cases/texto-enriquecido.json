@@ -1,0 +1,632 @@
+{
+  "descripcion": "Corpus compartido Java/TypeScript del texto enriquecido (fase 6.4.1): htmlIssues e isAllowedHref de src/app/content/rich-text.ts frente a RichTextPolicy. «esperado» son las incidencias exactas (html) o si el destino se admite (enlaces).",
+  "html": [
+    {
+      "nombre": "párrafo simple",
+      "html": "<p>Hola</p>",
+      "esperado": []
+    },
+    {
+      "nombre": "todas las etiquetas admitidas",
+      "html": "<h3>T</h3><p><em>a</em> <strong>b</strong> <code>c</code></p><ul><li>x</li></ul><ol><li>y</li></ol>",
+      "esperado": []
+    },
+    {
+      "nombre": "saltos de línea canónicos",
+      "html": "<p>a<br>b<br/>c<br />d</p>",
+      "esperado": []
+    },
+    {
+      "nombre": "salto con dos espacios",
+      "html": "<p>a<br  />b</p>",
+      "esperado": ["formato no admitido: <br  /> (se espera <br>)"]
+    },
+    {
+      "nombre": "texto sin etiquetas",
+      "html": "solo texto",
+      "esperado": []
+    },
+    {
+      "nombre": "entidades escapadas",
+      "html": "<p>&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;</p>",
+      "esperado": []
+    },
+    {
+      "nombre": "script",
+      "html": "<script>alert(1)</script>",
+      "esperado": ["etiqueta no permitida: <script>", "etiqueta no permitida: <script>"]
+    },
+    {
+      "nombre": "script en mayúsculas",
+      "html": "<SCRIPT>alert(1)</SCRIPT>",
+      "esperado": ["etiqueta no permitida: <script>", "etiqueta no permitida: <script>"]
+    },
+    {
+      "nombre": "style",
+      "html": "<style>p{color:red}</style>",
+      "esperado": ["etiqueta no permitida: <style>", "etiqueta no permitida: <style>"]
+    },
+    {
+      "nombre": "img con onerror",
+      "html": "<img src=x onerror=alert(1)>",
+      "esperado": ["etiqueta no permitida: <img>"]
+    },
+    {
+      "nombre": "svg con onload",
+      "html": "<svg onload=alert(1)>",
+      "esperado": ["etiqueta no permitida: <svg>"]
+    },
+    {
+      "nombre": "iframe",
+      "html": "<iframe src=\"https://evil.example\"></iframe>",
+      "esperado": ["etiqueta no permitida: <iframe>", "etiqueta no permitida: <iframe>"]
+    },
+    {
+      "nombre": "object y embed",
+      "html": "<object data=\"x\"></object><embed src=\"x\">",
+      "esperado": [
+        "etiqueta no permitida: <object>",
+        "etiqueta no permitida: <object>",
+        "etiqueta no permitida: <embed>"
+      ]
+    },
+    {
+      "nombre": "math y template",
+      "html": "<math><mi>x</mi></math><template><p>x</p></template>",
+      "esperado": [
+        "etiqueta no permitida: <math>",
+        "etiqueta no permitida: <mi>",
+        "etiqueta no permitida: <mi>",
+        "etiqueta no permitida: <math>",
+        "etiqueta no permitida: <template>",
+        "etiqueta no permitida: <template>"
+      ]
+    },
+    {
+      "nombre": "comentario HTML",
+      "html": "<!-- comentario --><p>x</p>",
+      "esperado": ["carácter < suelto"]
+    },
+    {
+      "nombre": "doctype",
+      "html": "<!doctype html><p>x</p>",
+      "esperado": ["carácter < suelto"]
+    },
+    {
+      "nombre": "CDATA",
+      "html": "<![CDATA[<script>x</script>]]>",
+      "esperado": [
+        "etiqueta no permitida: <script>",
+        "etiqueta no permitida: <script>",
+        "carácter < suelto"
+      ]
+    },
+    {
+      "nombre": "instrucción de procesamiento",
+      "html": "<?xml version=\"1.0\"?><p>x</p>",
+      "esperado": ["carácter < suelto"]
+    },
+    {
+      "nombre": "etiqueta en mayúsculas admitida",
+      "html": "<P>x</P>",
+      "esperado": [
+        "formato no admitido: <P> (se espera <p>)",
+        "formato no admitido: </P> (se espera </p>)"
+      ]
+    },
+    {
+      "nombre": "etiqueta con espacio final",
+      "html": "<p >x</p >",
+      "esperado": [
+        "formato no admitido: <p > (se espera <p>)",
+        "formato no admitido: </p > (se espera </p>)"
+      ]
+    },
+    {
+      "nombre": "espacio antes del nombre",
+      "html": "< p>x</p>",
+      "esperado": ["carácter < suelto"]
+    },
+    {
+      "nombre": "etiqueta autocerrada",
+      "html": "<p/>",
+      "esperado": ["formato no admitido: <p/> (se espera <p>)"]
+    },
+    {
+      "nombre": "h2 no admitida",
+      "html": "<h2>x</h2>",
+      "esperado": ["etiqueta no permitida: <h2>", "etiqueta no permitida: <h2>"]
+    },
+    {
+      "nombre": "b no admitida",
+      "html": "<b>x</b>",
+      "esperado": ["etiqueta no permitida: <b>", "etiqueta no permitida: <b>"]
+    },
+    {
+      "nombre": "span con estilo",
+      "html": "<span style=\"color:red\">x</span>",
+      "esperado": ["etiqueta no permitida: <span>", "etiqueta no permitida: <span>"]
+    },
+    {
+      "nombre": "párrafo con class",
+      "html": "<p class=\"x\">x</p>",
+      "esperado": ["atributos no permitidos en <p>: class=\"x\""]
+    },
+    {
+      "nombre": "párrafo con onclick",
+      "html": "<p onclick=\"alert(1)\">x</p>",
+      "esperado": ["atributos no permitidos en <p>: onclick=\"alert(1)\""]
+    },
+    {
+      "nombre": "atributo en el cierre",
+      "html": "<p>x</p class=\"x\">",
+      "esperado": ["formato no admitido: </p class=\"x\"> (se espera </p>)"]
+    },
+    {
+      "nombre": "atributo con salto de línea",
+      "html": "<p\nclass=\"x\">x</p>",
+      "esperado": ["atributos no permitidos en <p>: class=\"x\""]
+    },
+    {
+      "nombre": "atributo tras salto con tabulador",
+      "html": "<p\tonmouseover=\"x\">x</p>",
+      "esperado": ["atributos no permitidos en <p>: onmouseover=\"x\""]
+    },
+    {
+      "nombre": "br con atributo",
+      "html": "<br clear=\"all\">",
+      "esperado": ["atributos no permitidos en <br>: clear=\"all\""]
+    },
+    {
+      "nombre": "enlace interno",
+      "html": "<p><a href=\"/viajes/calas\">x</a></p>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace a un ancla",
+      "html": "<p><a href=\"#capitulo\">x</a></p>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace https",
+      "html": "<p><a href=\"https://example.com/a?b=1#c\">x</a></p>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace http",
+      "html": "<p><a href=\"http://example.com\">x</a></p>",
+      "esperado": ["atributos no permitidos en <a>: href=\"http://example.com\""]
+    },
+    {
+      "nombre": "enlace javascript",
+      "html": "<a href=\"javascript:alert(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"javascript:alert(1)\""]
+    },
+    {
+      "nombre": "enlace JavaScript con mayúsculas",
+      "html": "<a href=\"JaVaScRiPt:alert(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"JaVaScRiPt:alert(1)\""]
+    },
+    {
+      "nombre": "enlace javascript con espacio inicial",
+      "html": "<a href=\" javascript:alert(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\" javascript:alert(1)\""]
+    },
+    {
+      "nombre": "enlace javascript con tabulador",
+      "html": "<a href=\"java\tscript:alert(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"java\tscript:alert(1)\""]
+    },
+    {
+      "nombre": "enlace javascript con entidad decimal",
+      "html": "<a href=\"&#106;avascript:alert(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"&#106;avascript:alert(1)\""]
+    },
+    {
+      "nombre": "enlace javascript con entidad hexadecimal",
+      "html": "<a href=\"java&#x09;script:alert(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"java&#x09;script:alert(1)\""]
+    },
+    {
+      "nombre": "enlace javascript con &colon;",
+      "html": "<a href=\"javascript&colon;alert(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"javascript&colon;alert(1)\""]
+    },
+    {
+      "nombre": "enlace javascript codificado con %",
+      "html": "<a href=\"%6Aavascript:alert(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"%6Aavascript:alert(1)\""]
+    },
+    {
+      "nombre": "enlace data",
+      "html": "<a href=\"data:text/html;base64,PHNjcmlwdD4=\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"data:text/html;base64,PHNjcmlwdD4=\""]
+    },
+    {
+      "nombre": "enlace vbscript",
+      "html": "<a href=\"vbscript:msgbox(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"vbscript:msgbox(1)\""]
+    },
+    {
+      "nombre": "enlace mailto",
+      "html": "<a href=\"mailto:a@b.c\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"mailto:a@b.c\""]
+    },
+    {
+      "nombre": "enlace relativo al protocolo",
+      "html": "<a href=\"//evil.example\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"//evil.example\""]
+    },
+    {
+      "nombre": "enlace con barra invertida",
+      "html": "<a href=\"/\\evil.example\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"/\\evil.example\""]
+    },
+    {
+      "nombre": "enlace https con barra invertida",
+      "html": "<a href=\"https:\\\\evil.example\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"https:\\\\evil.example\""]
+    },
+    {
+      "nombre": "enlace https con espacio",
+      "html": "<a href=\"https://exa mple.com\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"https://exa mple.com\""]
+    },
+    {
+      "nombre": "enlace con comillas simples",
+      "html": "<a href='/viajes'>x</a>",
+      "esperado": ["atributos no permitidos en <a>: href='/viajes'"]
+    },
+    {
+      "nombre": "enlace sin comillas",
+      "html": "<a href=/viajes>x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=/viajes"]
+    },
+    {
+      "nombre": "enlace con dos espacios",
+      "html": "<a  href=\"/viajes\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"/viajes\""]
+    },
+    {
+      "nombre": "enlace con espacio final",
+      "html": "<a href=\"/viajes\" >x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"/viajes\""]
+    },
+    {
+      "nombre": "enlace en mayúsculas",
+      "html": "<A HREF=\"/viajes\">x</A>",
+      "esperado": [
+        "atributos no permitidos en <a>: HREF=\"/viajes\"",
+        "formato no admitido: </A> (se espera </a>)"
+      ]
+    },
+    {
+      "nombre": "enlace con onclick",
+      "html": "<a href=\"/viajes\" onclick=\"alert(1)\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"/viajes\" onclick=\"alert(1)\""]
+    },
+    {
+      "nombre": "enlace con target",
+      "html": "<a href=\"https://example.com\" target=\"_blank\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"https://example.com\" target=\"_blank\""]
+    },
+    {
+      "nombre": "enlace con title antes de href",
+      "html": "<a title=\"t\" href=\"/viajes\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: title=\"t\" href=\"/viajes\""]
+    },
+    {
+      "nombre": "enlace sin href",
+      "html": "<a>x</a>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace vacío",
+      "html": "<a href=\"\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"\""]
+    },
+    {
+      "nombre": "enlaces anidados",
+      "html": "<a href=\"/a\">x<a href=\"/b\">y</a></a>",
+      "esperado": ["enlace dentro de otro enlace"]
+    },
+    {
+      "nombre": "dos enlaces seguidos",
+      "html": "<a href=\"/a\">x</a> <a href=\"/b\">y</a>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace con comilla escapada",
+      "html": "<a href=\"https://example.com/&quot;onmouseover=alert(1)\">x</a>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace con salto de línea",
+      "html": "<a href=\"/viajes\nx\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"/viajes\nx\""]
+    },
+    {
+      "nombre": "enlace con U+2028",
+      "html": "<a href=\"/viajes\u2028x\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"/viajes\u2028x\""]
+    },
+    {
+      "nombre": "enlace con NBSP",
+      "html": "<a href=\"/viajes\u00a0x\">x</a>",
+      "esperado": ["atributos no permitidos en <a>: href=\"/viajes\u00a0x\""]
+    },
+    {
+      "nombre": "enlace con U+0085",
+      "html": "<a href=\"/viajes\u0085x\">x</a>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace con carácter de control",
+      "html": "<a href=\"/viajes\u0001x\">x</a>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace con barras codificadas",
+      "html": "<a href=\"/%2F%2Fevil.example\">x</a>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace con barra invertida codificada",
+      "html": "<a href=\"/%5Cevil.example\">x</a>",
+      "esperado": []
+    },
+    {
+      "nombre": "enlace con ruta y consulta",
+      "html": "<a href=\"/viajes/../motor?x=1#y\">x</a>",
+      "esperado": []
+    },
+    {
+      "nombre": "menor suelto",
+      "html": "<p>a < b</p>",
+      "esperado": ["carácter < suelto"]
+    },
+    {
+      "nombre": "menor al final",
+      "html": "<p>a</p><",
+      "esperado": ["carácter < suelto"]
+    },
+    {
+      "nombre": "dos menores",
+      "html": "<<p>x</p>",
+      "esperado": ["carácter < suelto"]
+    },
+    {
+      "nombre": "etiqueta sin cerrar",
+      "html": "<p>x</p><p",
+      "esperado": ["carácter < suelto"]
+    },
+    {
+      "nombre": "mayor suelto",
+      "html": "<p>a > b</p>",
+      "esperado": []
+    },
+    {
+      "nombre": "nombre con dígito inicial",
+      "html": "<1p>x</1p>",
+      "esperado": ["carácter < suelto", "carácter < suelto"]
+    },
+    {
+      "nombre": "nombre con guion",
+      "html": "<my-element>x</my-element>",
+      "esperado": ["etiqueta no permitida: <my-element>", "etiqueta no permitida: <my-element>"]
+    },
+    {
+      "nombre": "etiqueta vacía",
+      "html": "<>x</>",
+      "esperado": ["carácter < suelto", "carácter < suelto"]
+    },
+    {
+      "nombre": "letra no ASCII en el nombre",
+      "html": "<ṗ>x</ṗ>",
+      "esperado": ["carácter < suelto", "carácter < suelto"]
+    },
+    {
+      "nombre": "html vacío",
+      "html": "",
+      "esperado": []
+    }
+  ],
+  "enlaces": [
+    {
+      "href": "/",
+      "esperado": true
+    },
+    {
+      "href": "/viajes",
+      "esperado": true
+    },
+    {
+      "href": "/viajes/calas-de-mallorca/",
+      "esperado": true
+    },
+    {
+      "href": "/viajes?x=1#y",
+      "esperado": true
+    },
+    {
+      "href": "/%2F%2Fevil.example",
+      "esperado": true
+    },
+    {
+      "href": "/%5Cevil.example",
+      "esperado": true
+    },
+    {
+      "href": "/..",
+      "esperado": true
+    },
+    {
+      "href": "/./evil.example",
+      "esperado": true
+    },
+    {
+      "href": "//evil.example",
+      "esperado": false
+    },
+    {
+      "href": "///evil.example",
+      "esperado": false
+    },
+    {
+      "href": "/\\evil.example",
+      "esperado": false
+    },
+    {
+      "href": "\\\\evil.example",
+      "esperado": false
+    },
+    {
+      "href": "/ evil",
+      "esperado": false
+    },
+    {
+      "href": "/\tevil",
+      "esperado": false
+    },
+    {
+      "href": "/\nevil",
+      "esperado": false
+    },
+    {
+      "href": "/\u2028evil",
+      "esperado": false
+    },
+    {
+      "href": "/\u00a0evil",
+      "esperado": false
+    },
+    {
+      "href": "/\ufeffevil",
+      "esperado": false
+    },
+    {
+      "href": "/\u0085evil",
+      "esperado": true
+    },
+    {
+      "href": "/\u0000evil",
+      "esperado": true
+    },
+    {
+      "href": "/\u001fevil",
+      "esperado": true
+    },
+    {
+      "href": "/\u007fevil",
+      "esperado": true
+    },
+    {
+      "href": "/évil",
+      "esperado": true
+    },
+    {
+      "href": "/😀",
+      "esperado": true
+    },
+    {
+      "href": "/a\"b",
+      "esperado": false
+    },
+    {
+      "href": "/a<b",
+      "esperado": false
+    },
+    {
+      "href": "/a>b",
+      "esperado": false
+    },
+    {
+      "href": "",
+      "esperado": false
+    },
+    {
+      "href": "#",
+      "esperado": false
+    },
+    {
+      "href": "#capitulo",
+      "esperado": true
+    },
+    {
+      "href": "#Capitulo",
+      "esperado": false
+    },
+    {
+      "href": "#capitulo-2",
+      "esperado": true
+    },
+    {
+      "href": "#capítulo",
+      "esperado": false
+    },
+    {
+      "href": "#a b",
+      "esperado": false
+    },
+    {
+      "href": "https://example.com",
+      "esperado": true
+    },
+    {
+      "href": "https://",
+      "esperado": false
+    },
+    {
+      "href": "HTTPS://example.com",
+      "esperado": false
+    },
+    {
+      "href": "https://example.com/\\x",
+      "esperado": false
+    },
+    {
+      "href": "https://example.com/ x",
+      "esperado": false
+    },
+    {
+      "href": "https://example.com/'x",
+      "esperado": true
+    },
+    {
+      "href": "http://example.com",
+      "esperado": false
+    },
+    {
+      "href": "javascript:alert(1)",
+      "esperado": false
+    },
+    {
+      "href": "data:text/html,x",
+      "esperado": false
+    },
+    {
+      "href": "mailto:a@b.c",
+      "esperado": false
+    },
+    {
+      "href": "tel:+34600000000",
+      "esperado": false
+    },
+    {
+      "href": "viajes",
+      "esperado": false
+    },
+    {
+      "href": "?x=1",
+      "esperado": false
+    },
+    {
+      "href": " /viajes",
+      "esperado": false
+    },
+    {
+      "href": "/viajes ",
+      "esperado": false
+    }
+  ]
+}
