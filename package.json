@@ -13,6 +13,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr": "node dist/cristian-atienza/server/server.mjs",
+    "build:snapshot": "ng build --configuration production,snapshot",
+    "serve:snapshot": "node dist/cristian-atienza-instantaneas/server/server.mjs",
     "lint": "ng lint",
     "lint:styles": "stylelint \"src/**/*.scss\" --allow-empty-input",
     "format": "prettier --write .",

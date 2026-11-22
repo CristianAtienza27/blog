@@ -1,11 +1,11 @@
-import {
-  AngularNodeAppEngine,
-  createNodeRequestHandler,
-  isMainModule,
-  writeResponseToNodeResponse,
-} from '@angular/ssr/node';
+import { AngularNodeAppEngine, createNodeRequestHandler, isMainModule } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import {
+  handleRender,
+  prepareContent,
+  registerContentRoutes,
+} from './app/content/content-mode.server';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -25,6 +25,12 @@ const angularApp = new AngularNodeAppEngine();
  */
 
 /**
+ * Contenido de las instantáneas (/content/) y salud, solo en el build de instantáneas (fases 6.3.2
+ * y 6.3.3). En el build normal no registra nada.
+ */
+registerContentRoutes(app);
+
+/**
  * Serve static files from /browser
  */
 app.use(
@@ -37,12 +43,10 @@ app.use(
 
 /**
  * Handle all other requests by rendering the Angular application.
+ * (Build de instantáneas: versión fijada por petición, caché de HTML y 503 sin versión activa.)
  */
 app.use((req, res, next) => {
-  angularApp
-    .handle(req)
-    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
-    .catch(next);
+  handleRender(req, res, next, (context) => angularApp.handle(req, context));
 });
 
 /**
@@ -51,13 +55,21 @@ app.use((req, res, next) => {
  */
 if (isMainModule(import.meta.url) || process.env['pm_id']) {
   const port = process.env['PORT'] || 4000;
-  app.listen(port, (error) => {
-    if (error) {
-      throw error;
-    }
+  // En el build de instantáneas, lee activa.json y abre el puerto interno antes de escuchar.
+  prepareContent().then(
+    () =>
+      app.listen(port, (error) => {
+        if (error) {
+          throw error;
+        }
 
-    console.log(`Node Express server listening on http://localhost:${port}`);
-  });
+        console.log(`Node Express server listening on http://localhost:${port}`);
+      }),
+    (error: unknown) => {
+      console.error(error instanceof Error ? error.message : error);
+      process.exit(1);
+    },
+  );
 }
 
 /**

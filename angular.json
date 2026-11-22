@@ -66,6 +66,22 @@
               ],
               "outputHashing": "all"
             },
+            "snapshot": {
+              "outputPath": {
+                "base": "dist/cristian-atienza-instantaneas",
+                "media": "fonts"
+              },
+              "fileReplacements": [
+                {
+                  "replace": "src/app/content/json/content-source.ts",
+                  "with": "src/app/content/snapshot/content-source.snapshot.ts"
+                },
+                {
+                  "replace": "src/app/content/content-mode.server.ts",
+                  "with": "src/app/content/snapshot/content-mode.server.snapshot.ts"
+                }
+              ]
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
